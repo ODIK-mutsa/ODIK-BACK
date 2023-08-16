@@ -6,11 +6,17 @@ import com.micutne.odik.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    default User findByIdOrThrow(Long id) {
+    default User findByIdOrThrow(String id) {
         return findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
     }
+
+    Optional<User> findById(String id);
+
+    Boolean existsById(String id);
 }

@@ -1,5 +1,6 @@
 package com.micutne.odik.common.auth;
 
+import com.micutne.odik.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import java.util.Collection;
 public class CustomUserDetails implements UserDetails {
     private String username;
     private String password;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -50,5 +52,11 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public static CustomUserDetails fromEntity(User user) {
+        CustomUserDetails details = new CustomUserDetails();
+        details.username = user.getId();
+        return details;
     }
 }
