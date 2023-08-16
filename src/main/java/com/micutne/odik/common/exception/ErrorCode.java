@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "US_001", "회원을 찾을 수 없습니다."),
     USER_EMAIL_USED(HttpStatus.BAD_REQUEST, "US_002", "이미 사용중인 이메일 입니다."),
+    USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "US_003", "이미 존재하는 아이디 입니다."),
+    USER_PRIVATE_NOT_FOUND(HttpStatus.NOT_FOUND, "US_004", "회원 정보를 찾을 수 없습니다."),
 
     AUTH_NOT_FOUND(HttpStatus.NOT_FOUND, "AT_001", "인증을 찾을 수 없습니다."),
     AUTH_PASSWORD_UNEQUAL(HttpStatus.NOT_FOUND, "AT_002", "비밀번호가 일치하지 않습니다."),
@@ -23,9 +25,8 @@ public enum ErrorCode {
 
     INVALID_EMAIL_VALUE(HttpStatus.BAD_REQUEST, "EM_001", "존재하지 않는 이메일입니다."),
     INVALID_EMAIL_EXIST(HttpStatus.BAD_REQUEST, "EM_002", "이미 존재하는 이메일입니다."),
-    INVALID_PW_VALUE(HttpStatus.BAD_REQUEST, "PW_001", "비밀번호가 맞지 않습니다."),
+    INVALID_PW_VALUE(HttpStatus.BAD_REQUEST, "PW_001", "비밀번호가 맞지 않습니다.");
 
-    ;
 
     //------------------------------------------------------------------------//
     private final HttpStatus httpStatus;
