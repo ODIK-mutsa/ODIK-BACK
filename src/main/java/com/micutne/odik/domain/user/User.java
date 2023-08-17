@@ -1,14 +1,17 @@
 package com.micutne.odik.domain.user;
 
 import com.micutne.odik.domain.user.dto.SignUpRequest;
+import com.micutne.odik.domain.user.dto.UserRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
 @Entity
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,4 +41,13 @@ public class User {
         return user;
     }
 
+
+    public void updateInfo(UserRequest userRequest) {
+        this.nickName = userRequest.getNickName();
+        this.gender = userRequest.getGender();
+    }
+
+    public void updateState(UserRequest userRequest) {
+        this.state = userRequest.getState();
+    }
 }
