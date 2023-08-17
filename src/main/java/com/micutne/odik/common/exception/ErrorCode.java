@@ -14,6 +14,8 @@ public enum ErrorCode {
     AUTH_PASSWORD_UNEQUAL(HttpStatus.NOT_FOUND, "AT_002", "비밀번호가 일치하지 않습니다."),
     AUTH_REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "AT_003", "리프레쉬 토큰을 찾을 수 없습니다."),
 
+    TOUR_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "TI_001", "장소를 찾을 수 없습니다."),
+
     FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FL_OO1", "파일 업로드 중 오류가 발생하였습니다."),
     FILE_READING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FL_OO2", "파일 읽기 중 오류가 발생하였습니다."),
     FILE_STORAGE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FL_OO3", "파일 저장 중 오류가 발생하였습니다."),
