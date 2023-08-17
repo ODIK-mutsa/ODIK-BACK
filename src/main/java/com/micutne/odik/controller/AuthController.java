@@ -26,9 +26,15 @@ public class AuthController {
         return authService.signup(request);
     }
 
-    @PostMapping("/login")
+    @PostMapping("login")
     public LoginResponse login(@RequestBody LoginRequest request) {
         return authService.login(request);
 
     }
+
+    @PostMapping("refresh")
+    public LoginResponse refresh(@RequestBody String refreshToken) {
+        return authService.refresh(refreshToken);
+    }
+
 }

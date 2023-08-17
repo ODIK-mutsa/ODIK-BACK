@@ -54,4 +54,21 @@ public class AuthService {
 
         return new LoginResponse(accessToken, refreshToken);
     }
+
+    /**
+     * refreshToken 으로 Token 재발행
+     */
+    public LoginResponse refresh(String token) {
+        if (jwtTokenProvider.validate(token)) {
+            String userId = jwtTokenProvider.parseClaims(token).getSubject();
+            User user = userRepository.findByIdOrThrow(userId);
+            CustomUserDetails userDetails = CustomUserDetails.fromEntity(user);
+
+            String accessToken = jwtTokenProvider.generateAccessToken(userDetails);
+            String refreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
+
+            return new LoginResponse(accessToken, refreshToken);
+        }
+        throw new AuthException(ErrorCode.AUTH_REFRESH_TOKEN_EXPIRED);
+    }
 }

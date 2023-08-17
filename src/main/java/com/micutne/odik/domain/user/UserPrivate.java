@@ -12,7 +12,6 @@ public class UserPrivate {
     @Id
     @Column(name = "user_idx")
     private Long idx;
-    //TODO : 82-10-1234-5678 형식의 전화번호는 17 필요, ERD 형식은 12
     @Column(length = 17)
     private String phone;
     @Column(length = 512)
