@@ -40,7 +40,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         // 처음으로 소셜 로그인한 사용자를 데이터베이스에 등록
         if (!userDetailsManager.userExists(id)) {
-            SignUpRequest signUpRequest = new SignUpRequest(email, loginType, name, locale);
+            SignUpRequest signUpRequest = new SignUpRequest(email, loginType, name, null, locale, null, null);
             authService.signUpOAuth(signUpRequest);
         }
 
