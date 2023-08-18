@@ -11,6 +11,13 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    default User findByIdxOrThrow(Long id) {
+        return findByIdx(id)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    Optional<User> findByIdx(Long id);
+
     default User findByIdOrThrow(String id) {
         return findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -19,4 +26,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findById(String id);
 
     Boolean existsById(String id);
+
+    Boolean existsByNickName(String nickName);
 }

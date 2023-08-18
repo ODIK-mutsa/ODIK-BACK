@@ -11,19 +11,28 @@ public class SignUpRequest {
     private String nickName;
     @Size(min = 1)
     private String gender;
+    private String locale;
     private String state;
     private String phone;
     private String password;
     private String pss;
-    private String sort;
 
-    public SignUpRequest(String id, String loginType, String nickName, String gender, String phone, String password) {
+    public SignUpRequest(String id, String loginType, String nickName, String gender, String locale, String phone, String password) {
         this.id = id;
         this.loginType = loginType == null ? "email" : loginType;
         this.nickName = nickName;
         this.gender = gender;
+        this.locale = locale;
         this.state = "sign";
         this.phone = phone;
         this.password = password;
+    }
+
+    public SignUpRequest(String id, String loginType, String nickName, String locale) {
+        this.id = id;
+        this.loginType = loginType;
+        this.nickName = nickName;
+        this.locale = locale;
+        this.state = "sign";
     }
 }

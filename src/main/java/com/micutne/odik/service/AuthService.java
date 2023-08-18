@@ -27,7 +27,6 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     public UserResponse signup(SignUpRequest request) {
-        log.info(request.toString());
         String userId = request.getId() + "&lt=" + request.getLoginType();
         if (!userRepository.existsById(request.getId() + "&lt=" + request.getLoginType())) {
             request.setId(userId);
@@ -39,16 +38,43 @@ public class AuthService {
         throw new AuthException(ErrorCode.USER_ALREADY_EXIST);
     }
 
+    public void signUpOAuth(SignUpRequest request) {
+        String userId = request.getId() + "&lt=" + request.getLoginType();
+        request.setId(userId);
+
+        User user = userRepository.save(User.fromDto(request));
+        UserPrivate userPrivate = userPrivateRepository.save(UserPrivate.fromDto(request, user));
+    }
+
     public LoginResponse login(LoginRequest request) {
         String userId = request.getId() + "&lt=email";
-        log.info(userId);
         User user = userRepository.findByIdOrThrow(userId);
         UserPrivate userPrivate = userPrivateRepository.findByIdxOrThrow(user.getIdx());
         if (!passwordEncoder.matches(request.getPassword(), userPrivate.getPss())) {
             throw new AuthException(ErrorCode.AUTH_PASSWORD_UNEQUAL);
         }
         CustomUserDetails userDetails = CustomUserDetails.fromEntity(user);
-        // GENERATE ACCESS_TOKEN AND REFRESH_TOKEN
+
+        return getTokens(userDetails);
+    }
+
+    /**
+     * refreshToken 으로 Token 재발행
+     */
+    public LoginResponse refresh(String token) {
+        if (jwtTokenProvider.validate(token)) {
+            String userId = jwtTokenProvider.parseClaims(token).getSubject();
+            User user = userRepository.findByIdOrThrow(userId);
+
+            CustomUserDetails userDetails = CustomUserDetails.fromEntity(user);
+
+            return getTokens(userDetails);
+        }
+        throw new AuthException(ErrorCode.AUTH_REFRESH_TOKEN_EXPIRED);
+    }
+
+
+    public LoginResponse getTokens(CustomUserDetails userDetails) {
         String accessToken = jwtTokenProvider.generateAccessToken(userDetails);
         String refreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
 
