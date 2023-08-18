@@ -12,6 +12,7 @@ public class UserResponse {
     private String nickName;
     private String gender;
     private String state;
+    private String locale;
     private String dateJoin;
 
     public static UserResponse fromEntity(User user) {
@@ -21,6 +22,7 @@ public class UserResponse {
         response.nickName = user.getNickName();
         response.gender = user.getGender().equals("m") ? "male" : "female";
         response.state = user.getState();
+        response.locale = user.getLocale();
         response.dateJoin = TimeUtils.getLocalTime(user.getDateJoin());
         return response;
     }
