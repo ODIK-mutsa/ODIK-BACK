@@ -7,4 +7,5 @@ public class UserRequest {
     String nickName;
     String gender;
     String state;
+    String locale;
 }
