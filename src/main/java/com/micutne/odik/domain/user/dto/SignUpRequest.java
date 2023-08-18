@@ -28,11 +28,5 @@ public class SignUpRequest {
         this.password = password;
     }
 
-    public SignUpRequest(String id, String loginType, String nickName, String locale) {
-        this.id = id;
-        this.loginType = loginType;
-        this.nickName = nickName;
-        this.locale = locale;
-        this.state = "sign";
-    }
+
 }
