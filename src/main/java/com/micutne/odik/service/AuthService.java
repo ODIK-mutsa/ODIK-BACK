@@ -4,6 +4,7 @@ import com.micutne.odik.common.auth.CustomUserDetails;
 import com.micutne.odik.common.auth.JwtTokenProvider;
 import com.micutne.odik.common.exception.AuthException;
 import com.micutne.odik.common.exception.ErrorCode;
+import com.micutne.odik.config.TokenConfig;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.domain.user.UserPrivate;
 import com.micutne.odik.domain.user.dto.LoginRequest;
@@ -15,6 +16,7 @@ import com.micutne.odik.repository.UserRepository;
 import com.micutne.odik.utils.FormatUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +28,16 @@ public class AuthService {
     private final UserPrivateRepository userPrivateRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final StandardPBEStringEncryptor tokenEncoder;
+
 
     public UserResponse signup(SignUpRequest request) {
+        tokenEncoder.setPassword(TokenConfig.getUser());
         String userId = FormatUtils.formatId(request.getId(), request.getLoginType());
         if (!userRepository.existsById(userId)) {
             request.setId(userId);
             request.setPss(passwordEncoder.encode(request.getPassword()));
+            request.setToken(tokenEncoder.encrypt(FormatUtils.formatUserToken(String.valueOf(userId))));
             User user = userRepository.save(User.fromDto(request));
             UserPrivate userPrivate = userPrivateRepository.save(UserPrivate.fromDto(request, user));
             return UserResponse.fromEntity(user);

@@ -16,22 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
 
-    /**
-     * 사용자 정보 찾기
-     */
-    public UserResponse readOne(Long userIdx) {
-        return UserResponse.fromEntity(userRepository.findByIdxOrThrow(userIdx));
-    }
 
-    public UserResponse readOne(String userName) {
-        return UserResponse.fromEntity(userRepository.findByIdOrThrow(userName));
+    public UserResponse readOne(String userId) {
+        return UserResponse.fromEntity(userRepository.findByIdOrThrow(userId));
     }
 
     /**
      * 사용자 프로필 찾기
      */
-    public ProfileResponse readProfile(Long userIdx) {
-        return ProfileResponse.fromEntity(userRepository.findByIdxOrThrow(userIdx));
+    public ProfileResponse readProfile(String userToken) {
+        return ProfileResponse.fromEntity(userRepository.findByTokenOrThrow(userToken));
     }
 
     /**
