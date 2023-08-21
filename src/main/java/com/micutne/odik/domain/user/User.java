@@ -32,6 +32,8 @@ public class User {
     private Instant dateJoin;
     @Column(length = 8, nullable = false)
     private String state;
+    @Column
+    private String token;
 
     public static User fromDto(SignUpRequest request) {
         User user = new User();
@@ -41,12 +43,14 @@ public class User {
         user.gender = request.getGender();
         user.state = request.getState();
         user.locale = request.getLocale();
+        user.token = request.getToken();
         return user;
     }
 
 
     public void updateInfo(UserRequest userRequest) {
         this.nickName = userRequest.getNickName();
+        this.locale = userRequest.getLocale();
         this.gender = userRequest.getGender();
     }
 

@@ -10,7 +10,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "token")
 public class TokenConfig {
+    private static String user;
     private static String email;
+
+    public static String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
 
     public static String getEmail() {
         return email;
