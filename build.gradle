@@ -59,6 +59,12 @@ dependencies {
     //Jasypt
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
 
+    //email
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    //batch
+    implementation 'org.springframework.boot:spring-boot-starter-batch:3.1.2'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 
