@@ -3,7 +3,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3307/odik
     username: root
-    password: 963031
+    password:
   jpa:
     hibernate:
       ddl-auto: none
@@ -12,6 +12,17 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   security:
     oauth2:
       client:
@@ -29,8 +40,8 @@ spring:
         # 클라이언트(즉 우리 서버)를 식별하기 위한 정보
         registration:
           google:
-            client-id: 1007091246907-rbh7jd4rr993k8qb2ljvi65qbsaqlese.apps.googleusercontent.com
-            client-secret: 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
+            client-id:
+            client-secret:
             redirect-uri: http://localhost:8080/auth/oauth/google
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
@@ -38,6 +49,10 @@ spring:
             scope:
               - email
               - profile
+
+# Token Password
+token:
+  email: "oe"
 
 # Image PATH
 file:

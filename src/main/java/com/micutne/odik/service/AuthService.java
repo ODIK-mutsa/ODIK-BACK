@@ -12,6 +12,7 @@ import com.micutne.odik.domain.user.dto.SignUpRequest;
 import com.micutne.odik.domain.user.dto.UserResponse;
 import com.micutne.odik.repository.UserPrivateRepository;
 import com.micutne.odik.repository.UserRepository;
+import com.micutne.odik.utils.FormatUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,8 +28,8 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     public UserResponse signup(SignUpRequest request) {
-        String userId = request.getId() + "&lt=" + request.getLoginType();
-        if (!userRepository.existsById(request.getId() + "&lt=" + request.getLoginType())) {
+        String userId = FormatUtils.formatId(request.getId(), request.getLoginType());
+        if (!userRepository.existsById(userId)) {
             request.setId(userId);
             request.setPss(passwordEncoder.encode(request.getPassword()));
             User user = userRepository.save(User.fromDto(request));
@@ -39,7 +40,7 @@ public class AuthService {
     }
 
     public void signUpOAuth(SignUpRequest request) {
-        String userId = request.getId() + "&lt=" + request.getLoginType();
+        String userId = FormatUtils.formatId(request.getId(), request.getLoginType());
         request.setId(userId);
 
         User user = userRepository.save(User.fromDto(request));
@@ -47,7 +48,7 @@ public class AuthService {
     }
 
     public LoginResponse login(LoginRequest request) {
-        String userId = request.getId() + "&lt=email";
+        String userId = FormatUtils.formatId(request.getId(), "email");
         User user = userRepository.findByIdOrThrow(userId);
         UserPrivate userPrivate = userPrivateRepository.findByIdxOrThrow(user.getIdx());
         if (!passwordEncoder.matches(request.getPassword(), userPrivate.getPss())) {
@@ -80,4 +81,6 @@ public class AuthService {
 
         return new LoginResponse(accessToken, refreshToken);
     }
+
+
 }

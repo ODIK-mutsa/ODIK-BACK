@@ -40,7 +40,6 @@ public class UserService {
     @Transactional
     public UserResponse updateInfo(UserRequest userRequest, String id) {
         User user = userRepository.findByIdOrThrow(id);
-        log.info(id);
         user.updateInfo(userRequest);
         return UserResponse.fromEntity(user);
     }
