@@ -11,12 +11,12 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    default User findByIdxOrThrow(Long id) {
-        return findByIdx(id)
+    default User findByTokenOrThrow(String token) {
+        return findByToken(token)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 
-    Optional<User> findByIdx(Long id);
+    Optional<User> findByToken(String token);
 
     default User findByIdOrThrow(String id) {
         return findById(id)
@@ -28,4 +28,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsById(String id);
 
     Boolean existsByNickName(String nickName);
+
 }

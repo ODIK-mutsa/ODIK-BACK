@@ -16,6 +16,7 @@ public class SignUpRequest {
     private String phone;
     private String password;
     private String pss;
+    private String token;
 
     public SignUpRequest(String id, String loginType, String nickName, String gender, String locale, String phone, String password) {
         this.id = id;
