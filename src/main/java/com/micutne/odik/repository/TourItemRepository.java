@@ -17,10 +17,12 @@ public interface TourItemRepository extends JpaRepository<TourItem, Long> {
         return findById(idx)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.TOUR_ITEM_NOT_FOUND));
     }
-    Page<TourItem> findByUserOrderByDateCreatedDesc(User user, Pageable pageable);
+    Page<TourItem> findByUserIdxOrderByDateCreateDesc(User user, Pageable pageable);
 
     Page<TourItem> findAllBy(Pageable pageable);
 
-    Page<TourItem> findAllByUserInOrderByDateCreatedDesc(List<User> user, Pageable pageable);
+    Page<TourItem> findAllByUserIdxInOrderByDateCreateDesc(List<User> user, Pageable pageable);
 
 }
+
+

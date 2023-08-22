@@ -1,12 +1,12 @@
 package com.micutne.odik.domain.tour.dto;
 
+import com.micutne.odik.domain.user.User;
 import lombok.Data;
-import org.springframework.security.core.userdetails.User;
 
 @Data
 public class TourItemResponse {
     String title;
-    User userIdx;
+    User user;
 
     Double locationLat;
     Double locationLng;
