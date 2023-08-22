@@ -24,8 +24,8 @@ public class UserService {
     /**
      * 사용자 프로필 찾기
      */
-    public ProfileResponse readProfile(String userToken) {
-        return ProfileResponse.fromEntity(userRepository.findByTokenOrThrow(userToken));
+    public ProfileResponse readProfile(Long userIdx) {
+        return ProfileResponse.fromEntity(userRepository.findByIdxOrThrow(userIdx));
     }
 
     /**

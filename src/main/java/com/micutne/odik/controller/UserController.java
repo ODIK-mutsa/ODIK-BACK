@@ -22,8 +22,8 @@ public class UserController {
     }
 
     @PostMapping("profile")
-    public ProfileResponse readProfile(@RequestBody String userToken) {
-        return userService.readProfile(userToken);
+    public ProfileResponse readProfile(@RequestBody Long userIdx) {
+        return userService.readProfile(userIdx);
     }
 
     @PutMapping

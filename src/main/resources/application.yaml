@@ -1,12 +1,13 @@
 # DataBase
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3307/odik
-    username: root
+    url:
+    username:
     password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     show-sql: true
   servlet:
     multipart:
@@ -42,7 +43,7 @@ spring:
           google:
             client-id:
             client-secret:
-            redirect-uri: http://localhost:8080/auth/oauth/google
+            redirect-uri: /auth/oauth/google
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
             client-name: ODIK
@@ -52,6 +53,7 @@ spring:
 
 # Token Password
 token:
+  user: "ouix"
   email: "oe"
 
 # Image PATH
