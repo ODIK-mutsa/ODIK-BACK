@@ -1,8 +1,8 @@
 # DataBase
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3307/odik
-    username: root
+    url: 
+    username: 
     password:
   jpa:
     hibernate:
@@ -42,7 +42,7 @@ spring:
           google:
             client-id:
             client-secret:
-            redirect-uri: http://localhost:8080/auth/oauth/google
+            redirect-uri: /auth/oauth/google
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
             client-name: ODIK
