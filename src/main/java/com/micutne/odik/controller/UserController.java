@@ -3,6 +3,7 @@ package com.micutne.odik.controller;
 import com.micutne.odik.domain.user.dto.ProfileResponse;
 import com.micutne.odik.domain.user.dto.UserRequest;
 import com.micutne.odik.domain.user.dto.UserResponse;
+import com.micutne.odik.service.AuthService;
 import com.micutne.odik.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("user")
 public class UserController {
     private final UserService userService;
+    private final AuthService authService;
+
 
     @GetMapping
     public UserResponse readMyInfo(Authentication authentication) {
@@ -22,8 +25,8 @@ public class UserController {
     }
 
     @PostMapping("profile")
-    public ProfileResponse readProfile(@RequestBody String userToken) {
-        return userService.readProfile(userToken);
+    public ProfileResponse readProfile(@RequestBody Long userIdx) {
+        return userService.readProfile(userIdx);
     }
 
     @PutMapping

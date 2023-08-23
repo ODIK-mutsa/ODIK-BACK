@@ -35,7 +35,7 @@ public class WebSecurityConfig {
                         authHttp -> authHttp
 //                                .requestMatchers().permitAll()        //누구든 허용
 //                                .requestMatchers().authenticated()    //인증된 사용자만 허용
-                                .requestMatchers("/auth/**").anonymous()        //인증되지 않은 사용자만 허용
+//                                .requestMatchers("/auth/**").anonymous()        //인증되지 않은 사용자만 허용
                                 .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2Login -> oauth2Login

@@ -1,12 +1,13 @@
 # DataBase
 spring:
   datasource:
-    url: 
-    username: 
+    url:
+    username:
     password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     show-sql: true
   servlet:
     multipart:
@@ -52,6 +53,7 @@ spring:
 
 # Token Password
 token:
+  user: "ouix"
   email: "oe"
 
 # Image PATH

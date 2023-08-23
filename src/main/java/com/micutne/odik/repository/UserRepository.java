@@ -10,6 +10,12 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+    default User findByIdxOrThrow(Long idx) {
+        return findByIdx(idx)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    Optional<User> findByIdx(Long idx);
 
     default User findByTokenOrThrow(String token) {
         return findByToken(token)

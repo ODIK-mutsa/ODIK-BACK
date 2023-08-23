@@ -3,17 +3,16 @@ package com.micutne.odik.controller;
 import com.micutne.odik.domain.email.dto.EmailRequest;
 import com.micutne.odik.domain.email.dto.EmailResponse;
 import com.micutne.odik.domain.user.dto.LoginRequest;
-import com.micutne.odik.domain.user.dto.LoginResponse;
 import com.micutne.odik.domain.user.dto.SignUpRequest;
 import com.micutne.odik.domain.user.dto.UserResponse;
+import com.micutne.odik.domain.user.dto.VaildResponse;
 import com.micutne.odik.service.AuthService;
 import com.micutne.odik.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
@@ -29,14 +28,15 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public VaildResponse login(@RequestBody LoginRequest request) {
         return authService.login(request);
 
     }
 
-    @PostMapping("refresh")
-    public LoginResponse refresh(@RequestBody String refreshToken) {
-        return authService.refresh(refreshToken);
+    @GetMapping("validate_token")
+    public VaildResponse checkResponse(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                                       Authentication authentication) {
+        return authService.checkAuth(authorizationHeader, authentication);
     }
 
     @PostMapping("email_verify/request")
