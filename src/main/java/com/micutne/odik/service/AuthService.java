@@ -31,23 +31,26 @@ public class AuthService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    @Transactional
     public UserResponse signup(SignUpRequest request) {
         String userId = FormatUtils.formatId(request.getId(), request.getLogin_type());
         if (!userRepository.existsById(userId)) {
             request.setId(userId);
             request.setPss(passwordEncoder.encode(request.getPassword()));
             User user = userRepository.save(User.fromDto(request));
+            user.setToken(jwtTokenProvider.generateToken(CustomUserDetails.fromEntity(user)));
             UserPrivate userPrivate = userPrivateRepository.save(UserPrivate.fromDto(request, user));
             return UserResponse.fromEntity(user);
         }
         throw new AuthException(ErrorCode.USER_ALREADY_EXIST);
     }
 
+    @Transactional
     public void signUpOAuth(SignUpRequest request) {
         String userId = FormatUtils.formatId(request.getId(), request.getLogin_type());
         request.setId(userId);
-
         User user = userRepository.save(User.fromDto(request));
+        user.setToken(jwtTokenProvider.generateToken(CustomUserDetails.fromEntity(user)));
         UserPrivate userPrivate = userPrivateRepository.save(UserPrivate.fromDto(request, user));
     }
 
@@ -60,8 +63,6 @@ public class AuthService {
             if (!passwordEncoder.matches(request.getPassword(), userPrivate.getPss())) {
                 return new LoginResponse("NOT_FOUND");
             }
-            user.setToken(jwtTokenProvider.generateToken(CustomUserDetails.fromEntity(user)));
-
             return LoginResponse.fromEntity(user, "OK");
         } else return new LoginResponse("NOT_FOUND");
     }
