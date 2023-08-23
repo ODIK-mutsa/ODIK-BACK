@@ -6,7 +6,10 @@ import com.micutne.odik.common.exception.AuthException;
 import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.domain.user.UserPrivate;
-import com.micutne.odik.domain.user.dto.*;
+import com.micutne.odik.domain.user.dto.LoginRequest;
+import com.micutne.odik.domain.user.dto.SignUpRequest;
+import com.micutne.odik.domain.user.dto.UserResponse;
+import com.micutne.odik.domain.user.dto.VaildResponse;
 import com.micutne.odik.repository.UserPrivateRepository;
 import com.micutne.odik.repository.UserRepository;
 import com.micutne.odik.utils.FormatUtils;
@@ -55,25 +58,26 @@ public class AuthService {
     }
 
     @Transactional
-    public LoginResponse login(LoginRequest request) {
+    public VaildResponse login(LoginRequest request) {
         String userId = FormatUtils.formatId(request.getId(), "email");
         if (userRepository.existsById(userId)) {
             User user = userRepository.findByIdOrThrow(userId);
             UserPrivate userPrivate = userPrivateRepository.findByIdxOrThrow(user.getIdx());
             if (!passwordEncoder.matches(request.getPassword(), userPrivate.getPss())) {
-                return new LoginResponse("NOT_FOUND");
+                return new VaildResponse("NOT_FOUND");
             }
-            return LoginResponse.fromEntity(user, "OK");
-        } else return new LoginResponse("NOT_FOUND");
+            return VaildResponse.fromEntity(user, "OK");
+        } else return new VaildResponse("NOT_FOUND");
     }
 
-    public CheckResponse checkAuth(String token, Authentication authentication) {
+    public VaildResponse checkAuth(String token, Authentication authentication) {
+        if (authentication == null) return new VaildResponse("INVALID");
         String userId = authentication.getPrincipal().toString();
         User user = userRepository.findByIdOrThrow(userId);
         if (user.getToken().equals(token.split(" ")[1])) {
-            return new CheckResponse("VALID");
+            return VaildResponse.fromEntity(user, "VALID");
         }
-        return new CheckResponse("INVALID");
+        return new VaildResponse("INVALID");
     }
 
 
