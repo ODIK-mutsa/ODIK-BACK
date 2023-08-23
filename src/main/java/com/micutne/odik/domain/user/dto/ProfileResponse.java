@@ -5,15 +5,15 @@ import lombok.Data;
 
 @Data
 public class ProfileResponse {
-    String token;
-    String nickName;
+    Long idx;
+    String nick_name;
     String gender;
     String locale;
 
     public static ProfileResponse fromEntity(User user) {
         ProfileResponse response = new ProfileResponse();
-        response.token = user.getToken();
-        response.nickName = user.getNickName();
+        response.idx = user.getIdx();
+        response.nick_name = user.getNickName();
         response.gender = user.getGender().equals("m") ? "male" : "female";
         response.locale = user.getLocale();
         return response;

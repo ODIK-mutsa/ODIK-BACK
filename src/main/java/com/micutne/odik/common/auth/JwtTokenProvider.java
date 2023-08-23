@@ -14,10 +14,6 @@ import java.util.Date;
 @Component
 @Slf4j
 public class JwtTokenProvider {
-    @Value("${jwt.accessTokenExpirationTime}")
-    private Long jwtAccessTokenExpirationTime;
-    @Value("${jwt.refreshTokenExpirationTime}")
-    private Long jwtRefreshTokenExpirationTime;
 
     private final Key jwtSecretKey;
     private final JwtParser jwtParser;
@@ -27,27 +23,15 @@ public class JwtTokenProvider {
         this.jwtParser = Jwts.parserBuilder().setSigningKey(this.jwtSecretKey).build();
     }
 
-    public String generateToken(UserDetails userDetails, Date expiryDate) {
-        //Claims : JWT 에 담기는 정보의 단위를 Claim 이라고 부른다. JWT 에 담고싶은 사용자 정보를 담는다.
+    public String generateToken(UserDetails userDetails) {
         Claims jwtClaims = Jwts.claims()
                 .setSubject(userDetails.getUsername())
-                .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(expiryDate);
+                .setIssuedAt(Date.from(Instant.now()));
 
         return Jwts.builder()
                 .setClaims(jwtClaims)
                 .signWith(jwtSecretKey)
                 .compact();
-    }
-
-    public String generateAccessToken(CustomUserDetails userDetails) {
-        Date expiryDate = new Date(new Date().getTime() + jwtAccessTokenExpirationTime);
-        return generateToken(userDetails, expiryDate);
-    }
-
-    public String generateRefreshToken(CustomUserDetails userDetails) {
-        Date expiryDate = new Date(new Date().getTime() + jwtRefreshTokenExpirationTime);
-        return generateToken(userDetails, expiryDate);
     }
 
 

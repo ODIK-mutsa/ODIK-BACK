@@ -1,32 +1,23 @@
 package com.micutne.odik.domain.user.dto;
 
 import com.micutne.odik.domain.user.User;
-import com.micutne.odik.utils.FormatUtils;
-import com.micutne.odik.utils.TimeUtils;
 import lombok.Data;
 
 @Data
 public class UserResponse {
-
-    private String token;
     private String email;
-    private String loginType;
-    private String nickName;
-    private String gender;
-    private String state;
+    private String login_type;
+    private String nick_name;
     private String locale;
-    private String dateJoin;
+    private String state;
 
     public static UserResponse fromEntity(User user) {
         UserResponse response = new UserResponse();
-        response.token = user.getToken();
-        response.email = FormatUtils.parseId(user.getId())[0];
-        response.loginType = user.getLoginType();
-        response.nickName = user.getNickName();
-        response.gender = user.getGender().equals("m") ? "male" : "female";
-        response.state = user.getState();
+        response.email = user.getId();
+        response.login_type = user.getLoginType();
+        response.nick_name = user.getNickName();
         response.locale = user.getLocale();
-        response.dateJoin = TimeUtils.getLocalTime(user.getDateJoin());
+        response.state = user.getState();
         return response;
     }
 }
