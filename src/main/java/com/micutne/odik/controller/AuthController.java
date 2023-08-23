@@ -34,10 +34,6 @@ public class AuthController {
 
     }
 
-    @PostMapping("refresh")
-    public LoginResponse refresh(@RequestBody String refreshToken) {
-        return authService.refresh(refreshToken);
-    }
 
     @PostMapping("email_verify/request")
     public EmailResponse emailRequest(@RequestBody EmailRequest request) {

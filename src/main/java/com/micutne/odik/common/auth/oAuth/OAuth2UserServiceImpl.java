@@ -22,7 +22,7 @@ import java.util.Map;
 public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-
+        log.info("오는거 맞냐");
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
         String registrationId = userRequest

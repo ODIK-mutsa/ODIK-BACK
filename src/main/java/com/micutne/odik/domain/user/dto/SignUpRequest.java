@@ -18,15 +18,9 @@ public class SignUpRequest {
     private String pss;
     private String token;
 
-    public SignUpRequest(String id, String loginType, String nickName, String gender, String locale, String phone, String password) {
-        this.id = id;
-        this.loginType = loginType == null ? "email" : loginType;
-        this.nickName = nickName;
-        this.gender = gender;
-        this.locale = locale;
+    public SignUpRequest() {
+        this.loginType = "email";
         this.state = "sign";
-        this.phone = phone;
-        this.password = password;
     }
 
 
