@@ -23,8 +23,7 @@ public class UserController {
     @GetMapping("check")
     public CheckResponse checkResponse(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
                                        Authentication authentication) {
-        log.info("Authorization Header: " + authorizationHeader);
-        return authService.checkAuth(authorizationHeader.split(" ")[1], authentication);
+        return authService.checkAuth(authorizationHeader, authentication);
     }
 
     @GetMapping

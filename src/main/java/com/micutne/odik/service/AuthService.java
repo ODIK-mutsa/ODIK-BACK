@@ -32,7 +32,7 @@ public class AuthService {
     }
 
     public UserResponse signup(SignUpRequest request) {
-        String userId = FormatUtils.formatId(request.getId(), request.getLoginType());
+        String userId = FormatUtils.formatId(request.getId(), request.getLogin_type());
         if (!userRepository.existsById(userId)) {
             request.setId(userId);
             request.setPss(passwordEncoder.encode(request.getPassword()));
@@ -44,7 +44,7 @@ public class AuthService {
     }
 
     public void signUpOAuth(SignUpRequest request) {
-        String userId = FormatUtils.formatId(request.getId(), request.getLoginType());
+        String userId = FormatUtils.formatId(request.getId(), request.getLogin_type());
         request.setId(userId);
 
         User user = userRepository.save(User.fromDto(request));
@@ -69,7 +69,7 @@ public class AuthService {
     public CheckResponse checkAuth(String token, Authentication authentication) {
         String userId = authentication.getPrincipal().toString();
         User user = userRepository.findByIdOrThrow(userId);
-        if (user.getToken().equals(token)) {
+        if (user.getToken().equals(token.split(" ")[1])) {
             return new CheckResponse("VALID");
         }
         return new CheckResponse("INVALID");

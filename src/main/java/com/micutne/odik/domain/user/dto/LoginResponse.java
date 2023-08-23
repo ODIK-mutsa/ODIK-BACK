@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LoginResponse {
     String result;
-    String tokenOdik;
-    String nickName;
+    String token_odik;
+    String nick_name;
     String gender;
     String locale;
 
@@ -22,8 +22,8 @@ public class LoginResponse {
     public static LoginResponse fromEntity(User user, String result) {
         LoginResponse response = new LoginResponse();
         response.result = result;
-        response.tokenOdik = user.getToken();
-        response.nickName = user.getNickName();
+        response.token_odik = user.getToken();
+        response.nick_name = user.getNickName();
         response.gender = user.getGender();
         response.locale = user.getLocale();
         return response;

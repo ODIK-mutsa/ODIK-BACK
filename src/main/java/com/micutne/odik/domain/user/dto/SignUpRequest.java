@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public class SignUpRequest {
     private String id;
-    private String loginType;
+    private String login_type;
     @Size(min = 20)
-    private String nickName;
+    private String nick_name;
     @Size(min = 1)
     private String gender;
     private String locale;
@@ -19,7 +19,7 @@ public class SignUpRequest {
     private String token;
 
     public SignUpRequest() {
-        this.loginType = "email";
+        this.login_type = "email";
         this.state = "sign";
     }
 

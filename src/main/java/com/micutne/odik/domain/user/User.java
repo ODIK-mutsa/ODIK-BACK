@@ -17,7 +17,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
-    @Column(length = 30, unique = true)
+    @Column(length = 255, unique = true)
     private String id;
     @Column(length = 6, nullable = false)
     private String loginType;
@@ -39,8 +39,8 @@ public class User {
     public static User fromDto(SignUpRequest request) {
         User user = new User();
         user.id = request.getId();
-        user.loginType = request.getLoginType();
-        user.nickName = request.getNickName();
+        user.loginType = request.getLogin_type();
+        user.nickName = request.getNick_name();
         user.gender = request.getGender();
         user.state = request.getState();
         user.locale = request.getLocale();
@@ -49,7 +49,7 @@ public class User {
 
 
     public void updateInfo(UserRequest userRequest) {
-        this.nickName = userRequest.getNickName();
+        this.nickName = userRequest.getNick_name();
         this.locale = userRequest.getLocale();
         this.gender = userRequest.getGender();
     }
