@@ -35,48 +35,68 @@ public class EmailService {
 
     public EmailService(StandardPBEStringEncryptor tokenEncoder, EmailRepository emailRepository, UserRepository userRepository, JavaMailSender javaMailSender, TemplateEngine templateEngine) {
         this.tokenEncoder = tokenEncoder;
+        tokenEncoder.setPassword(TokenConfig.getEmail());
         this.emailRepository = emailRepository;
         this.userRepository = userRepository;
         this.javaMailSender = javaMailSender;
         this.templateEngine = templateEngine;
-        tokenEncoder.setPassword(TokenConfig.getEmail());
+    }
+
+    @Transactional
+    public EmailResponse passwordVerifyRequest(EmailRequest request) {
+        String MAIL_TITLE = "[ODIK] PASSWORD VERIFY TEST";
+        String MAIL_TEMPLATE = "passwordVerify";
+
+        String userId = FormatUtils.formatId(request.getEmail(), "email");
+        if (userRepository.existsById(userId)) {
+            return VerifyRequest(request, MAIL_TITLE, MAIL_TEMPLATE);
+        } else {
+            return EmailResponse.fromEntity(request.getEmail(), EmailState.NOT_EXIST);
+        }
     }
 
     @Transactional
     public EmailResponse emailVerifyRequest(EmailRequest request) {
+        String MAIL_TITLE = "[ODIK] EMAIL VERIFY TEST";
+        String MAIL_TEMPLATE = "emailVerify";
+
         String userId = FormatUtils.formatId(request.getEmail(), "email");
         //사용중인 계정인지 확인
         if (!userRepository.existsById(userId)) {
-            //메일 전송
-            try {
-                String EMAIL_VERIFY_MAIL_TITLE = "[ODIK] EMAIL VERIFY TEST";
-                String EMAIL_VERIFY_MAIL_TEMPLATE = "emailVerify";
-                sendMessage(request.getEmail(), EMAIL_VERIFY_MAIL_TITLE, request.getCode(), EMAIL_VERIFY_MAIL_TEMPLATE);
-            } catch (MessagingException | IOException e) {
-                throw new RuntimeException(e);
-            }
-            //토큰 생성
-            request.setToken(tokenEncoder.encrypt(FormatUtils.formatEmailToken(request)));
-
-            Email emailEntity;
-            //이미 인증 번호 메일을 발송한 경우
-            if (emailRepository.existsByEmail(request.getEmail())) {
-                emailEntity = emailRepository.findByEmailOrThrow(request.getEmail());
-                emailEntity.update(request);
-            }
-            //새로 메일을 발송하는 경우
-            else {
-                emailEntity = emailRepository.save(Email.fromDto(request));
-                emailRepository.save(emailEntity);
-            }
-            return EmailResponse.fromEntity(emailEntity, EmailState.SEND);
+            return VerifyRequest(request, MAIL_TITLE, MAIL_TEMPLATE);
         } else {
             return EmailResponse.fromEntity(request.getEmail(), EmailState.ALREADY_EXIST);
         }
+
+    }
+
+    @Transactional
+    public EmailResponse VerifyRequest(EmailRequest request, String MAIL_TITLE, String MAIL_TEMPLATE) {
+        //메일 전송
+        try {
+            sendMessage(request.getEmail(), MAIL_TITLE, request.getCode(), MAIL_TEMPLATE);
+        } catch (MessagingException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        //토큰 생성
+        request.setToken(tokenEncoder.encrypt(FormatUtils.formatEmailToken(request)));
+
+        Email emailEntity;
+        //이미 인증 번호 메일을 발송한 경우
+        if (emailRepository.existsByEmail(request.getEmail())) {
+            emailEntity = emailRepository.findByEmailOrThrow(request.getEmail());
+            emailEntity.update(request);
+        }
+        //새로 메일을 발송하는 경우
+        else {
+            emailEntity = emailRepository.save(Email.fromDto(request));
+            emailRepository.save(emailEntity);
+        }
+        return EmailResponse.fromEntity(emailEntity, EmailState.SEND);
     }
 
 
-    public EmailResponse emailVerifyCheck(EmailRequest request) {
+    public EmailResponse verifyCheck(EmailRequest request) {
         //만료된 인증번호인지 확인
         if (isExpired(request.getToken())) {
             return EmailResponse.fromEntity(request.getEmail(), EmailState.EXPIRED);
@@ -87,6 +107,7 @@ public class EmailService {
             return EmailResponse.fromEntity(emailEntity, EmailState.OK);
         } else return EmailResponse.fromEntity(emailEntity, EmailState.WRONG_CODE);
     }
+
 
     /**
      * 메일 전송
@@ -113,7 +134,8 @@ public class EmailService {
      * 유효기간 만료 확인
      */
     private boolean isExpired(String token) {
-        LocalDateTime expireDate = LocalDateTime.parse(FormatUtils.parseEmailToken(tokenEncoder.decrypt(token))[1]);
+        String parseToken = FormatUtils.parseEmailToken(tokenEncoder.decrypt(token))[1];
+        LocalDateTime expireDate = LocalDateTime.parse(parseToken);
         LocalDateTime now = LocalDateTime.now();
 
         return expireDate.isBefore(now);

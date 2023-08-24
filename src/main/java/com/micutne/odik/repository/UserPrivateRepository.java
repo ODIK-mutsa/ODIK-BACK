@@ -9,12 +9,12 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserPrivateRepository extends JpaRepository<UserPrivate, Long> {
+public interface UserPrivateRepository extends JpaRepository<UserPrivate, Integer> {
 
-    default UserPrivate findByIdxOrThrow(Long id) {
+    default UserPrivate findByIdxOrThrow(int id) {
         return findByIdx(id)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_PRIVATE_NOT_FOUND));
     }
 
-    Optional<UserPrivate> findByIdx(Long idx);
+    Optional<UserPrivate> findByIdx(int idx);
 }

@@ -24,7 +24,7 @@ public class UserService {
     /**
      * 사용자 프로필 찾기
      */
-    public ProfileResponse readProfile(Long userIdx) {
+    public ProfileResponse readProfile(int userIdx) {
         return ProfileResponse.fromEntity(userRepository.findByIdxOrThrow(userIdx));
     }
 

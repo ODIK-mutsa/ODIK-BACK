@@ -8,7 +8,7 @@ public enum EmailState {
     ALREADY_EXIST,
     OK,
     WRONG_CODE,
-    EXPIRED;
+    EXPIRED, NOT_EXIST;
 
     EmailState() {
 

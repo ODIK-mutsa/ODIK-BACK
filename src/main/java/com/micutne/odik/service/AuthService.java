@@ -19,6 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @Slf4j
 public class AuthService {
@@ -71,7 +74,10 @@ public class AuthService {
     }
 
     public VaildResponse checkAuth(String token, Authentication authentication) {
-        if (authentication == null) return new VaildResponse("INVALID");
+        if (token == null || token.isEmpty() || authentication == null) {
+            return new VaildResponse("INVALID");
+        }
+
         String userId = authentication.getPrincipal().toString();
         User user = userRepository.findByIdOrThrow(userId);
         if (user.getToken().equals(token.split(" ")[1])) {
@@ -80,9 +86,17 @@ public class AuthService {
         return new VaildResponse("INVALID");
     }
 
+    @Transactional
+    public Map<String, String> changePassword(String email, String newPassword) {
+        String userId = FormatUtils.formatId(email, "email");
+        log.info(userId);
+        User user = userRepository.findByIdOrThrow(userId);
+        UserPrivate userPrivate = userPrivateRepository.findByIdxOrThrow(user.getIdx());
+        userPrivate.updatePassword(passwordEncoder.encode(newPassword));
 
-    public String getTokens(CustomUserDetails userDetails) {
-        return jwtTokenProvider.generateToken(userDetails);
+        Map<String, String> result = new HashMap<>();
+        result.put("result", "OK");
+        return result;
     }
 
 

@@ -14,6 +14,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -34,8 +36,9 @@ public class AuthController {
     }
 
     @GetMapping("validate_token")
-    public VaildResponse checkResponse(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+    public VaildResponse checkResponse(@RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader,
                                        Authentication authentication) {
+
         return authService.checkAuth(authorizationHeader, authentication);
     }
 
@@ -46,7 +49,24 @@ public class AuthController {
 
     @PostMapping("email_verify/verify")
     public EmailResponse emailVerify(@RequestBody EmailRequest request) {
-        return emailService.emailVerifyCheck(request);
+        return emailService.verifyCheck(request);
+    }
+
+    @PostMapping("find_pw/request")
+    public EmailResponse passwordRequest(@RequestBody EmailRequest request) {
+        return emailService.passwordVerifyRequest(request);
+    }
+
+    @PostMapping("find_pw/verify")
+    public EmailResponse passwordVerify(@RequestBody EmailRequest request) {
+        return emailService.verifyCheck(request);
+    }
+
+    @PutMapping("find_pw")
+    public Map<String, String> passwordChange(@RequestBody Map<String, String> requestData) {
+        String email = requestData.get("email");
+        String password = requestData.get("password");
+        return authService.changePassword(email, password);
     }
 
 

@@ -12,11 +12,10 @@ public class EmailRequest {
     String code;
     LocalDateTime date;
 
-    public EmailRequest(String email, String token, String code, LocalDateTime date) {
-        this.email = email;
-        this.token = token;
-        this.code = code == null ? RandomUtils.Random6Hex() : code;
-        this.date = LocalDateTime.now();
+    public EmailRequest() {
+        code = code == null ? RandomUtils.Random6Hex() : code;
+        date = LocalDateTime.now();
     }
+
 
 }
