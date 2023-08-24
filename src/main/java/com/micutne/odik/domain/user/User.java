@@ -16,7 +16,7 @@ import java.time.Instant;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idx;
+    private int idx;
     @Column(length = 255, unique = true)
     private String id;
     @Column(length = 6, nullable = false)

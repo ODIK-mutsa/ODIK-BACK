@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class ProfileResponse {
-    Long idx;
+    int idx;
     String nick_name;
     String gender;
     String locale;

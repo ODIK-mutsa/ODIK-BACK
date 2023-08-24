@@ -25,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("profile")
-    public ProfileResponse readProfile(@RequestBody Long userIdx) {
+    public ProfileResponse readProfile(@RequestBody int userIdx) {
         return userService.readProfile(userIdx);
     }
 

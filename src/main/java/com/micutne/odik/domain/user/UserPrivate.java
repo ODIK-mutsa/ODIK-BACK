@@ -11,7 +11,7 @@ import lombok.Getter;
 public class UserPrivate {
     @Id
     @Column(name = "user_idx")
-    private Long idx;
+    private int idx;
     @Column(length = 17)
     private String phone;
     @Column(length = 512)
@@ -23,5 +23,9 @@ public class UserPrivate {
         userPrivate.phone = request.getPhone();
         userPrivate.pss = request.getPss();
         return userPrivate;
+    }
+
+    public void updatePassword(String newPassword) {
+        pss = newPassword;
     }
 }
