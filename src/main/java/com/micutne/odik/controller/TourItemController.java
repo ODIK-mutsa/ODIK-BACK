@@ -54,27 +54,26 @@ public class TourItemController {
 
     @PostMapping("")
     public TourItemResponse create(
-            //Authentication authentication,
-            @ModelAttribute TourItemRequest request) {
-            //@RequestParam(value = "image", required = false)MultipartFile image) {
-       // log.info(request.toString());
+            Authentication authentication,
+            @RequestBody TourItemRequest request) {
 
-        return tourItemService.create(request);//, authentication.getName());//, image, authentication.getPrincipal().toString());
+
+        return tourItemService.create(request, authentication.getPrincipal().toString());
     }
 
     @PutMapping("/{idx}")
     public TourItemResponse update(
-            // Authentication authentication,
+            Authentication authentication,
             @PathVariable Long idx,
-            @Valid @ModelAttribute TourItemRequest request) {
-        return tourItemService.update(idx, request); //, id);
+            @Valid @RequestBody TourItemRequest request) {
+        return tourItemService.update(idx, request, authentication.getPrincipal().toString());
     }
 
     @DeleteMapping("/{idx}")
     public void remove (
-            // Authentication authentication,
+            Authentication authentication,
             @PathVariable Long idx) {
-        tourItemService.remove(idx); //, authentication.getPrincipal().toString());
+        tourItemService.remove(idx, authentication.getPrincipal().toString());
     }
 
 }

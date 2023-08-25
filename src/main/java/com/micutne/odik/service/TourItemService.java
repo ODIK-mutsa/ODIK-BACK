@@ -51,9 +51,9 @@ public class TourItemService {
      * 관광지 저장
      */
     @Transactional
-    public TourItemResponse create(TourItemRequest request){ //}, String id) {
+    public TourItemResponse create(TourItemRequest request, String id) {
        TourItem tourItem = tourItemMapper.toEntity(request);
-       //tourItem.updateUser(userRepository.findByIdOrThrow(id));
+       tourItem.updateUser(userRepository.findByIdOrThrow(id));
        tourItem = tourItemRepository.save(tourItem);
         return tourItemMapper.toDto(tourItem);
     }
@@ -62,10 +62,10 @@ public class TourItemService {
      * 관광지 수정
      */
     @Transactional
-    public TourItemResponse update(Long idx, TourItemRequest request) { //}, String id) {
+    public TourItemResponse update(Long idx, TourItemRequest request, String id) {
         TourItem tourItem = tourItemRepository.findByIdOrThrow(idx);
-        //User user = userRepository.findByIdOrThrow(id);
-        // checkAuth(item, user);
+        User user = userRepository.findByIdOrThrow(id);
+        checkAuth(tourItem, user);
         tourItem.updateTourItem(request);
         return tourItemMapper.toDto(tourItem);
 
@@ -74,10 +74,10 @@ public class TourItemService {
     /**
      * 관광지 삭제
      */
-    public void remove(Long idx) { //}, String id) {
+    public void remove(Long idx, String id) {
         TourItem tourItem = tourItemRepository.findByIdOrThrow(idx);
-        // User user = userRepository.findByIdOrThrow(id);
-        // checkAuth(item, user);
+        User user = userRepository.findByIdOrThrow(id);
+        checkAuth(tourItem, user);
         try {
             tourItemRepository.delete(tourItem);
         } catch (Exception e) {
