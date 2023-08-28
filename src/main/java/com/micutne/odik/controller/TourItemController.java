@@ -57,7 +57,6 @@ public class TourItemController {
             Authentication authentication,
             @RequestBody TourItemRequest request) {
 
-
         return tourItemService.create(request, authentication.getPrincipal().toString());
     }
 

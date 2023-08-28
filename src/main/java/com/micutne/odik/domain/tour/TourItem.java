@@ -1,6 +1,7 @@
 package com.micutne.odik.domain.tour;
 
 import com.micutne.odik.domain.BaseEntity;
+import com.micutne.odik.domain.imageTourItem.ImageTourItem;
 import com.micutne.odik.domain.review.ReviewItem;
 import com.micutne.odik.domain.tour.dto.TourItemRequest;
 import com.micutne.odik.domain.user.User;
@@ -11,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
 import java.util.List;
@@ -45,7 +47,15 @@ public class TourItem extends BaseEntity {
 
     private Float pointGoogle;
 
-   // private String imagesGoogle;
+    //@OneToMany(mappedBy = "tourItem", cascade = CascadeType.ALL)
+    //@CreatedDate
+    //private List<ImageTourItem> imagesGoogle;
+
+
+
+//    @ElementCollection
+//    @CollectionTable(name = "image_tour_item")
+//    private List<String> url;
 
 
     //@OneToMany(mappedBy = "tour_item", cascade = CascadeType.ALL)
@@ -54,7 +64,7 @@ public class TourItem extends BaseEntity {
 
 
     @Builder
-    public TourItem(String title, User user, Double location_lat, Double location_lng, String state, String address, String reference_id_google, String phone_number, Float point_google) {
+    public TourItem(String title, User user, Double location_lat, Double location_lng, String state, String address, String reference_id_google, String phone_number, Float point_google ) {
         this.title = title;
         this.user = user;
         this.locationLat = location_lat;

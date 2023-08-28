@@ -3,14 +3,21 @@ package com.micutne.odik.service;
 import com.micutne.odik.common.exception.AuthException;
 import com.micutne.odik.common.exception.BusinessException;
 import com.micutne.odik.common.exception.ErrorCode;
+import com.micutne.odik.domain.imageTourItem.ImageTourItem;
+//import com.micutne.odik.domain.imageTourItem.dto.ImageTourItemMapper;
+//import com.micutne.odik.domain.imageTourItem.dto.ImageTourItemRequest;
 import com.micutne.odik.domain.tour.TourItem;
 import com.micutne.odik.domain.tour.dto.TourItemListResponse;
 import com.micutne.odik.domain.tour.dto.TourItemMapper;
 import com.micutne.odik.domain.tour.dto.TourItemRequest;
 import com.micutne.odik.domain.tour.dto.TourItemResponse;
 import com.micutne.odik.domain.user.User;
+import com.micutne.odik.repository.ImageTourItemRepository;
 import com.micutne.odik.repository.TourItemRepository;
 import com.micutne.odik.repository.UserRepository;
+import com.micutne.odik.utils.file.Extensions;
+//import com.micutne.odik.utils.file.FileResponse;
+//import com.micutne.odik.utils.file.ImageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,15 +25,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class TourItemService {
+    private static final String[] ARTICLE_FILE_URL = Extensions.IMAGE.getExtensions();
     private final TourItemRepository tourItemRepository;
     private final UserRepository userRepository;
     private final TourItemMapper tourItemMapper;
-
+    private final ImageTourItemRepository imageTourItemRepository;
+   // private final ImageTourItemMapper imageTourItemMapper;
+    //private final TourItemResponse tourItemResponse;
 
 
     /**
@@ -52,10 +67,31 @@ public class TourItemService {
      */
     @Transactional
     public TourItemResponse create(TourItemRequest request, String id) {
-       TourItem tourItem = tourItemMapper.toEntity(request);
-       tourItem.updateUser(userRepository.findByIdOrThrow(id));
-       tourItem = tourItemRepository.save(tourItem);
-        return tourItemMapper.toDto(tourItem);
+        //if (new TourItem().getReferenceIdGoogle() != (request.getReference_id_google())) {
+        if (!tourItemRepository.existsByReferenceIdGoogle(id)) {
+            TourItem tourItem = tourItemMapper.toEntity(request);
+            tourItem.updateUser(userRepository.findByIdOrThrow(id));
+            tourItem = tourItemRepository.save(tourItem);
+            //return tourItemMapper.toDto(tourItem);
+
+
+            List<ImageTourItem> imageTourItems = new ArrayList<>();
+            for (String imageUrl : request.getImages_google()) {
+                ImageTourItem imageTourItem = ImageTourItem.builder()
+                        .tour_item_idx(tourItem)
+                        .url(imageUrl)
+                        .build();
+                imageTourItems.add(imageTourItem);
+            }
+            imageTourItemRepository.saveAll(imageTourItems);
+
+
+
+
+            return new TourItemResponse("OK");
+        } else {
+            return new TourItemResponse("ALREADY_EXIST");
+        }
     }
 
     /**
@@ -92,6 +128,28 @@ public class TourItemService {
         if (!tourItem.getUser().equals(user)) throw new AuthException(ErrorCode.USER_NOT_FOUND);
     }
 
+
+    // 이미지 생성
+    /*
+    private List<ImageTourItem> saveImage(MultipartFile[] images, TourItem tourItem) {
+        List<FileResponse> responses = Arrays.stream(images)
+                .map(file -> ImageUtils.saveFiles(file, ARTICLE_FILE_URL, file.getOriginalFilename().split("\\.")[0] ))
+                .toList();
+
+        for (FileResponse temp : responses) {
+            temp.setTourItem(tourItem)
+        }
+
+    }
+
+     */
+
+    // delete
+    /*
+    private void removeImage(TourItem tourItem) {
+        List<ImageTourItemRequest> images = tourItem.get
+    }
+
+     */
+
 }
-
-
