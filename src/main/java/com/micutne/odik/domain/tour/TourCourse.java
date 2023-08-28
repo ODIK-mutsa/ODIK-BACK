@@ -12,7 +12,6 @@ import java.util.List;
 @Entity
 @Table(name = "Tour_course")
 @Getter
-@Setter
 public class TourCourse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +21,10 @@ public class TourCourse {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
-    private User user_idx;
+    private User userIdx;
 
-    private LocalDateTime date_create;
-    private LocalDateTime date_modify;
+    private LocalDateTime dateCreate;
+    private LocalDateTime dateModify;
 
     @OneToMany(mappedBy = "tourCourse")
     private List<TourCourseItemList> tourCourseItemLists = new ArrayList<>();

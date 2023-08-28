@@ -14,14 +14,14 @@ public class TourCourseItemList {
 
     @ManyToOne
     @JoinColumn(name = "tour_course_idx")
-    private TourCourse tour_Course_idx;
+    private TourCourse tourCourseIdx;
 
     @ManyToOne
     @JoinColumn(name  = "tour_item_idx")
-    private TourItem tour_item_idx;
+    private TourItem tourItemIdx;
     private String order;
 
-    private LocalDateTime date_create;
+    private LocalDateTime dateCreate;
 
 
     @ManyToOne

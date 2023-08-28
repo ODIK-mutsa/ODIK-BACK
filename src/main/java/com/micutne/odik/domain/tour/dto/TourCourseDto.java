@@ -23,9 +23,9 @@ public class TourCourseDto {
     public static TourCourseDto fromEntity(TourCourse tourItem) {
         TourCourseDto dto = new TourCourseDto();
         dto.setTitle(tourItem.getTitle());
-        dto.setUser_idx(tourItem.getUser_idx());
-        dto.setDate_create(tourItem.getDate_create());
-        dto.setDate_modify(tourItem.getDate_modify());
+        dto.setUser_idx(tourItem.getUserIdx());
+        dto.setDate_create(tourItem.getDateCreate());
+        dto.setDate_modify(tourItem.getDateModify());
         return dto;
     }
 }
