@@ -32,6 +32,5 @@ public class TourCourse {
     @OneToMany(mappedBy = "tourCourse")
     private List<TourCourseItemList> tourCourseItemLists = new ArrayList<>();
 
-
 }
 
