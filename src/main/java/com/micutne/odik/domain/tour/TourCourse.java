@@ -5,9 +5,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
 
 
 @Entity
@@ -20,21 +21,17 @@ public class TourCourse {
     private Long idx;
     @Column(length = 30)
     private String title;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_idx")
     private User user_idx;
-    @Temporal(value = TemporalType.TIMESTAMP)
-    private Date date_create;
-    @Temporal(value = TemporalType.TIMESTAMP)
-    private Date date_modify;
 
-    @OneToMany(mappedBy = "tour_course", fetch = FetchType.LAZY)
-    private List<TourCourseItemList>  list = new ArrayList<>();
+    private LocalDateTime date_create;
+    private LocalDateTime date_modify;
 
-    public TourCourse() {
-        this.idx = idx;
-        this.title = title;
-        this.user_idx = user_idx;
-        this.date_create = date_create;
-        this.date_modify = date_modify;
-        this.list = list;
-    }
+    @OneToMany(mappedBy = "tourCourse")
+    private List<TourCourseItemList> tourCourseItemLists = new ArrayList<>();
+
+
 }
+
