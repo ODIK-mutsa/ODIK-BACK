@@ -2,12 +2,12 @@ package com.micutne.odik.domain.tour.dto;
 
 import com.micutne.odik.domain.tour.TourCourse;
 import com.micutne.odik.domain.user.User;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 @Data
 @AllArgsConstructor
@@ -16,8 +16,8 @@ public class TourCourseDto {
     private Long idx;
     private String title;
     private User user_idx;
-    private Date date_create;
-    private Date date_modify;
+    private LocalDateTime date_create;
+    private LocalDateTime date_modify;
 
 
     public static TourCourseDto fromEntity(TourCourse tourItem) {
