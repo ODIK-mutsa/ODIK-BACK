@@ -62,8 +62,8 @@ dependencies {
     //email
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-    //batch
-    implementation 'org.springframework.boot:spring-boot-starter-batch:3.1.2'
+    //Scheduler
+    implementation 'org.springframework.boot:spring-boot-starter-quartz:2.7.5'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
