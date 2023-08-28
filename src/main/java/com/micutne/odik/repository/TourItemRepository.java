@@ -17,6 +17,9 @@ public interface TourItemRepository extends JpaRepository<TourItem, Long> {
         return findById(idx)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.TOUR_ITEM_NOT_FOUND));
     }
+
+    Boolean existsByReferenceIdGoogle(String referenceIdGoogle);
+
     Page<TourItem> findByUserIdxOrderByDateCreateDesc(User user, Pageable pageable);
 
     Page<TourItem> findAllBy(Pageable pageable);
