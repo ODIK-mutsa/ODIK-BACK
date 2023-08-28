@@ -6,6 +6,8 @@ import com.micutne.odik.domain.email.Email;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -25,4 +27,6 @@ public interface EmailRepository extends JpaRepository<Email, Long> {
     Boolean existsByToken(String token);
 
     Boolean existsByEmail(String email);
+
+    List<Email> findByDateBefore(LocalDateTime dateTime);
 }
