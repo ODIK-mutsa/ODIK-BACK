@@ -13,6 +13,11 @@ public enum ErrorCode {
     AUTH_NOT_FOUND(HttpStatus.NOT_FOUND, "AT_001", "인증을 찾을 수 없습니다."),
     AUTH_PASSWORD_UNEQUAL(HttpStatus.NOT_FOUND, "AT_002", "비밀번호가 일치하지 않습니다."),
     AUTH_REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "AT_003", "리프레쉬 토큰을 찾을 수 없습니다."),
+    AUTH_REFRESH_TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "AT_004", "리프레쉬 토큰 인증에 실패했습니다."),
+    AUTH_EMAIL_VERIFY_NOT_FOUND(HttpStatus.BAD_REQUEST, "AT_005", "해당 이메일의 이메일 인증 정보가 존재하지 않습니다."),
+
+    TOUR_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "TI_001", "장소를 찾을 수 없습니다."),
+    TOUR_ITEM_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "TI_002", "상품을 삭제 중 오류가 발생하였습니다."),
 
     FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FL_OO1", "파일 업로드 중 오류가 발생하였습니다."),
     FILE_READING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FL_OO2", "파일 읽기 중 오류가 발생하였습니다."),
@@ -25,7 +30,9 @@ public enum ErrorCode {
 
     INVALID_EMAIL_VALUE(HttpStatus.BAD_REQUEST, "EM_001", "존재하지 않는 이메일입니다."),
     INVALID_EMAIL_EXIST(HttpStatus.BAD_REQUEST, "EM_002", "이미 존재하는 이메일입니다."),
-    INVALID_PW_VALUE(HttpStatus.BAD_REQUEST, "PW_001", "비밀번호가 맞지 않습니다.");
+    EMAIL_TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "EM_003", "이메일 인증 토큰이 일치하지 않습니다."),
+    INVALID_PW_VALUE(HttpStatus.BAD_REQUEST, "PW_001", "비밀번호가 맞지 않습니다."),
+    ;
 
 
     //------------------------------------------------------------------------//

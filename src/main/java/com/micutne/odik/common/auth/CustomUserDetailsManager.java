@@ -18,8 +18,7 @@ public class CustomUserDetailsManager implements UserDetailsManager {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByIdOrThrow(username);
-        CustomUserDetails details = CustomUserDetails.fromEntity(user);
-        return details;
+        return CustomUserDetails.fromEntity(user);
     }
 
     @Override
@@ -44,7 +43,7 @@ public class CustomUserDetailsManager implements UserDetailsManager {
 
     @Override
     public boolean userExists(String username) {
-        return false;
+        return userRepository.existsById(username);
     }
 
 

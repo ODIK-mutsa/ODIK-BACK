@@ -1,17 +1,20 @@
 package com.micutne.odik.controller;
 
+import com.micutne.odik.domain.email.dto.EmailRequest;
+import com.micutne.odik.domain.email.dto.EmailResponse;
 import com.micutne.odik.domain.user.dto.LoginRequest;
-import com.micutne.odik.domain.user.dto.LoginResponse;
 import com.micutne.odik.domain.user.dto.SignUpRequest;
 import com.micutne.odik.domain.user.dto.UserResponse;
+import com.micutne.odik.domain.user.dto.VaildResponse;
 import com.micutne.odik.service.AuthService;
-import com.micutne.odik.service.UserService;
+import com.micutne.odik.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -19,16 +22,52 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("auth")
 public class AuthController {
     private final AuthService authService;
-    private final UserService userService;
+    private final EmailService emailService;
 
     @PostMapping("signup")
     public UserResponse signup(@RequestBody SignUpRequest request) {
         return authService.signup(request);
     }
 
-    @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    @PostMapping("login")
+    public VaildResponse login(@RequestBody LoginRequest request) {
         return authService.login(request);
 
     }
+
+    @GetMapping("validate_token")
+    public VaildResponse checkResponse(@RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader,
+                                       Authentication authentication) {
+
+        return authService.checkAuth(authorizationHeader, authentication);
+    }
+
+    @PostMapping("email_verify/request")
+    public EmailResponse emailRequest(@RequestBody EmailRequest request) {
+        return emailService.emailVerifyRequest(request);
+    }
+
+    @PostMapping("email_verify/verify")
+    public EmailResponse emailVerify(@RequestBody EmailRequest request) {
+        return emailService.verifyCheck(request);
+    }
+
+    @PostMapping("find_pw/request")
+    public EmailResponse passwordRequest(@RequestBody EmailRequest request) {
+        return emailService.passwordVerifyRequest(request);
+    }
+
+    @PostMapping("find_pw/verify")
+    public EmailResponse passwordVerify(@RequestBody EmailRequest request) {
+        return emailService.verifyCheck(request);
+    }
+
+    @PutMapping("find_pw")
+    public Map<String, String> passwordChange(@RequestBody Map<String, String> requestData) {
+        String email = requestData.get("email");
+        String password = requestData.get("password");
+        return authService.changePassword(email, password);
+    }
+
+
 }
