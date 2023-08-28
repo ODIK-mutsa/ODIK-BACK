@@ -17,7 +17,10 @@ public enum ErrorCode {
     AUTH_EMAIL_VERIFY_NOT_FOUND(HttpStatus.BAD_REQUEST, "AT_005", "해당 이메일의 이메일 인증 정보가 존재하지 않습니다."),
 
     TOUR_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "TI_001", "장소를 찾을 수 없습니다."),
-    TOUR_ITEM_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "TI_002", "상품을 삭제 중 오류가 발생하였습니다."),
+    TOUR_ITEM_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "TI_002", "장소를 삭제 중 오류가 발생하였습니다."),
+    TOUR_ITEM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "TI_003", "이미 존재하는 장소입니다."),
+
+    IMAGE_TOUR_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "II_001", "이미지를 찾을 수 없습니다."),
 
     FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FL_OO1", "파일 업로드 중 오류가 발생하였습니다."),
     FILE_READING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FL_OO2", "파일 읽기 중 오류가 발생하였습니다."),
