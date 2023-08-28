@@ -21,32 +21,31 @@ public class TourCourseService {
     private final UserRepository userRepository;
 
 
-    // 등록
-    public TourCourseDto createTourCourse(TourCourseDto dto) {
+    public TourCourseDto create(TourCourseDto dto) {
         TourCourse newTour = new TourCourse();
-        newTour.setTitle(dto.getTitle());
-        newTour.setUser_idx(dto.getUser_idx());
-        newTour.setDate_create(dto.getDate_create());
-        newTour.setDate_modify(dto.getDate_modify());
+        newTour.getTitle();
+        newTour.getUserIdx();
+        newTour.getDateCreate();
+        newTour.getDateModify();
         return TourCourseDto.fromEntity(tourCourseRepository.save(newTour));
     }
 
     // 수정
-    public TourCourseDto updateTourCourse(Long idx, TourCourseDto dto) {
-        Optional<TourCourse> optionalTourCourse = TourCourseRepository.findById(idx);
+    public TourCourseDto update(Long idx, TourCourseDto dto) {
+        Optional<TourCourse> optionalTourCourse = tourCourseRepository.findById(idx);
         if (optionalTourCourse.isPresent()) {
             TourCourse tour = optionalTourCourse.get();
-            tour.setUser_idx(dto.getUser_idx());
-            tour.setTitle(dto.getTitle());
-            tour.setDate_create(dto.getDate_create());
-            tour.setDate_modify(dto.getDate_modify());
+            tour.getUserIdx();
+            tour.getTitle();
+            tour.getDateCreate();
+            tour.getDateModify();
             return TourCourseDto.fromEntity(tourCourseRepository.save(tour));
         } else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
     }
 
-        // 삭제
-    public void deleteTourCourse(Long idx) {
+    // 삭제
+    public void delete(Long idx) {
         if (tourCourseRepository.existsById(idx))
             tourCourseRepository.deleteById(idx);
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
