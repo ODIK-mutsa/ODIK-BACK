@@ -5,6 +5,8 @@ import com.micutne.odik.domain.imageTourItem.ImageTourItem;
 import com.micutne.odik.domain.review.ReviewItem;
 import com.micutne.odik.domain.tour.dto.TourItemRequest;
 import com.micutne.odik.domain.user.User;
+import com.micutne.odik.domain.user.dto.ProfileResponse;
+import com.micutne.odik.domain.user.dto.UserResponse;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -23,22 +25,26 @@ import java.util.List;
 public class TourItem extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idx;
+    private int idx;
 
     @Column
     private String title;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_idx")
-    @JsonIgnore
+    //@JsonIgnore
     private User user;
-    @NotNull
+    @Column(nullable = false)
     private Double locationLat;
-    @NotNull
+    @Column(nullable = false)
     private Double locationLng;
-    @NotNull
+    // 상품의 상태: 카트에 담겨있는 상품인지, 게시판에 모두공개로 올라가있는 상태인지, 코스에 포함되어 있는지, 계획에 포함되어있는지 등.
+    // cart, public, course, plan
+    //@Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'public'")
+    @Column(nullable = false)
+    //@ColumnDefault("public")
     private String state;
-    @NotNull
+    @Column(nullable = false)
     private String address;
     @ColumnDefault("unidentified")
     private String referenceIdGoogle;
@@ -47,15 +53,9 @@ public class TourItem extends BaseEntity {
 
     private Float pointGoogle;
 
-    //@OneToMany(mappedBy = "tourItem", cascade = CascadeType.ALL)
-    //@CreatedDate
-    //private List<ImageTourItem> imagesGoogle;
-
-
-
-//    @ElementCollection
-//    @CollectionTable(name = "image_tour_item")
-//    private List<String> url;
+    @OneToMany(mappedBy = "tourItemIdx", cascade = CascadeType.ALL)
+    @CreatedDate
+    private List<ImageTourItem> imagesGoogle;
 
 
     //@OneToMany(mappedBy = "tour_item", cascade = CascadeType.ALL)
@@ -69,7 +69,8 @@ public class TourItem extends BaseEntity {
         this.user = user;
         this.locationLat = location_lat;
         this.locationLng = location_lng;
-        this.state = state;
+        // 기본 값 public으로 설정 후, 서비스에 따라 updateState를 통해 상태 변경
+        this.state = "public";
         this.address = address;
         this.referenceIdGoogle = reference_id_google;
         this.phoneNumber = phone_number;
@@ -83,6 +84,7 @@ public class TourItem extends BaseEntity {
         TourItem tourItem = new TourItem();
         tourItem.title = request.getTitle();
         tourItem.user = request.getUser();
+        //tourItem.user = UserResponse.fromEntity(tourItem.getUser());
         tourItem.locationLng = request.getLocation_lng();
         tourItem.locationLat = request.getLocation_lat();
         tourItem.state = request.getState();
@@ -99,63 +101,11 @@ public class TourItem extends BaseEntity {
 
     }
 
-    public void findState() {
-
-        if (address != null && address.contains("제주특별자치도")) {
-            state = "제주특별자치도";
-        }
-        if (address != null && address.contains("서울특별시")) {
-            state = "서울특별시";
-        }
-        if (address != null && address.contains("부산광역시")) {
-            state = "부산광역시";
-        }
-        if (address != null && address.contains("대구광역시")) {
-            state = "대구광역시";
-        }
-        if (address != null && address.contains("인천광역시")) {
-            state = "인천광역시";
-        }
-        if (address != null && address.contains("광주광역시")) {
-            state = "광주광역시";
-        }
-        if (address != null && address.contains("대전광역시")) {
-            state = "대전광역시";
-        }
-        if (address != null && address.contains("울산광역시")) {
-            state = "울산광역시";
-        }
-        if (address != null && address.contains("세종특별자치시")) {
-            state = "세종특별자치시";
-        }
-        if (address != null && address.contains("경기도")) {
-            state = "경기도";
-        }
-        if (address != null && address.contains("강원특별자치도")) {
-            state = "강원특별자치도";
-        }
-        if (address != null && address.contains("충청북도")) {
-            state = "충청북도";
-        }
-        if (address != null && address.contains("충청남도")) {
-            state = "충청남도";
-        }
-        if (address != null && address.contains("전라북도")) {
-            state = "전라북도";
-        }
-        if (address != null && address.contains("전라남도")) {
-            state = "전라남도";
-        }
-        if (address != null && address.contains("경상북도")) {
-            state = "경상북도";
-        }
-        if (address != null && address.contains("경상남도")) {
-            state = "경상남도";
-        }
-        if (address == null) {
-            state = "unknown";
-        }
+    public void updateState(String state) {
+        this.state = state;
     }
+
+
 
     public void updateUser(User user) {
         this.user = user;

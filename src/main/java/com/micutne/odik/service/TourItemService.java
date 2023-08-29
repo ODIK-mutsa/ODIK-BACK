@@ -48,7 +48,7 @@ public class TourItemService {
      * 특정 관광지 불러오기
      */
 
-    public TourItemResponse readOne(Long idx) {
+    public TourItemResponse readOne(int idx) {
         TourItem tourItem = tourItemRepository.findByIdOrThrow(idx);
         return tourItemMapper.toDto(tourItem);
     }
@@ -68,25 +68,27 @@ public class TourItemService {
     @Transactional
     public TourItemResponse create(TourItemRequest request, String id) {
         //if (new TourItem().getReferenceIdGoogle() != (request.getReference_id_google())) {
-        if (!tourItemRepository.existsByReferenceIdGoogle(id)) {
+        if (!tourItemRepository.existsByReferenceIdGoogle(new TourItem().getReferenceIdGoogle())) {
             TourItem tourItem = tourItemMapper.toEntity(request);
             tourItem.updateUser(userRepository.findByIdOrThrow(id));
             tourItem = tourItemRepository.save(tourItem);
+            // updateState 메소드를 통해 카트에 담을 경우 cart, 코스의 일부로 저장되는 경우 course로 사용가능?
+            tourItem.updateState("cart");
             //return tourItemMapper.toDto(tourItem);
 
 
             List<ImageTourItem> imageTourItems = new ArrayList<>();
             for (String imageUrl : request.getImages_google()) {
+                // Url 또는 파일 추가 로직 ( 파일 추가부분 수정 필요 )
+                boolean saveUrl = imageUrl.startsWith("http://") || imageUrl.startsWith("https://");
+                String saveFile = "saveFile";
                 ImageTourItem imageTourItem = ImageTourItem.builder()
                         .tour_item_idx(tourItem)
-                        .url(imageUrl)
+                        .url(saveUrl ? imageUrl : saveFile)
                         .build();
                 imageTourItems.add(imageTourItem);
             }
             imageTourItemRepository.saveAll(imageTourItems);
-
-
-
 
             return new TourItemResponse("OK");
         } else {
@@ -98,7 +100,7 @@ public class TourItemService {
      * 관광지 수정
      */
     @Transactional
-    public TourItemResponse update(Long idx, TourItemRequest request, String id) {
+    public TourItemResponse update(int idx, TourItemRequest request, String id) {
         TourItem tourItem = tourItemRepository.findByIdOrThrow(idx);
         User user = userRepository.findByIdOrThrow(id);
         checkAuth(tourItem, user);
@@ -110,7 +112,7 @@ public class TourItemService {
     /**
      * 관광지 삭제
      */
-    public void remove(Long idx, String id) {
+    public void remove(int idx, String id) {
         TourItem tourItem = tourItemRepository.findByIdOrThrow(idx);
         User user = userRepository.findByIdOrThrow(id);
         checkAuth(tourItem, user);
@@ -151,5 +153,4 @@ public class TourItemService {
     }
 
      */
-
 }
