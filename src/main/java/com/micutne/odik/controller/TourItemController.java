@@ -32,7 +32,7 @@ public class TourItemController {
      */
 
     @GetMapping("{idx}")
-    public TourItemResponse readOne(@PathVariable Long idx) {
+    public TourItemResponse readOne(@PathVariable int idx) {
         return tourItemService.readOne(idx);
     }
 
@@ -63,7 +63,7 @@ public class TourItemController {
     @PutMapping("/{idx}")
     public TourItemResponse update(
             Authentication authentication,
-            @PathVariable Long idx,
+            @PathVariable int idx,
             @Valid @RequestBody TourItemRequest request) {
         return tourItemService.update(idx, request, authentication.getPrincipal().toString());
     }
@@ -71,7 +71,7 @@ public class TourItemController {
     @DeleteMapping("/{idx}")
     public void remove (
             Authentication authentication,
-            @PathVariable Long idx) {
+            @PathVariable int idx) {
         tourItemService.remove(idx, authentication.getPrincipal().toString());
     }
 

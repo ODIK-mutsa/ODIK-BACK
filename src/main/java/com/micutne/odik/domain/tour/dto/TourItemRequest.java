@@ -1,6 +1,8 @@
 package com.micutne.odik.domain.tour.dto;
 
 import com.micutne.odik.domain.user.User;
+import com.micutne.odik.domain.user.dto.ProfileResponse;
+import com.micutne.odik.domain.user.dto.UserResponse;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
