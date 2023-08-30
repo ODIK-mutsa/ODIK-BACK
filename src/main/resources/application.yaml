@@ -1,13 +1,20 @@
 # DataBase
 spring:
   datasource:
+<<<<<<< HEAD
+    url: jdbc:mysql://db-kayple-call.cugyzoa7ayqq.ap-northeast-2.rds.amazonaws.com:3306/market
+
+    username: ll
+    password: ajttk
+=======
     url:
     username:
     password:
+>>>>>>> 4112fdf7f17853281ffbc0893d84f160ecbe3576
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     show-sql: true
   servlet:
     multipart:
@@ -16,8 +23,13 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
+<<<<<<< HEAD
+    username: kimse990507@gmail.com
+    password: qxmlgsjscypqblrx
+=======
     username:
     password:
+>>>>>>> 4112fdf7f17853281ffbc0893d84f160ecbe3576
     properties:
       mail:
         smtp:
@@ -41,7 +53,11 @@ spring:
         # 클라이언트(즉 우리 서버)를 식별하기 위한 정보
         registration:
           google:
+<<<<<<< HEAD
+            client-id: 1007091246907-svv8s21ad6tvr37nmpe21ldh74oj1nmq.apps.googleusercontent.com
+=======
             client-id:
+>>>>>>> 4112fdf7f17853281ffbc0893d84f160ecbe3576
             client-secret:
             redirect-uri: /auth/oauth/google
             authorization-grant-type: authorization_code
@@ -65,5 +81,3 @@ file:
 # JWT
 jwt:
   secret: JEh7781T69H7/BGxUTl7wX538jGYOe52
-  accessTokenExpirationTime: 3600000
-  refreshTokenExpirationTime: 86400000
