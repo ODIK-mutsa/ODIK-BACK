@@ -1,13 +1,10 @@
 package com.micutne.odik.domain.tour.dto;
 
-import ch.qos.logback.core.spi.ErrorCodes;
 import com.micutne.odik.common.exception.BusinessException;
 import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.imageTourItem.ImageTourItem;
 import com.micutne.odik.domain.tour.TourItem;
-import com.micutne.odik.domain.user.User;
 import com.micutne.odik.domain.user.dto.ProfileResponse;
-import com.micutne.odik.domain.user.dto.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,7 +43,6 @@ public class TourItemResponse {
         response.idx = tourItem.getIdx();
         response.title = tourItem.getTitle();
         response.user = ProfileResponse.fromEntity(tourItem.getUser());
-        //response.user = tourItem.getUser();
         response.location_lat = tourItem.getLocationLat();
         response.location_lng = tourItem.getLocationLng();
         response.state = tourItem.getState();
@@ -55,7 +51,6 @@ public class TourItemResponse {
         response.phone_number = tourItem.getPhoneNumber();
         response.point_google = tourItem.getPointGoogle();
         response.result = "OK";
-        //response.images_google = tourItem.getImagesGoogle();
         return response;
     }
 

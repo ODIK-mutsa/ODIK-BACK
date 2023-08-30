@@ -23,35 +23,10 @@ import java.util.Map;
 public class TourItemController {
     private final TourItemService tourItemService;
 
-    // 구현해야하는 기능:
-
-
-
     /**
-     * 특정 관광지 불러오기
+     * 특정 관광지 또는 전체 관광지 불러오기
      */
-/*
-    //@GetMapping("{idx}")
-    @GetMapping("")
-    public TourItemResponse readOne(@PathVariable String reference_id) {
-        return tourItemService.readOne(reference_id);
-    }
 
- */
-
-    /**
-     * 전체 관광지 불러오기
-     */
-/*
-    @GetMapping("")
-    public Page<TourItemListResponse> readAll(
-            @RequestParam(name = "no", defaultValue = "0") int pageNo,
-            @RequestParam(name = "size", defaultValue = "20") int pageSize) {
-
-        return tourItemService.readAll(pageNo, pageSize);
-    }
-
- */
 
     @GetMapping("")
     public Object readOneOrAll(@RequestParam(required = false) String reference_id,
@@ -72,7 +47,6 @@ public class TourItemController {
     public TourItemResponse create(
             Authentication authentication,
             @RequestBody TourItemRequest request) {
-
         return tourItemService.create(request, authentication.getPrincipal().toString());
     }
 
