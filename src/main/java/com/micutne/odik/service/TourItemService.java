@@ -2,6 +2,7 @@ package com.micutne.odik.service;
 
 import com.micutne.odik.common.exception.AuthException;
 import com.micutne.odik.common.exception.BusinessException;
+import com.micutne.odik.common.exception.EntityNotFoundException;
 import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.imageTourItem.ImageTourItem;
 //import com.micutne.odik.domain.imageTourItem.dto.ImageTourItemMapper;
@@ -48,19 +49,25 @@ public class TourItemService {
      * 특정 관광지 불러오기
      */
 
-    public TourItemResponse readOne(int idx) {
-        TourItem tourItem = tourItemRepository.findByIdOrThrow(idx);
-        return tourItemMapper.toDto(tourItem);
-    }
+    public TourItemResponse readOne(String reference_id) {
+        //TourItem tourItem = tourItemRepository.findByIdOrThrow(idx);
+        //if (tourItemRepository.existsByReferenceIdGoogle(new TourItem().getReferenceIdGoogle())) {
+            TourItem tourItem = tourItemRepository.findByReferenceIdGoogle(reference_id);
+          //  return tourItemMapper.toDto(tourItem);
+            return TourItemResponse.fromEntity(tourItemRepository.findByReferenceIdGoogle(reference_id));
+        }
+        //else throw new EntityNotFoundException(ErrorCode.TOUR_ITEM_NOT_FOUND);
+    //}
 
     /**
      * 전체 관광지 전체 불러오기
      */
 
     public Page<TourItemListResponse> readAll(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        return tourItemRepository.findAllBy(pageable).map(tourItemMapper::toListDto);
+            Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return tourItemRepository.findAllByState("public", pageable).map(tourItemMapper::toListDto);
     }
+
 
     /**
      * 관광지 저장
@@ -69,13 +76,21 @@ public class TourItemService {
     public TourItemResponse create(TourItemRequest request, String id) {
         //if (new TourItem().getReferenceIdGoogle() != (request.getReference_id_google())) {
         if (!tourItemRepository.existsByReferenceIdGoogle(new TourItem().getReferenceIdGoogle())) {
+            //request.updateUser(userRepository.findByIdOrThrow(id));
+            request.setUser(userRepository.findByIdOrThrow(id));
+            //userRepository.findByIdOrThrow(id);
+            //request.getUser(userRepository.findByIdOrThrow(id));
+            TourItem tourItem = tourItemMapper.toEntity(request);
+            tourItem = tourItemRepository.save(tourItem);
+
+            /*
             TourItem tourItem = tourItemMapper.toEntity(request);
             tourItem.updateUser(userRepository.findByIdOrThrow(id));
             tourItem = tourItemRepository.save(tourItem);
             // updateState 메소드를 통해 카트에 담을 경우 cart, 코스의 일부로 저장되는 경우 course로 사용가능?
             tourItem.updateState("cart");
             //return tourItemMapper.toDto(tourItem);
-
+             */
 
             List<ImageTourItem> imageTourItems = new ArrayList<>();
             for (String imageUrl : request.getImages_google()) {
@@ -90,10 +105,13 @@ public class TourItemService {
             }
             imageTourItemRepository.saveAll(imageTourItems);
 
-            return new TourItemResponse("OK");
-        } else {
-            return new TourItemResponse("ALREADY_EXIST");
-        }
+            return TourItemResponse.fromEntity(tourItem);
+            //return new TourItemResponse("OK");
+        } else
+            //return TourItemResponse.alreadyExist("ALREADY_EXIST");
+        //return new TourItemResponse(ErrorCode.TOUR_ITEM_ALREADY_EXIST);
+        //return new TourItemResponse(ErrorCode.TOUR_ITEM_ALREADY_EXIST);
+        return new TourItemResponse();
     }
 
     /**
@@ -105,7 +123,8 @@ public class TourItemService {
         User user = userRepository.findByIdOrThrow(id);
         checkAuth(tourItem, user);
         tourItem.updateTourItem(request);
-        return tourItemMapper.toDto(tourItem);
+        //return tourItemMapper.toDto(tourItem);
+        return TourItemResponse.fromEntity(tourItem);
 
     }
 

@@ -1,5 +1,6 @@
 package com.micutne.odik.domain.tour.dto;
 
+import com.micutne.odik.domain.tour.TourItem;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.domain.user.dto.ProfileResponse;
 import com.micutne.odik.domain.user.dto.UserResponse;
@@ -44,8 +45,9 @@ public class TourItemRequest {
         //this.images_google = images_google;
 
     }
-
-
+    public void updateUser(User user) {
+        this.user = user;
+    }
 
 
 }

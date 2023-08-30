@@ -18,7 +18,7 @@ public enum ErrorCode {
 
     TOUR_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "TI_001", "장소를 찾을 수 없습니다."),
     TOUR_ITEM_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "TI_002", "장소를 삭제 중 오류가 발생하였습니다."),
-    TOUR_ITEM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "TI_003", "이미 존재하는 장소입니다."),
+    TOUR_ITEM_ALREADY_EXIST(HttpStatus.INTERNAL_SERVER_ERROR, "TI_003", "이미 존재하는 장소입니다."),
 
     IMAGE_TOUR_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "II_001", "이미지를 찾을 수 없습니다."),
 
