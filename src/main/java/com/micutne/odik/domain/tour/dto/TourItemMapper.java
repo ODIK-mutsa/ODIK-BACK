@@ -20,13 +20,11 @@ public interface TourItemMapper {
             @Mapping(source = "referenceIdGoogle", target = "reference_id_google")
             @Mapping(source = "phoneNumber", target = "phone_number")
             @Mapping(source = "pointGoogle", target = "point_google")
-           // @Mapping(source = "imagesGoogle", target = "images_google")
 
     TourItem entityToDto(TourItem tourItem);
 
     TourItem toEntity(TourItemRequest request);
 
-   //@Mapping(source = "user", target = "user")
     TourItemResponse toDto(TourItem tourItem);
 
     TourItemListResponse toListDto(TourItem tourItem);
