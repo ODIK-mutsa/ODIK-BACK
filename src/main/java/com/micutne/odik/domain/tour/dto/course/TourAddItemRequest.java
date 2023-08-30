@@ -12,6 +12,7 @@ public class TourAddItemRequest {
     int tour_course_idx;
     int tour_item_idx;
     int level;
+    int day;
     TourCourse tourCourse;
     TourItem tourItem;
 }

@@ -10,6 +10,7 @@ public class TourCourseItemResponse {
     String title;
     TourItemResponse tour_item;
     int level;
+    int day;
 
     public static TourCourseItemResponse fromEntity(TourCourseListTourItem itemList) {
         TourCourseItemResponse response = new TourCourseItemResponse();
@@ -17,6 +18,7 @@ public class TourCourseItemResponse {
         response.title = itemList.getTitle();
         response.tour_item = TourItemResponse.fromEntity(itemList.getTourItem());
         response.level = itemList.getLevel();
+        response.day = itemList.getDay();
         return response;
     }
 

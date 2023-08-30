@@ -3,6 +3,7 @@ package com.micutne.odik.controller;
 import com.micutne.odik.domain.tour.dto.course.TourAddItemRequest;
 import com.micutne.odik.domain.tour.dto.course.TourCourseRequest;
 import com.micutne.odik.domain.tour.dto.course.TourCourseResponse;
+import com.micutne.odik.domain.tour.dto.course.TourItemResponse;
 import com.micutne.odik.domain.user.dto.ProfileResponse;
 import com.micutne.odik.domain.user.dto.UserRequest;
 import com.micutne.odik.domain.user.dto.UserResponse;
@@ -45,6 +46,14 @@ public class UserController {
     }
 
     /**
+     * 사용자 장바구니 불러오기
+     */
+    @GetMapping("course")
+    public TourCourseResponse readMyCourse(Authentication authentication) {
+        return tourCourseService.readMyCourse(authentication.getPrincipal().toString());
+    }
+
+    /**
      * 사용자 코스 생성하기
      */
     @PostMapping("course")
@@ -56,18 +65,16 @@ public class UserController {
      * 사용자 장바구니에 관광지 추가하기
      */
     @PostMapping("course/add_tour_item")
-    public TourCourseResponse addMyTourItem(Authentication authentication, @RequestBody TourAddItemRequest request) {
-        return tourCourseService.addMyTourItem(request, authentication.getPrincipal().toString());
+    public TourItemResponse addMyTourItem(Authentication authentication, @RequestBody TourAddItemRequest request) {
+        return tourCourseService.createTourItem(request, authentication.getPrincipal().toString());
     }
 
     /**
      * 사용자 장바구니 수정하기
      */
     @PutMapping("course")
-    public TourCourseResponse update(@PathVariable("idx") int idx,
-                                     @RequestBody TourCourseRequest dto,
-                                     Authentication authentication) {
-        return tourCourseService.update(idx, dto, authentication.getPrincipal().toString());
+    public TourCourseResponse update(@RequestBody TourCourseRequest request, Authentication authentication) {
+        return tourCourseService.updateMyCourse(request, authentication.getPrincipal().toString());
     }
 
 //    /**

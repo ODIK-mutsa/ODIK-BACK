@@ -2,6 +2,7 @@ package com.micutne.odik.domain.tour;
 
 import com.micutne.odik.domain.BaseEntity;
 import com.micutne.odik.domain.tour.dto.course.TourAddItemRequest;
+import com.micutne.odik.domain.tour.dto.course.TourUpdateItemRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,10 @@ public class TourCourseListTourItem extends BaseEntity {
     private int idx;
     private String title;
 
+    @Column
+    private int level;
+    private int day;
+
     @ManyToOne
     @JoinColumn
     private TourCourse tourCourse;
@@ -22,8 +27,6 @@ public class TourCourseListTourItem extends BaseEntity {
     @ManyToOne
     @JoinColumn
     private TourItem tourItem;
-    @Column
-    private int level;
 
 
     public static TourCourseListTourItem fromDto(TourAddItemRequest request) {
@@ -32,7 +35,14 @@ public class TourCourseListTourItem extends BaseEntity {
         tourCourseItemList.tourCourse = request.getTourCourse();
         tourCourseItemList.tourItem = request.getTourItem();
         tourCourseItemList.level = request.getLevel();
+        tourCourseItemList.day = request.getDay();
         return tourCourseItemList;
+    }
+
+    public void update(TourUpdateItemRequest request) {
+        title = request.getTitle() != null ? request.getTitle() : title;
+        level = request.getLevel() != -1 ? request.getLevel() : level;
+        day = request.getDay() != -1 ? request.getDay() : day;
     }
 
 }

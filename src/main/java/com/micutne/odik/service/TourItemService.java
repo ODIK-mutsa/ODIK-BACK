@@ -4,8 +4,6 @@ import com.micutne.odik.common.exception.AuthException;
 import com.micutne.odik.common.exception.BusinessException;
 import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.imageTourItem.ImageTourItem;
-//import com.micutne.odik.domain.imageTourItem.dto.ImageTourItemMapper;
-//import com.micutne.odik.domain.imageTourItem.dto.ImageTourItemRequest;
 import com.micutne.odik.domain.tour.TourItem;
 import com.micutne.odik.domain.tour.dto.TourItemListResponse;
 import com.micutne.odik.domain.tour.dto.TourItemMapper;
@@ -16,8 +14,6 @@ import com.micutne.odik.repository.ImageTourItemRepository;
 import com.micutne.odik.repository.TourItemRepository;
 import com.micutne.odik.repository.UserRepository;
 import com.micutne.odik.utils.file.Extensions;
-//import com.micutne.odik.utils.file.FileResponse;
-//import com.micutne.odik.utils.file.ImageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,10 +21,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -40,7 +34,7 @@ public class TourItemService {
     private final UserRepository userRepository;
     private final TourItemMapper tourItemMapper;
     private final ImageTourItemRepository imageTourItemRepository;
-   // private final ImageTourItemMapper imageTourItemMapper;
+    // private final ImageTourItemMapper imageTourItemMapper;
     //private final TourItemResponse tourItemResponse;
 
 
