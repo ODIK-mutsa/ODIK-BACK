@@ -21,6 +21,8 @@ public interface TourItemRepository extends JpaRepository<TourItem, Integer> {
 
     Boolean existsByReferenceIdGoogle(String referenceIdGoogle);
 
+    TourItem findByReferenceIdGoogle (String referenceIdGoogle);
+
     Page<TourItem> findByUserIdxOrderByDateCreateDesc(ProfileResponse user, Pageable pageable);
 
     Page<TourItem> findAllBy(Pageable pageable);
