@@ -1,5 +1,7 @@
 package com.micutne.odik.common.auth;
 
+import com.micutne.odik.domain.user.User;
+import com.micutne.odik.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,10 +13,12 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsManager implements UserDetailsManager {
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        User user = userRepository.findByIdOrThrow(username);
+        return CustomUserDetails.fromEntity(user);
     }
 
     @Override
@@ -39,7 +43,7 @@ public class CustomUserDetailsManager implements UserDetailsManager {
 
     @Override
     public boolean userExists(String username) {
-        return false;
+        return userRepository.existsById(username);
     }
 
 

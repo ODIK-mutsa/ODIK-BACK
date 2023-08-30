@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 
 @Component
 public class TimeUtils {
-    public final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd hh:mm");
+    public final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
     public final static ZoneId koreaZoneId = ZoneId.of("Asia/Seoul");
 
     // Instant -> LocalDataTime 변환
