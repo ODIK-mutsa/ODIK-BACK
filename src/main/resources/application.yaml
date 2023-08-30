@@ -1,44 +1,61 @@
 # DataBase
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3307/odik
-    username:
-    password:
+    url: jdbc:mysql://db-kayple-call.cugyzoa7ayqq.ap-northeast-2.rds.amazonaws.com:3306/market
+
+    username: ll
+    password: ajttk
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     show-sql: true
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-#  profiles:
-#    include: oauth
-#  security:
-#    oauth2:
-#      client:
-#        # 1. 서비스 제공자에 대한 정보
-#        # redirect 할 로그인 페이지가 어딘지
-#        # access token 을 발급받는 URL 이 어딘지
-#        # access token 을 제공하여 사용자 정보를 회수할 URL 은 어딘지
-#        provider:
-#          google :
-#            authorization-uri:
-#            token-uri:
-#            user-info-uri:
-#            user-name-attribute:
-#        # 2. 서비스 제공자를 사용하기 위한 정보
-#        # 클라이언트(즉 우리 서버)를 식별하기 위한 정보
-#        registration:
-#          google:
-#            client-id:
-#            client-secret:
-#            redirect-uri:
-#            authorization-grant-type:
-#            client-authentication-method:
-#            client-name:
-#            scope:
-#          # 서비스 제공자 식별자
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: kimse990507@gmail.com
+    password: qxmlgsjscypqblrx
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  security:
+    oauth2:
+      client:
+        # 1. 서비스 제공자에 대한 정보
+        # redirect 할 로그인 페이지가 어딘지
+        # access token 을 발급받는 URL 이 어딘지
+        # access token 을 제공하여 사용자 정보를 회수할 URL 은 어딘지
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://www.googleapis.com/oauth2/v4/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+        # 2. 서비스 제공자를 사용하기 위한 정보
+        # 클라이언트(즉 우리 서버)를 식별하기 위한 정보
+        registration:
+          google:
+            client-id: 1007091246907-svv8s21ad6tvr37nmpe21ldh74oj1nmq.apps.googleusercontent.com
+            client-secret:
+            redirect-uri: /auth/oauth/google
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
+            client-name: ODIK
+            scope:
+              - email
+              - profile
+
+# Token Password
+token:
+  user: "ouix"
+  email: "oe"
 
 # Image PATH
 file:
@@ -49,5 +66,3 @@ file:
 # JWT
 jwt:
   secret: JEh7781T69H7/BGxUTl7wX538jGYOe52
-  accessTokenExpirationTime: 3600000
-  refreshTokenExpirationTime: 86400000
