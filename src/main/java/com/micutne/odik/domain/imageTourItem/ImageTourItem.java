@@ -25,7 +25,8 @@ public class ImageTourItem {
     @JoinColumn(name = "tour_item_idx")
     @JsonIgnore
     private TourItem tourItemIdx;
-    @Column(name = "url")
+    @Lob
+    @Column(columnDefinition = "TEXT", name = "url")
     private String imagesGoogle;
 
     @CreatedDate
@@ -35,14 +36,8 @@ public class ImageTourItem {
     @Builder
     public ImageTourItem(TourItem tour_item_idx, String url) {
         this.tourItemIdx = tour_item_idx;
-        //this.imagesGoogle = images_google;
         this.imagesGoogle = url;
     }
-
-   // public ImageTourItem(String url) {
-   //     this.url = url;
-   // }
-
 }
 
 
