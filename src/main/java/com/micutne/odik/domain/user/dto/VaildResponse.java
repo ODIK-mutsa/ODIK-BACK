@@ -2,10 +2,15 @@ package com.micutne.odik.domain.user.dto;
 
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.utils.TimeUtils;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class UserResponse {
+@NoArgsConstructor
+@AllArgsConstructor
+public class VaildResponse {
+    String result;
     String email;
     String login_type;
     String token_odik;
@@ -15,8 +20,13 @@ public class UserResponse {
     String state;
     String date_join;
 
-    public static UserResponse fromEntity(User user) {
-        UserResponse response = new UserResponse();
+    public VaildResponse(String result) {
+        this.result = result;
+    }
+
+    public static VaildResponse fromEntity(User user, String result) {
+        VaildResponse response = new VaildResponse();
+        response.result = result;
         response.email = user.getId();
         response.login_type = user.getLoginType();
         response.token_odik = user.getToken();

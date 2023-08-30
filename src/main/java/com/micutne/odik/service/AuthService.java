@@ -7,51 +7,97 @@ import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.domain.user.UserPrivate;
 import com.micutne.odik.domain.user.dto.LoginRequest;
-import com.micutne.odik.domain.user.dto.LoginResponse;
 import com.micutne.odik.domain.user.dto.SignUpRequest;
 import com.micutne.odik.domain.user.dto.UserResponse;
+import com.micutne.odik.domain.user.dto.VaildResponse;
 import com.micutne.odik.repository.UserPrivateRepository;
 import com.micutne.odik.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import com.micutne.odik.utils.FormatUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
     private final UserPrivateRepository userPrivateRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
+    public AuthService(UserRepository userRepository, UserPrivateRepository userPrivateRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+        this.userRepository = userRepository;
+        this.userPrivateRepository = userPrivateRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    @Transactional
     public UserResponse signup(SignUpRequest request) {
-        log.info(request.toString());
-        String userId = request.getId() + "&lt=" + request.getLoginType();
-        if (!userRepository.existsById(request.getId() + "&lt=" + request.getLoginType())) {
+        String userId = FormatUtils.formatId(request.getId(), request.getLogin_type());
+        if (!userRepository.existsById(userId)) {
             request.setId(userId);
             request.setPss(passwordEncoder.encode(request.getPassword()));
             User user = userRepository.save(User.fromDto(request));
+            user.setToken(jwtTokenProvider.generateToken(CustomUserDetails.fromEntity(user)));
             UserPrivate userPrivate = userPrivateRepository.save(UserPrivate.fromDto(request, user));
             return UserResponse.fromEntity(user);
         }
         throw new AuthException(ErrorCode.USER_ALREADY_EXIST);
     }
 
-    public LoginResponse login(LoginRequest request) {
-        String userId = request.getId() + "&lt=email";
+    @Transactional
+    public void signUpOAuth(SignUpRequest request) {
+        String userId = FormatUtils.formatId(request.getId(), request.getLogin_type());
+        request.setId(userId);
+        User user = userRepository.save(User.fromDto(request));
+        user.setToken(jwtTokenProvider.generateToken(CustomUserDetails.fromEntity(user)));
+        UserPrivate userPrivate = userPrivateRepository.save(UserPrivate.fromDto(request, user));
+    }
+
+    @Transactional
+    public VaildResponse login(LoginRequest request) {
+        String userId = FormatUtils.formatId(request.getId(), "email");
+        if (userRepository.existsById(userId)) {
+            User user = userRepository.findByIdOrThrow(userId);
+            UserPrivate userPrivate = userPrivateRepository.findByIdxOrThrow(user.getIdx());
+            if (!passwordEncoder.matches(request.getPassword(), userPrivate.getPss())) {
+                return new VaildResponse("NOT_FOUND");
+            }
+            return VaildResponse.fromEntity(user, "OK");
+        } else return new VaildResponse("NOT_FOUND");
+    }
+
+    public VaildResponse checkAuth(String token, Authentication authentication) {
+        if (token == null || token.isEmpty() || authentication == null) {
+            return new VaildResponse("INVALID");
+        }
+
+        String userId = authentication.getPrincipal().toString();
+        User user = userRepository.findByIdOrThrow(userId);
+        if (user.getToken().equals(token.split(" ")[1])) {
+            return VaildResponse.fromEntity(user, "VALID");
+        }
+        return new VaildResponse("INVALID");
+    }
+
+    @Transactional
+    public Map<String, String> changePassword(String email, String newPassword) {
+        String userId = FormatUtils.formatId(email, "email");
         log.info(userId);
         User user = userRepository.findByIdOrThrow(userId);
         UserPrivate userPrivate = userPrivateRepository.findByIdxOrThrow(user.getIdx());
-        if (!passwordEncoder.matches(request.getPassword(), userPrivate.getPss())) {
-            throw new AuthException(ErrorCode.AUTH_PASSWORD_UNEQUAL);
-        }
-        CustomUserDetails userDetails = CustomUserDetails.fromEntity(user);
-        // GENERATE ACCESS_TOKEN AND REFRESH_TOKEN
-        String accessToken = jwtTokenProvider.generateAccessToken(userDetails);
-        String refreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
+        userPrivate.updatePassword(passwordEncoder.encode(newPassword));
 
-        return new LoginResponse(accessToken, refreshToken);
+        Map<String, String> result = new HashMap<>();
+        result.put("result", "OK");
+        return result;
     }
+
+
 }

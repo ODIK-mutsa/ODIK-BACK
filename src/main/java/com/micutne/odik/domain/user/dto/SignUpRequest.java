@@ -6,24 +6,22 @@ import lombok.Data;
 @Data
 public class SignUpRequest {
     private String id;
-    private String loginType;
+    private String login_type;
     @Size(min = 20)
-    private String nickName;
+    private String nick_name;
     @Size(min = 1)
     private String gender;
+    private String locale;
     private String state;
     private String phone;
     private String password;
     private String pss;
-    private String sort;
+    private String token;
 
-    public SignUpRequest(String id, String loginType, String nickName, String gender, String phone, String password) {
-        this.id = id;
-        this.loginType = loginType == null ? "email" : loginType;
-        this.nickName = nickName;
-        this.gender = gender;
+    public SignUpRequest() {
+        this.login_type = "email";
         this.state = "sign";
-        this.phone = phone;
-        this.password = password;
     }
+
+
 }
