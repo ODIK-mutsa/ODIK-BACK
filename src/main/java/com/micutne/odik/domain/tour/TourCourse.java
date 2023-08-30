@@ -1,33 +1,43 @@
 package com.micutne.odik.domain.tour;
 
+import com.micutne.odik.domain.BaseEntity;
+import com.micutne.odik.domain.tour.dto.course.TourCourseRequest;
 import com.micutne.odik.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "Tour_course")
 @Getter
-public class TourCourse {
+public class TourCourse extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idx;
+    private int idx;
     @Column(length = 30)
     private String title;
+    @Column(length = 8)
+    private String state;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
     private User userIdx;
 
-    private LocalDateTime dateCreate;
-    private LocalDateTime dateModify;
-
     @OneToMany(mappedBy = "tourCourse")
-    private List<TourCourseItemList> tourCourseItemLists = new ArrayList<>();
+    private List<TourCourseListTourItem> tourCourseItemLists = new ArrayList<>();
 
+    public static TourCourse fromDto(TourCourseRequest request) {
+        TourCourse tourCourse = new TourCourse();
+        tourCourse.title = request.getTitle();
+        tourCourse.state = request.getState();
+        tourCourse.userIdx = request.getUser();
+        return tourCourse;
+    }
+
+    public void update(TourCourseRequest request) {
+        title = request.getTitle();
+        state = request.getState();
+    }
 }
 

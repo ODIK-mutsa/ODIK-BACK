@@ -2,48 +2,47 @@ package com.micutne.odik.controller;
 
 
 import com.micutne.odik.domain.tour.dto.ResponseDto;
-import com.micutne.odik.domain.tour.dto.TourCourseDto;
-import com.micutne.odik.repository.TourCourseRepository;
+import com.micutne.odik.domain.tour.dto.course.TourCourseRequest;
+import com.micutne.odik.domain.tour.dto.course.TourCourseResponse;
 import com.micutne.odik.service.TourCourseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/tour")
+@RequestMapping("/tour/course")
 public class TourCourseController {
-    private final TourCourseRepository tourCourseRepository;
     private final TourCourseService tourCourseService;
 
 
     // 등록하기 / post / tour
-    @PostMapping("/course")
-    public ResponseDto create(@RequestBody TourCourseDto TourDto) {
-        this.tourCourseService.create(TourDto);
-        ResponseDto responseDto = new ResponseDto();
-        responseDto.setMessage("등록 되었습니다.");
-        return responseDto;
+    @PostMapping()
+    public TourCourseResponse create(Authentication authentication, @RequestBody TourCourseRequest request) {
+        return tourCourseService.create(request, authentication.getPrincipal().toString());
+    }
+
+    @PostMapping("/add_tour_item")
+    public TourCourseResponse addTourItem(Authentication authentication, @RequestBody TourCourseRequest request) {
+        return tourCourseService.create(request, authentication.getPrincipal().toString());
     }
 
     // 수정하기 / put / tour
-    @PutMapping("/course")
-    public ResponseDto update(@PathVariable("idx") Long idx,
-                              @RequestBody TourCourseDto dto) {
-        tourCourseService.update(idx, dto);
-        ResponseDto responseDto = new ResponseDto();
-        responseDto.setMessage("수정 되었습니다.");
-        return responseDto;
+    @PutMapping()
+    public TourCourseResponse update(@PathVariable("idx") int idx,
+                                     @RequestBody TourCourseRequest dto,
+                                     Authentication authentication) {
+        return tourCourseService.update(idx, dto, authentication.getPrincipal().toString());
     }
 
     // 삭제 / delete
-    @DeleteMapping("/course")
-    public ResponseDto delete(@PathVariable("idx") Long idx) {
-        tourCourseService.delete(idx);
+    @DeleteMapping()
+    public ResponseDto remove(@PathVariable("idx") int idx,
+                              Authentication authentication) {
+        tourCourseService.remove(idx, authentication.getPrincipal().toString());
         ResponseDto responseDto = new ResponseDto();
         responseDto.setMessage("삭제 되었습니다.");
         return responseDto;
