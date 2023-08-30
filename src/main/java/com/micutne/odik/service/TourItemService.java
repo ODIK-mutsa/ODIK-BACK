@@ -64,9 +64,10 @@ public class TourItemService {
      */
 
     public Page<TourItemListResponse> readAll(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        return tourItemRepository.findAllBy(pageable).map(tourItemMapper::toListDto);
+            Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return tourItemRepository.findAllByState("public", pageable).map(tourItemMapper::toListDto);
     }
+
 
     /**
      * 관광지 저장
