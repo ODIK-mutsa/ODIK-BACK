@@ -1,5 +1,8 @@
 package com.micutne.odik.domain.tour.dto;
 
+import ch.qos.logback.core.spi.ErrorCodes;
+import com.micutne.odik.common.exception.BusinessException;
+import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.imageTourItem.ImageTourItem;
 import com.micutne.odik.domain.tour.TourItem;
 import com.micutne.odik.domain.user.User;
@@ -18,6 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 public class TourItemResponse {
 
+    int idx;
+
     String title;
     ProfileResponse user;
 
@@ -35,8 +40,10 @@ public class TourItemResponse {
 
     List<ImageTourItem> images_google;
 
+
     public static TourItemResponse fromEntity(TourItem tourItem) {
         TourItemResponse response = new TourItemResponse();
+        response.idx = tourItem.getIdx();
         response.title = tourItem.getTitle();
         response.user = ProfileResponse.fromEntity(tourItem.getUser());
         //response.user = tourItem.getUser();
@@ -47,7 +54,19 @@ public class TourItemResponse {
         response.reference_id_google = tourItem.getReferenceIdGoogle();
         response.phone_number = tourItem.getPhoneNumber();
         response.point_google = tourItem.getPointGoogle();
+        response.result = "OK";
         //response.images_google = tourItem.getImagesGoogle();
+        return response;
+    }
+
+    public static TourItemResponse updateEntity(TourItem tourItem) {
+        TourItemResponse response = new TourItemResponse();
+        response.title = tourItem.getTitle();
+        response.location_lat = tourItem.getLocationLat();
+        response.location_lng = tourItem.getLocationLng();
+        response.address = tourItem.getAddress();
+        response.phone_number = tourItem.getPhoneNumber();
+        response.reference_id_google = tourItem.getReferenceIdGoogle();
         return response;
     }
 
@@ -55,6 +74,15 @@ public class TourItemResponse {
     public TourItemResponse (String result) {
         this.result = result;
 
+    }
+
+    public static TourItemResponse alreadyExist (String result) {
+        TourItemResponse response = new TourItemResponse();
+        response.result = result;
+        return response;
+    }
+    public TourItemResponse(ErrorCode errorCode) {
+        this.result = String.valueOf(new BusinessException(ErrorCode.TOUR_ITEM_ALREADY_EXIST));
     }
 
 }

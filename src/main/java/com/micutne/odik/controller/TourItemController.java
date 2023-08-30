@@ -30,22 +30,38 @@ public class TourItemController {
     /**
      * 특정 관광지 불러오기
      */
-
-    @GetMapping("{idx}")
-    public TourItemResponse readOne(@PathVariable int idx) {
-        return tourItemService.readOne(idx);
+/*
+    //@GetMapping("{idx}")
+    @GetMapping("")
+    public TourItemResponse readOne(@PathVariable String reference_id) {
+        return tourItemService.readOne(reference_id);
     }
+
+ */
 
     /**
      * 전체 관광지 불러오기
      */
-
+/*
     @GetMapping("")
     public Page<TourItemListResponse> readAll(
             @RequestParam(name = "no", defaultValue = "0") int pageNo,
             @RequestParam(name = "size", defaultValue = "20") int pageSize) {
 
         return tourItemService.readAll(pageNo, pageSize);
+    }
+
+ */
+
+    @GetMapping("")
+    public Object readOneOrAll(@RequestParam(required = false) String reference_id,
+                               @RequestParam(name = "no", defaultValue = "0") int pageNo,
+                               @RequestParam(name = "size", defaultValue = "20") int pageSize) {
+        if (reference_id != null) {
+            return tourItemService.readOne(reference_id);
+        } else {
+            return tourItemService.readAll(pageNo, pageSize);
+        }
     }
 
     /**
