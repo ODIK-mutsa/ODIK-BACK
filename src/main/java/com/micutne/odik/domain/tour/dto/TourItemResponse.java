@@ -21,6 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 public class TourItemResponse {
 
+    int idx;
+
     String title;
     ProfileResponse user;
 
@@ -41,6 +43,7 @@ public class TourItemResponse {
 
     public static TourItemResponse fromEntity(TourItem tourItem) {
         TourItemResponse response = new TourItemResponse();
+        response.idx = tourItem.getIdx();
         response.title = tourItem.getTitle();
         response.user = ProfileResponse.fromEntity(tourItem.getUser());
         //response.user = tourItem.getUser();
