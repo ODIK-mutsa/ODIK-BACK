@@ -58,8 +58,8 @@ public class TourItem extends BaseEntity {
     private List<ImageTourItem> imagesGoogle;
 
 
-    //@OneToMany(mappedBy = "tour_item", cascade = CascadeType.ALL)
-    //private List<ReviewItem> reviewItem;
+    @OneToMany(mappedBy = "tourItemIdx", cascade = CascadeType.ALL)
+    private List<ReviewItem> reviewItem;
 
 
 
