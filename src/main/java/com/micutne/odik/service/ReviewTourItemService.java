@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class ReviewTourItemService {
     private final ReviewTourItemRepository reviewTourItemRepository;
     private final TourItemRepository tourItemRepository;
-    private final ReviewTourItemMapper reviewItemMapper;
+    private final ReviewTourItemMapper reviewTourItemMapper;
     private final UserRepository userRepository;
 
 
@@ -28,7 +28,7 @@ public class ReviewTourItemService {
     public ReviewTourItemResponse readOne(int itemIdx, int reviewIdx) {
         ReviewTourItem reviewTourItem = reviewTourItemRepository.findByIdOrThrow(reviewIdx);
         TourItem tourItem = tourItemRepository.findByIdOrThrow(itemIdx);
-        return reviewItemMapper.toDto(reviewTourItem);
+        return ReviewTourItemResponse.fromEntity(reviewTourItem);
     }
 
     /**
@@ -42,7 +42,7 @@ public class ReviewTourItemService {
         TourItem tourItem = tourItemRepository.findByIdOrThrow(tour_item_idx);
         request.setTour_item_idx(tourItem);
         request.setUser_idx(userRepository.findByIdOrThrow(username));
-        ReviewTourItem reviewTourItem = reviewItemMapper.toEntity(request);
+        ReviewTourItem reviewTourItem = reviewTourItemMapper.toEntity(request);
         reviewTourItem = reviewTourItemRepository.save(reviewTourItem);
 
         return com.micutne.odik.domain.review.dto.ReviewTourItemResponse.fromEntity(reviewTourItem);
