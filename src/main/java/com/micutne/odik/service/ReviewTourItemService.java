@@ -1,6 +1,7 @@
 package com.micutne.odik.service;
 
 import com.micutne.odik.common.exception.AuthException;
+import com.micutne.odik.common.exception.BusinessException;
 import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.review.ReviewTourItem;
 import com.micutne.odik.domain.review.dto.ReviewTourItemListResponse;
@@ -75,6 +76,25 @@ public class ReviewTourItemService {
 
         return reviewTourItemMapper.toDto(reviewTourItem);
     }
+
+    /**
+     * 리뷰 삭제
+     */
+    public void remove(int itemId, int reviewId, String username) {
+        TourItem tourItem = tourItemRepository.findByIdOrThrow(itemId);
+        User user = userRepository.findByIdOrThrow(username);
+        ReviewTourItem reviewTourItem = reviewTourItemRepository.findByIdOrThrow(reviewId);
+
+        checkAuth(reviewTourItem, user);
+        checkPath(reviewTourItem, tourItem);
+        try {
+            reviewTourItemRepository.delete(reviewTourItem);
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.REVIEW_ITEM_DELETE_FAIL);
+        }
+        log.info("delete a review");
+    }
+
 
     // 리뷰 권한 확인
     public void checkAuth(ReviewTourItem reviewTourItem, User user) {

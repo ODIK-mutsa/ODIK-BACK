@@ -4,11 +4,15 @@ import com.micutne.odik.domain.review.dto.ReviewTourItemListResponse;
 import com.micutne.odik.domain.review.dto.ReviewTourItemRequest;
 import com.micutne.odik.domain.review.dto.ReviewTourItemResponse;
 import com.micutne.odik.service.ReviewTourItemService;
+import jakarta.mail.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -63,4 +67,18 @@ public class ReviewItemController {
     ) {
         return reviewTourItemService.update(itemId, reviewId, request, authentication.getPrincipal().toString());
     }
+
+    /**
+     * 리뷰 삭제
+     */
+    @DeleteMapping("{reviewId}")
+    public void remove(
+            Authentication authentication,
+            @PathVariable("itemId") int itemId,
+            @PathVariable("reviewId") int reviewId
+    ) {
+        reviewTourItemService.remove(itemId, reviewId, authentication.getPrincipal().toString());
+    }
+
+
 }
