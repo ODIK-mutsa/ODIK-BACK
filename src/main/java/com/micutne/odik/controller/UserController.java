@@ -66,7 +66,7 @@ public class UserController {
      */
     @PostMapping("course/add_tour_item")
     public TourItemResponse addMyTourItem(Authentication authentication, @RequestBody TourAddItemRequest request) {
-        return tourCourseService.createTourItem(request, authentication.getPrincipal().toString());
+        return tourCourseService.addMyTourItem(request, authentication.getPrincipal().toString());
     }
 
     /**
