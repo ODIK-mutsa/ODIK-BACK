@@ -39,7 +39,9 @@ public class TourCourseService {
         else {
             tourCourse = tourCourseRepository.findByUserIdxAndStateOrThrow(user, "cart");
         }
-        return TourCourseResponse.fromEntity(tourCourse);
+        TourCourseResponse response = TourCourseResponse.fromEntity(tourCourse);
+        response.setResult("OK");
+        return response;
     }
 
     public TourCourseResponse create(TourCourseRequest request, String username) {
