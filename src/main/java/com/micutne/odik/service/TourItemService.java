@@ -34,6 +34,8 @@ public class TourItemService {
     private final UserRepository userRepository;
     private final TourItemMapper tourItemMapper;
     private final ImageTourItemRepository imageTourItemRepository;
+   // private final ImageTourItemMapper imageTourItemMapper;
+    //private final TourItemResponse tourItemResponse;
 
 
     /**
