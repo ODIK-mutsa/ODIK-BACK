@@ -38,6 +38,7 @@ public class TourItemResponse {
     List<ImageTourItem> images_google;
 
 
+
     public static TourItemResponse fromEntity(TourItem tourItem) {
         TourItemResponse response = new TourItemResponse();
         response.idx = tourItem.getIdx();
