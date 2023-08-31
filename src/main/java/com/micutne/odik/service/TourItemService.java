@@ -34,7 +34,7 @@ public class TourItemService {
     private final UserRepository userRepository;
     private final TourItemMapper tourItemMapper;
     private final ImageTourItemRepository imageTourItemRepository;
-   // private final ImageTourItemMapper imageTourItemMapper;
+    // private final ImageTourItemMapper imageTourItemMapper;
     //private final TourItemResponse tourItemResponse;
 
 
@@ -43,16 +43,16 @@ public class TourItemService {
      */
 
     public TourItemResponse readOne(String reference_id) {
-            TourItem tourItem = tourItemRepository.findByReferenceIdGoogle(reference_id);
-            return TourItemResponse.fromEntity(tourItemRepository.findByReferenceIdGoogle(reference_id));
-        }
+        TourItem tourItem = tourItemRepository.findByReferenceIdGoogle(reference_id);
+        return TourItemResponse.fromEntity(tourItemRepository.findByReferenceIdGoogle(reference_id));
+    }
 
     /**
      * 전체 관광지 전체 불러오기
      */
 
     public Page<TourItemListResponse> readAll(int pageNo, int pageSize) {
-            Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
         return tourItemRepository.findAllByState("public", pageable).map(tourItemMapper::toListDto);
     }
 
@@ -80,9 +80,9 @@ public class TourItemService {
             }
             imageTourItemRepository.saveAll(imageTourItems);
 
-            return TourItemResponse.fromEntity(tourItem);
+            return TourItemResponse.fromEntity(tourItem, imageTourItems);
         } else
-        return new TourItemResponse(String.valueOf(ErrorCode.TOUR_ITEM_ALREADY_EXIST));
+            return new TourItemResponse(String.valueOf(ErrorCode.TOUR_ITEM_ALREADY_EXIST));
     }
 
     /**
@@ -119,7 +119,6 @@ public class TourItemService {
     public void checkAuth(TourItem tourItem, User user) {
         if (!tourItem.getUser().equals(user)) throw new AuthException(ErrorCode.USER_NOT_FOUND);
     }
-
 
 
 }
