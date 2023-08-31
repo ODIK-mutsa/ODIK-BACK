@@ -6,15 +6,14 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 
-import javax.sound.sampled.ReverbType;
 
 @Component
 @Mapper(componentModel = "spring")
 public interface ReviewItemMapper {
     ReviewItemMapper INSTANCE = Mappers.getMapper(ReviewItemMapper.class);
 
-    @Mapping(source = "userIdx", target = "user_idx")
-    @Mapping(source = "tourItemIdx", target = "tour_item_idx")
+    @Mapping(source = "user_idx", target = "userIdx")
+    @Mapping(source = "tour_item_idx", target = "tourItemIdx")
 
     ReviewItem toEntity(ReviewItemRequest request);
     ReviewItemListResponse toListDto(ReviewItem reviewItem);
