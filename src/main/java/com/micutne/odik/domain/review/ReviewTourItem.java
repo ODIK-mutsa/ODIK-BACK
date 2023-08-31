@@ -1,6 +1,7 @@
 package com.micutne.odik.domain.review;
 
 import com.micutne.odik.domain.BaseEntity;
+import com.micutne.odik.domain.review.dto.ReviewTourItemRequest;
 import com.micutne.odik.domain.tour.TourItem;
 import com.micutne.odik.domain.user.User;
 import jakarta.persistence.*;
@@ -32,6 +33,11 @@ public class ReviewTourItem extends BaseEntity {
         this.content = content;
         this.userIdx = userIdx;
         this.tourItemIdx = tourItemIdx;
+    }
+
+    public void update(ReviewTourItemRequest request) {
+        this.rating = request.getRating();
+        this.content = request.getContent();
     }
 
 
