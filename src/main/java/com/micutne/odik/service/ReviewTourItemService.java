@@ -30,6 +30,7 @@ public class ReviewTourItemService {
     private final TourItemRepository tourItemRepository;
     private final ReviewTourItemMapper reviewTourItemMapper;
     private final UserRepository userRepository;
+    private final ReviewTourItemResponse reviewTourItemResponse;
 
 
     /**
@@ -73,8 +74,10 @@ public class ReviewTourItemService {
         checkAuth(reviewTourItem, user);
         checkPath(reviewTourItem, tourItem);
         reviewTourItem.update(request);
+        reviewTourItemResponse.setResult("OK");
+        reviewTourItemRepository.save(reviewTourItem);
 
-        return reviewTourItemMapper.toDto(reviewTourItem);
+        return ReviewTourItemResponse.fromEntity(reviewTourItem);
     }
 
     /**
