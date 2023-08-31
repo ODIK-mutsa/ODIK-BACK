@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ReviewItemRequest {
+public class ReviewTourItemRequest {
     int rating;
     String content;
     User user_idx;
     TourItem tour_item_idx;
 
     @Builder
-    public ReviewItemRequest(int rating, String content, User user_idx, TourItem tour_item_idx) {
+    public ReviewTourItemRequest(int rating, String content, User user_idx, TourItem tour_item_idx) {
         this.rating = rating;
         this.content = content;
         this.user_idx = user_idx;

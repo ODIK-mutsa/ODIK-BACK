@@ -2,21 +2,16 @@ package com.micutne.odik.domain.tour;
 
 import com.micutne.odik.domain.BaseEntity;
 import com.micutne.odik.domain.imageTourItem.ImageTourItem;
-import com.micutne.odik.domain.review.ReviewItem;
+import com.micutne.odik.domain.review.ReviewTourItem;
 import com.micutne.odik.domain.tour.dto.TourItemRequest;
 import com.micutne.odik.domain.user.User;
-import com.micutne.odik.domain.user.dto.ProfileResponse;
-import com.micutne.odik.domain.user.dto.UserResponse;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -50,7 +45,7 @@ public class TourItem extends BaseEntity {
     private List<ImageTourItem> imagesGoogle;
     @OneToMany(mappedBy = "tourItemIdx", cascade = CascadeType.ALL)
     @CreatedDate
-    private List<ReviewItem> reviewItem;
+    private List<ReviewTourItem> reviewTourItem;
 
     @Builder
     public TourItem(String title, User user, Double location_lat, Double location_lng, String state, String address, String reference_id_google, String phone_number, Float point_google ) {

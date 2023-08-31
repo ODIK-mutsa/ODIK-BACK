@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class ReviewItem extends BaseEntity {
+public class ReviewTourItem extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idx;
@@ -27,7 +27,7 @@ public class ReviewItem extends BaseEntity {
     private TourItem tourItemIdx;
 
     @Builder
-    public ReviewItem(int rating, String content, User userIdx, TourItem tourItemIdx) {
+    public ReviewTourItem(int rating, String content, User userIdx, TourItem tourItemIdx) {
         this.rating = rating;
         this.content = content;
         this.userIdx = userIdx;
