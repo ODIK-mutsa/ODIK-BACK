@@ -32,35 +32,22 @@ public class TourItem extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_idx")
-    //@JsonIgnore
     private User user;
     @Column(nullable = false)
     private Double locationLat;
     @Column(nullable = false)
     private Double locationLng;
-    // 상품의 상태: 카트에 담겨있는 상품인지, 게시판에 모두공개로 올라가있는 상태인지, 코스에 포함되어 있는지, 계획에 포함되어있는지 등.
-    // cart, public, course, plan
-    //@Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'public'")
     @Column(nullable = false)
-    //@ColumnDefault("public")
     private String state;
     @Column(nullable = false)
     private String address;
     @ColumnDefault("unidentified")
     private String referenceIdGoogle;
-
     private String phoneNumber;
-
     private Float pointGoogle;
-
     @OneToMany(mappedBy = "tourItemIdx", cascade = CascadeType.ALL)
     @CreatedDate
     private List<ImageTourItem> imagesGoogle;
-
-
-    @OneToMany(mappedBy = "tourItemIdx", cascade = CascadeType.ALL)
-    private List<ReviewItem> reviewItem;
-
 
 
     @Builder
@@ -69,13 +56,11 @@ public class TourItem extends BaseEntity {
         this.user = user;
         this.locationLat = location_lat;
         this.locationLng = location_lng;
-        // 기본 값 public으로 설정 후, 서비스에 따라 updateState를 통해 상태 변경
         this.state = "public";
         this.address = address;
         this.referenceIdGoogle = reference_id_google;
         this.phoneNumber = phone_number;
         this.pointGoogle = point_google;
-       // this.imagesGoogle = images_google;
 
     }
 
@@ -84,7 +69,6 @@ public class TourItem extends BaseEntity {
         TourItem tourItem = new TourItem();
         tourItem.title = request.getTitle();
         tourItem.user = request.getUser();
-        //tourItem.user = UserResponse.fromEntity(tourItem.getUser());
         tourItem.locationLng = request.getLocation_lng();
         tourItem.locationLat = request.getLocation_lat();
         tourItem.state = request.getState();
