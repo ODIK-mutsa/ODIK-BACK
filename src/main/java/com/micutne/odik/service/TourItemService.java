@@ -5,10 +5,7 @@ import com.micutne.odik.common.exception.BusinessException;
 import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.imageTourItem.ImageTourItem;
 import com.micutne.odik.domain.tour.TourItem;
-import com.micutne.odik.domain.tour.dto.TourItemListResponse;
-import com.micutne.odik.domain.tour.dto.TourItemMapper;
-import com.micutne.odik.domain.tour.dto.TourItemRequest;
-import com.micutne.odik.domain.tour.dto.TourItemResponse;
+import com.micutne.odik.domain.tour.dto.*;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.repository.ImageTourItemRepository;
 import com.micutne.odik.repository.TourItemRepository;
@@ -21,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -130,6 +128,17 @@ public class TourItemService {
             throw new BusinessException(ErrorCode.TOUR_ITEM_DELETE_FAIL);
         }
         log.info("delete a tour item");
+    }
+
+    /**
+     * 관광지 검색
+     */
+    public Page<TourItemResponse> search(
+            String query, int pageNo
+    ){
+        Pageable pageable = PageRequest.of(
+                pageNo, 20, Sort.by("idx").descending());
+        return tourItemRepository.findAllByTitleContains(query, pageable).map(TourItemResponse::fromEntity);
     }
 
     /**
