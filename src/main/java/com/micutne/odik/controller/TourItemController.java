@@ -1,19 +1,16 @@
 package com.micutne.odik.controller;
 
-import com.micutne.odik.domain.tour.dto.TourItemListResponse;
 import com.micutne.odik.domain.tour.dto.TourItemRequest;
 import com.micutne.odik.domain.tour.dto.TourItemResponse;
 import com.micutne.odik.service.TourItemService;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Map;
 
 
 @RestController
@@ -26,8 +23,6 @@ public class TourItemController {
     /**
      * 특정 관광지 또는 전체 관광지 불러오기
      */
-
-
     @GetMapping("")
     public Object readOneOrAll(@RequestParam(required = false) String reference_id,
                                @RequestParam(name = "no", defaultValue = "0") int pageNo,
@@ -42,14 +37,17 @@ public class TourItemController {
     /**
      * 관광지 생성
      */
-
     @PostMapping("")
     public TourItemResponse create(
             Authentication authentication,
-            @RequestBody TourItemRequest request) {
-        return tourItemService.create(request, authentication.getPrincipal().toString());
+            @ModelAttribute() TourItemRequest request,
+            @RequestParam(value = "images", required = false) MultipartFile[] images) {
+        return tourItemService.create(request, authentication.getPrincipal().toString(), images);
     }
 
+    /**
+     * 관광지 수정
+     */
     @PutMapping("/{idx}")
     public TourItemResponse update(
             Authentication authentication,
@@ -58,11 +56,26 @@ public class TourItemController {
         return tourItemService.update(idx, request, authentication.getPrincipal().toString());
     }
 
+    /**
+     * 관광지 삭제
+     */
     @DeleteMapping("/{idx}")
-    public void remove (
+    public void remove(
             Authentication authentication,
             @PathVariable int idx) {
         tourItemService.remove(idx, authentication.getPrincipal().toString());
+    }
+
+    /**
+     * 관광지 검색
+     */
+    @GetMapping("/findby")
+    public Page<TourItemResponse> search(
+            @RequestParam("query") String query,
+            @RequestParam(value = "pageNo", defaultValue = "0")
+            int pageNo
+    ) {
+        return tourItemService.search(query, pageNo);
     }
 
 }
