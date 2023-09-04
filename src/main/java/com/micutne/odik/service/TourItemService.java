@@ -62,12 +62,16 @@ public class TourItemService {
      */
     @Transactional
     public TourItemResponse create(TourItemRequest request, String id) {
-        if (!tourItemRepository.existsByReferenceIdGoogle(request.getReference_id_google())) {
-            request.setUser(userRepository.findByIdOrThrow(id));
-            TourItem tourItem = tourItemMapper.toEntity(request);
-            tourItem = tourItemRepository.save(tourItem);
+        if (tourItemRepository.existsByReferenceIdGoogle(request.getReference_id_google()))
+            return new TourItemResponse(String.valueOf(ErrorCode.TOUR_ITEM_ALREADY_EXIST));
 
-            List<ImageTourItem> imageTourItems = new ArrayList<>();
+        request.setUser(userRepository.findByIdOrThrow(id));
+        TourItem tourItem = tourItemMapper.toEntity(request);
+        tourItem = tourItemRepository.save(tourItem);
+
+        List<ImageTourItem> imageTourItems = new ArrayList<>();
+
+        if (request.getImages_google() != null) {
             for (String imageUrl : request.getImages_google()) {
                 // Url 또는 파일 추가 로직 ( 파일 추가부분 수정 필요 )
                 boolean saveUrl = imageUrl.startsWith("http://") || imageUrl.startsWith("https://");
@@ -78,11 +82,13 @@ public class TourItemService {
                         .build();
                 imageTourItems.add(imageTourItem);
             }
-            imageTourItemRepository.saveAll(imageTourItems);
+        }
 
-            return TourItemResponse.fromEntity(tourItem, imageTourItems);
-        } else
-            return new TourItemResponse(String.valueOf(ErrorCode.TOUR_ITEM_ALREADY_EXIST));
+        imageTourItems = imageTourItemRepository.saveAll(imageTourItems);
+
+        TourItemResponse response = TourItemResponse.fromEntity(tourItem, imageTourItems);
+        response.setImages_google(imageTourItems.stream().map(ImageTourItem::getImagesGoogle).toList());
+        return response;
     }
 
     /**

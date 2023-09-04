@@ -2,8 +2,7 @@ package com.micutne.odik.controller;
 
 import com.micutne.odik.domain.tour.dto.course.TourAddItemRequest;
 import com.micutne.odik.domain.tour.dto.course.TourCourseRequest;
-import com.micutne.odik.domain.tour.dto.course.TourCourseResponse;
-import com.micutne.odik.domain.tour.dto.course.TourItemResponse;
+import com.micutne.odik.domain.tour.dto.course.TourCourseResultResponse;
 import com.micutne.odik.domain.user.dto.ProfileResponse;
 import com.micutne.odik.domain.user.dto.UserRequest;
 import com.micutne.odik.domain.user.dto.UserResponse;
@@ -49,7 +48,7 @@ public class UserController {
      * 사용자 장바구니 불러오기
      */
     @GetMapping("course")
-    public TourCourseResponse readMyCourse(Authentication authentication) {
+    public TourCourseResultResponse readMyCourse(Authentication authentication) {
         return tourCourseService.readMyCourse(authentication.getPrincipal().toString());
     }
 
@@ -57,7 +56,7 @@ public class UserController {
      * 사용자 코스 생성하기
      */
     @PostMapping("course")
-    public TourCourseResponse create(Authentication authentication, @RequestBody TourCourseRequest request) {
+    public TourCourseResultResponse create(Authentication authentication, @RequestBody TourCourseRequest request) {
         return tourCourseService.create(request, authentication.getPrincipal().toString());
     }
 
@@ -65,16 +64,16 @@ public class UserController {
      * 사용자 장바구니에 관광지 추가하기
      */
     @PostMapping("course/add_tour_item")
-    public TourItemResponse addMyTourItem(Authentication authentication, @RequestBody TourAddItemRequest request) {
-        return tourCourseService.addMyTourItem(request, authentication.getPrincipal().toString());
+    public TourCourseResultResponse addMyTourItem(Authentication authentication, @RequestBody TourAddItemRequest request) {
+        return tourCourseService.addTourItem(request, authentication.getPrincipal().toString());
     }
 
     /**
      * 사용자 장바구니 수정하기
      */
     @PutMapping("course")
-    public TourCourseResponse update(@RequestBody TourCourseRequest request, Authentication authentication) {
-        return tourCourseService.updateMyCourse(request, authentication.getPrincipal().toString());
+    public TourCourseResultResponse update(@RequestBody TourCourseRequest request, Authentication authentication) {
+        return tourCourseService.updateCourse(request, authentication.getPrincipal().toString());
     }
 
 //    /**

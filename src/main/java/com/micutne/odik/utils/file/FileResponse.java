@@ -11,13 +11,15 @@ public class FileResponse {
     private long fileSize;
     private String contentType;
     private Instant uploadTimeStamp;
+    private String fileRoot;
 
     @Builder
-    public FileResponse(String fileName, long fileSize, String contentType, Instant uploadTimeStamp) {
+    public FileResponse(String fileName, long fileSize, String contentType, Instant uploadTimeStamp, String fileRoot) {
         this.fileName = fileName;
         this.fileSize = fileSize;
         this.contentType = contentType;
         this.uploadTimeStamp = uploadTimeStamp;
+        this.fileRoot = fileRoot;
     }
 }
 

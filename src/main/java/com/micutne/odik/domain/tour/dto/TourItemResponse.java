@@ -48,8 +48,8 @@ public class TourItemResponse {
         response.reference_id_google = tourItem.getReferenceIdGoogle();
         response.phone_number = tourItem.getPhoneNumber();
         response.point_google = tourItem.getPointGoogle();
-
-        response.setImages_google(tourItem.getImagesGoogle().stream().map(ImageTourItem::getImagesGoogle).toList());
+        if (tourItem.getImagesGoogle() != null)
+            response.setImages_google(tourItem.getImagesGoogle().stream().map(ImageTourItem::getImagesGoogle).toList());
         response.result = "OK";
         return response;
     }

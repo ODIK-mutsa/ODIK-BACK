@@ -1,6 +1,7 @@
 package com.micutne.odik.domain.tour;
 
 import com.micutne.odik.domain.BaseEntity;
+import com.micutne.odik.domain.tour.dto.course.TourAddItemRequest;
 import com.micutne.odik.domain.tour.dto.course.TourCourseRequest;
 import com.micutne.odik.domain.user.User;
 import jakarta.persistence.*;
@@ -36,6 +37,11 @@ public class TourCourse extends BaseEntity {
     }
 
     public void update(TourCourseRequest request) {
+        title = (request.getTitle() != null) ? request.getTitle() : title;
+        state = (request.getState() != null) ? request.getState() : state;
+    }
+
+    public void update(TourAddItemRequest request) {
         title = (request.getTitle() != null) ? request.getTitle() : title;
         state = (request.getState() != null) ? request.getState() : state;
     }
