@@ -5,8 +5,6 @@ import lombok.Data;
 
 @Data
 public class TourItemListResponse {
-    String title;
-
     User user;
 
     Double location_lat;
@@ -16,6 +14,4 @@ public class TourItemListResponse {
     String state;
     String address;
 
-
-
-    }
+}

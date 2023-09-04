@@ -1,19 +1,14 @@
 package com.micutne.odik.controller;
 
-import com.micutne.odik.domain.tour.dto.TourItemListResponse;
 import com.micutne.odik.domain.tour.dto.TourItemRequest;
 import com.micutne.odik.domain.tour.dto.TourItemResponse;
 import com.micutne.odik.service.TourItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Map;
 
 
 @RestController
@@ -46,8 +41,9 @@ public class TourItemController {
     @PostMapping("")
     public TourItemResponse create(
             Authentication authentication,
-            @RequestBody TourItemRequest request) {
-        return tourItemService.create(request, authentication.getPrincipal().toString());
+            @ModelAttribute() TourItemRequest request,
+            @RequestParam(value = "images", required = false) MultipartFile[] images) {
+        return tourItemService.create(request, authentication.getPrincipal().toString(), images);
     }
 
     @PutMapping("/{idx}")
@@ -59,7 +55,7 @@ public class TourItemController {
     }
 
     @DeleteMapping("/{idx}")
-    public void remove (
+    public void remove(
             Authentication authentication,
             @PathVariable int idx) {
         tourItemService.remove(idx, authentication.getPrincipal().toString());
