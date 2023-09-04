@@ -13,5 +13,6 @@ public class TourItemListResponse {
 
     String state;
     String address;
+    String type;
 
 }
