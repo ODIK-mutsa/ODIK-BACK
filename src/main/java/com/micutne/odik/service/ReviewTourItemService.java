@@ -9,8 +9,6 @@ import com.micutne.odik.domain.review.dto.ReviewTourItemRequest;
 import com.micutne.odik.domain.review.dto.ReviewTourItemMapper;
 import com.micutne.odik.domain.review.dto.ReviewTourItemResponse;
 import com.micutne.odik.domain.tour.TourItem;
-import com.micutne.odik.domain.tour.dto.TourItemRequest;
-import com.micutne.odik.domain.tour.dto.TourItemResponse;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.repository.ReviewTourItemRepository;
 import com.micutne.odik.repository.TourItemRepository;
@@ -31,7 +29,6 @@ public class ReviewTourItemService {
     private final ReviewTourItemMapper reviewTourItemMapper;
     private final UserRepository userRepository;
     private final ReviewTourItemResponse reviewTourItemResponse;
-
 
     /**
      *  특정 리뷰 불러오기 (... 더보기 ?)
@@ -60,7 +57,7 @@ public class ReviewTourItemService {
         ReviewTourItem reviewTourItem = reviewTourItemMapper.toEntity(request);
         reviewTourItem = reviewTourItemRepository.save(reviewTourItem);
 
-        return com.micutne.odik.domain.review.dto.ReviewTourItemResponse.fromEntity(reviewTourItem);
+        return ReviewTourItemResponse.fromEntity(reviewTourItem);
     }
 
     /**
@@ -97,7 +94,6 @@ public class ReviewTourItemService {
         }
         log.info("delete a review");
     }
-
 
     // 리뷰 권한 확인
     public void checkAuth(ReviewTourItem reviewTourItem, User user) {
