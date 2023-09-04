@@ -39,7 +39,9 @@ public class TourCourseService {
         else {
             tourCourse = tourCourseRepository.findByUserIdxAndStateOrThrow(user, "cart");
         }
-        return TourCourseResponse.fromEntity(tourCourse);
+        TourCourseResponse response = TourCourseResponse.fromEntity(tourCourse);
+        response.setResult("OK");
+        return response;
     }
 
     public TourCourseResponse create(TourCourseRequest request, String username) {
@@ -94,20 +96,6 @@ public class TourCourseService {
         if (!tourCourse.getUserIdx().equals(user)) throw new AuthException(ErrorCode.NOT_YOURS);
     }
 
-    public TourItemResponse createTourItem(TourAddItemRequest request, TourCourse tourCourse) {
-        TourItem tourItem = tourItemRepository.findByIdOrThrow(request.getTour_item_idx());
-
-        if (!tourCourseItemListRepository.existsByTourCourseAndTourItem(tourCourse, tourItem)) {
-            request.setTourCourse(tourCourse);
-            request.setTourItem(tourItem);
-
-            tourCourseItemListRepository.save(TourCourseListTourItem.fromDto(request));
-
-            return new TourItemResponse("OK");
-        } else {
-            return new TourItemResponse("ALREADY_EXIST");
-        }
-    }
 
     public TourItemResponse addTourItem(TourAddItemRequest request, String username) {
         User user = userRepository.findByIdOrThrow(username);
@@ -119,7 +107,26 @@ public class TourCourseService {
     }
 
     @Transactional
-    public TourItemResponse createTourItem(TourAddItemRequest request, String username) {
+    public TourItemResponse createTourItem(TourAddItemRequest request, TourCourse tourCourse) {
+        TourItem tourItem = tourItemRepository.findByIdOrThrow(request.getTour_item_idx());
+
+
+        if (!tourCourseItemListRepository.existsByTourCourseAndTourItem(tourCourse, tourItem)) {
+            if (!tourCourseItemListRepository.existsByTourCourseAndDayAndLevel(tourCourse, request.getDay(), request.getLevel())) {
+                request.setTourCourse(tourCourse);
+                request.setTourItem(tourItem);
+
+                tourCourseItemListRepository.save(TourCourseListTourItem.fromDto(request));
+
+                return new TourItemResponse("OK");
+            } else return new TourItemResponse("ALREADY_EXIST");
+        }
+        //이미 코스에 그 아이템이 있는 경우
+        else return new TourItemResponse("ALREADY_EXIST");
+    }
+
+    @Transactional
+    public TourItemResponse addMyTourItem(TourAddItemRequest request, String username) {
         User user = userRepository.findByIdOrThrow(username);
         TourCourse tourCourse;
         // 장바구니 코스가 없는 경우
@@ -130,7 +137,7 @@ public class TourCourseService {
         else {
             tourCourse = tourCourseRepository.findByUserIdxAndStateOrThrow(user, "cart");
         }
-
         return createTourItem(request, tourCourse);
     }
 }
+

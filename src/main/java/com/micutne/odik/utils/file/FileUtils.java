@@ -4,8 +4,8 @@ import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.common.exception.FileException;
 import com.micutne.odik.common.exception.InvalidValueException;
 import com.micutne.odik.config.FileConfig;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,11 +23,15 @@ import java.util.Objects;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 class FileUtils {
-    public static Path root;
-    static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+    private static Path root;
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+    private static final StandardPBEStringEncryptor tokenEncoder;
 
+    static {
+        tokenEncoder = new StandardPBEStringEncryptor();
+        tokenEncoder.setPassword("file");
+    }
 
     public static void createDirectory(Path path) {
         try {
@@ -45,7 +49,7 @@ class FileUtils {
         if (fileName == null) fileName = validateFileName(file.getOriginalFilename());
 
         String timeStamp = dateFormat.format(new Date());
-        fileName = timeStamp + "_" + fileName;
+        fileName = tokenEncoder.encrypt(timeStamp + "_" + fileName);
         String ext = getExt(Objects.requireNonNull(file.getOriginalFilename()));
         validateFileSize(file.getSize());
         Path filePath = save(file, fileName + "." + ext);
@@ -89,11 +93,15 @@ class FileUtils {
 
 
     private static FileResponse buildFileResponse(Path filePath, long size, String contentType) {
+
+        String fileRoot = String.valueOf(filePath).substring(1);
+        fileRoot = fileRoot.replace("\\", "/");
         return FileResponse.builder()
                 .fileName(filePath.getFileName().toString())
                 .fileSize(size)
                 .contentType(contentType)
                 .uploadTimeStamp(Instant.now())
+                .fileRoot(fileRoot)
                 .build();
     }
 

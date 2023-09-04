@@ -15,7 +15,6 @@ public class TourCourseItemResponse {
     public static TourCourseItemResponse fromEntity(TourCourseListTourItem itemList) {
         TourCourseItemResponse response = new TourCourseItemResponse();
         response.idx = itemList.getIdx();
-        response.title = itemList.getTitle();
         response.tour_item = TourItemResponse.fromEntity(itemList.getTourItem());
         response.level = itemList.getLevel();
         response.day = itemList.getDay();

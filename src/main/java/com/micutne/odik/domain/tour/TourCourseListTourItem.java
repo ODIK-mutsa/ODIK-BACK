@@ -14,7 +14,6 @@ public class TourCourseListTourItem extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idx;
-    private String title;
 
     @Column
     private int level;
@@ -31,7 +30,6 @@ public class TourCourseListTourItem extends BaseEntity {
 
     public static TourCourseListTourItem fromDto(TourAddItemRequest request) {
         TourCourseListTourItem tourCourseItemList = new TourCourseListTourItem();
-        tourCourseItemList.title = request.getTitle();
         tourCourseItemList.tourCourse = request.getTourCourse();
         tourCourseItemList.tourItem = request.getTourItem();
         tourCourseItemList.level = request.getLevel();
@@ -40,7 +38,6 @@ public class TourCourseListTourItem extends BaseEntity {
     }
 
     public void update(TourUpdateItemRequest request) {
-        title = request.getTitle() != null ? request.getTitle() : title;
         level = request.getLevel() != -1 ? request.getLevel() : level;
         day = request.getDay() != -1 ? request.getDay() : day;
     }

@@ -14,6 +14,8 @@ import com.micutne.odik.repository.ImageTourItemRepository;
 import com.micutne.odik.repository.TourItemRepository;
 import com.micutne.odik.repository.UserRepository;
 import com.micutne.odik.utils.file.Extensions;
+import com.micutne.odik.utils.file.FileResponse;
+import com.micutne.odik.utils.file.ImageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +37,7 @@ public class TourItemService {
     private final UserRepository userRepository;
     private final TourItemMapper tourItemMapper;
     private final ImageTourItemRepository imageTourItemRepository;
-   // private final ImageTourItemMapper imageTourItemMapper;
+    // private final ImageTourItemMapper imageTourItemMapper;
     //private final TourItemResponse tourItemResponse;
 
 
@@ -43,16 +46,16 @@ public class TourItemService {
      */
 
     public TourItemResponse readOne(String reference_id) {
-            TourItem tourItem = tourItemRepository.findByReferenceIdGoogle(reference_id);
-            return TourItemResponse.fromEntity(tourItemRepository.findByReferenceIdGoogle(reference_id));
-        }
+        TourItem tourItem = tourItemRepository.findByReferenceIdGoogle(reference_id);
+        return TourItemResponse.fromEntity(tourItemRepository.findByReferenceIdGoogle(reference_id));
+    }
 
     /**
      * 전체 관광지 전체 불러오기
      */
 
     public Page<TourItemListResponse> readAll(int pageNo, int pageSize) {
-            Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
         return tourItemRepository.findAllByState("public", pageable).map(tourItemMapper::toListDto);
     }
 
@@ -61,13 +64,17 @@ public class TourItemService {
      * 관광지 저장
      */
     @Transactional
-    public TourItemResponse create(TourItemRequest request, String id) {
-        if (!tourItemRepository.existsByReferenceIdGoogle(request.getReference_id_google())) {
-            request.setUser(userRepository.findByIdOrThrow(id));
-            TourItem tourItem = tourItemMapper.toEntity(request);
-            tourItem = tourItemRepository.save(tourItem);
+    public TourItemResponse create(TourItemRequest request, String id, MultipartFile[] images) {
+        if (tourItemRepository.existsByReferenceIdGoogle(request.getReference_id_google()))
+            return new TourItemResponse(String.valueOf(ErrorCode.TOUR_ITEM_ALREADY_EXIST));
 
-            List<ImageTourItem> imageTourItems = new ArrayList<>();
+        request.setUser(userRepository.findByIdOrThrow(id));
+        TourItem tourItem = tourItemMapper.toEntity(request);
+        tourItem = tourItemRepository.save(tourItem);
+
+        List<ImageTourItem> imageTourItems = new ArrayList<>();
+
+        if (request.getImages_google() != null) {
             for (String imageUrl : request.getImages_google()) {
                 // Url 또는 파일 추가 로직 ( 파일 추가부분 수정 필요 )
                 boolean saveUrl = imageUrl.startsWith("http://") || imageUrl.startsWith("https://");
@@ -78,11 +85,23 @@ public class TourItemService {
                         .build();
                 imageTourItems.add(imageTourItem);
             }
-            imageTourItemRepository.saveAll(imageTourItems);
+        }
 
-            return TourItemResponse.fromEntity(tourItem);
-        } else
-        return new TourItemResponse(String.valueOf(ErrorCode.TOUR_ITEM_ALREADY_EXIST));
+        if (images != null) {
+            List<FileResponse> responses = ImageUtils.saveFiles(images, "\\tour_item", tourItem.getTitle());
+            log.info(responses.toString());
+            for (FileResponse res : responses) {
+                ImageTourItem imageTourItem = ImageTourItem.builder()
+                        .tour_item_idx(tourItem)
+                        .url(res.getFileRoot())
+                        .build();
+                imageTourItems.add(imageTourItem);
+            }
+        }
+
+        imageTourItemRepository.saveAll(imageTourItems);
+
+        return TourItemResponse.fromEntity(tourItem, imageTourItems);
     }
 
     /**
@@ -119,7 +138,6 @@ public class TourItemService {
     public void checkAuth(TourItem tourItem, User user) {
         if (!tourItem.getUser().equals(user)) throw new AuthException(ErrorCode.USER_NOT_FOUND);
     }
-
 
 
 }

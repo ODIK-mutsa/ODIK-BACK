@@ -8,12 +8,10 @@ import com.micutne.odik.domain.user.dto.ProfileResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Data
-@Component
 @NoArgsConstructor
 @AllArgsConstructor
 public class TourItemResponse {
@@ -35,8 +33,7 @@ public class TourItemResponse {
     String phone_number;
     Float point_google;
 
-    List<ImageTourItem> images_google;
-
+    List<String> images_google;
 
 
     public static TourItemResponse fromEntity(TourItem tourItem) {
@@ -51,32 +48,32 @@ public class TourItemResponse {
         response.reference_id_google = tourItem.getReferenceIdGoogle();
         response.phone_number = tourItem.getPhoneNumber();
         response.point_google = tourItem.getPointGoogle();
+
+        if (tourItem.getImagesGoogle() != null)
+            response.setImages_google(tourItem.getImagesGoogle().stream().map(ImageTourItem::getImagesGoogle).toList());
         response.result = "OK";
         return response;
     }
 
-    public static TourItemResponse updateEntity(TourItem tourItem) {
-        TourItemResponse response = new TourItemResponse();
-        response.title = tourItem.getTitle();
-        response.location_lat = tourItem.getLocationLat();
-        response.location_lng = tourItem.getLocationLng();
-        response.address = tourItem.getAddress();
-        response.phone_number = tourItem.getPhoneNumber();
-        response.reference_id_google = tourItem.getReferenceIdGoogle();
+    public static TourItemResponse fromEntity(TourItem tourItem, List<ImageTourItem> imageTourItems) {
+
+        TourItemResponse response = fromEntity(tourItem);
+        response.setImages_google(imageTourItems.stream().map(ImageTourItem::getImagesGoogle).toList());
         return response;
     }
 
 
-    public TourItemResponse (String result) {
+    public TourItemResponse(String result) {
         this.result = result;
 
     }
 
-    public static TourItemResponse alreadyExist (String result) {
+    public static TourItemResponse alreadyExist(String result) {
         TourItemResponse response = new TourItemResponse();
         response.result = result;
         return response;
     }
+
     public TourItemResponse(ErrorCode errorCode) {
         this.result = String.valueOf(new BusinessException(ErrorCode.TOUR_ITEM_ALREADY_EXIST));
     }
