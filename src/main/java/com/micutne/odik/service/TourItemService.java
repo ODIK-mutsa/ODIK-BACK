@@ -5,23 +5,22 @@ import com.micutne.odik.common.exception.BusinessException;
 import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.imageTourItem.ImageTourItem;
 import com.micutne.odik.domain.tour.TourItem;
-import com.micutne.odik.domain.tour.dto.*;
+import com.micutne.odik.domain.tour.dto.TourItemListResponse;
+import com.micutne.odik.domain.tour.dto.TourItemMapper;
+import com.micutne.odik.domain.tour.dto.TourItemRequest;
+import com.micutne.odik.domain.tour.dto.TourItemResponse;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.repository.ImageTourItemRepository;
 import com.micutne.odik.repository.TourItemRepository;
 import com.micutne.odik.repository.UserRepository;
 import com.micutne.odik.utils.file.Extensions;
-import com.micutne.odik.utils.file.FileResponse;
-import com.micutne.odik.utils.file.ImageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +61,7 @@ public class TourItemService {
      * 관광지 저장
      */
     @Transactional
-    public TourItemResponse create(TourItemRequest request, String id, MultipartFile[] images) {
+    public TourItemResponse create(TourItemRequest request, String id) {
         if (tourItemRepository.existsByReferenceIdGoogle(request.getReference_id_google()))
             return new TourItemResponse(String.valueOf(ErrorCode.TOUR_ITEM_ALREADY_EXIST));
 
@@ -85,21 +84,11 @@ public class TourItemService {
             }
         }
 
-        if (images != null) {
-            List<FileResponse> responses = ImageUtils.saveFiles(images, "\\tour_item", tourItem.getTitle());
-            log.info(responses.toString());
-            for (FileResponse res : responses) {
-                ImageTourItem imageTourItem = ImageTourItem.builder()
-                        .tour_item_idx(tourItem)
-                        .url(res.getFileRoot())
-                        .build();
-                imageTourItems.add(imageTourItem);
-            }
-        }
+        imageTourItems = imageTourItemRepository.saveAll(imageTourItems);
 
-        imageTourItemRepository.saveAll(imageTourItems);
-
-        return TourItemResponse.fromEntity(tourItem, imageTourItems);
+        TourItemResponse response = TourItemResponse.fromEntity(tourItem, imageTourItems);
+        response.setImages_google(imageTourItems.stream().map(ImageTourItem::getImagesGoogle).toList());
+        return response;
     }
 
     /**
@@ -128,17 +117,6 @@ public class TourItemService {
             throw new BusinessException(ErrorCode.TOUR_ITEM_DELETE_FAIL);
         }
         log.info("delete a tour item");
-    }
-
-    /**
-     * 관광지 검색
-     */
-    public Page<TourItemResponse> search(
-            String query, int pageNo
-    ){
-        Pageable pageable = PageRequest.of(
-                pageNo, 20, Sort.by("idx").descending());
-        return tourItemRepository.findAllByTitleContains(query, pageable).map(TourItemResponse::fromEntity);
     }
 
     /**

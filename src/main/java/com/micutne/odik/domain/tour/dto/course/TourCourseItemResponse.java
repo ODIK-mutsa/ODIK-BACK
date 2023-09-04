@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class TourCourseItemResponse {
     int idx;
-    String title;
     TourItemResponse tour_item;
     int level;
     int day;

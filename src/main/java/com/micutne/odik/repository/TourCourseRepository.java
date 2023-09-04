@@ -18,6 +18,8 @@ public interface TourCourseRepository extends JpaRepository<TourCourse, Integer>
 
     Optional<TourCourse> findByIdx(int idx);
 
+    Boolean existsByIdx(int idx);
+
 
     Boolean existsByUserIdxAndState(User user, String state);
 

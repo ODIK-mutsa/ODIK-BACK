@@ -13,8 +13,7 @@ public class TourCourseResponse {
     String title;
     String state;
     ProfileResponse user;
-    String result;
-    List<TourCourseItemResponse> tour_course_item_lists = new ArrayList<>();
+    List<TourCourseItemResponse> tour_items = new ArrayList<>();
 
     public static TourCourseResponse fromEntity(TourCourse tourCourse) {
         TourCourseResponse response = new TourCourseResponse();
@@ -22,7 +21,7 @@ public class TourCourseResponse {
         response.title = tourCourse.getTitle();
         response.state = tourCourse.getState();
         response.user = ProfileResponse.fromEntity(tourCourse.getUserIdx());
-        response.tour_course_item_lists = tourCourse.getTourCourseItemLists().stream().map(TourCourseItemResponse::fromEntity).toList();
+        response.tour_items = tourCourse.getTourCourseItemLists().stream().map(TourCourseItemResponse::fromEntity).toList();
         return response;
     }
 }

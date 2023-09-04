@@ -5,14 +5,15 @@ import com.micutne.odik.domain.tour.TourItem;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 public class TourAddItemRequest {
-    String title;
     int tour_course_idx;
-    int tour_item_idx;
-    int level;
-    int day;
+    String title;
+    String state;
+    List<TourUpdateItemRequest> tour_items;
     TourCourse tourCourse;
-    TourItem tourItem;
+    List<TourItem> tourItems;
 }

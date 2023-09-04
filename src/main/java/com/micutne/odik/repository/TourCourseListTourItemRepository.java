@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface TourCourseListTourItemRepository extends JpaRepository<TourCourseListTourItem, Integer> {
     Boolean existsByTourCourseAndTourItem(TourCourse tourCourse, TourItem tourItem);
 
-    Boolean existsByTourCourseAndDayAndLevel(TourCourse tourCourse, int day, int level);
+    Boolean existsByDayAndLevel(int day, int level);
 }
