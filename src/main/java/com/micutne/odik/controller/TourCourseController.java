@@ -1,11 +1,14 @@
 package com.micutne.odik.controller;
 
 
+import com.micutne.odik.domain.like.dto.CourseLikeRequest;
+import com.micutne.odik.domain.like.dto.LikeResponse;
 import com.micutne.odik.domain.review.dto.course.ReviewCoursePageResultResponse;
 import com.micutne.odik.domain.review.dto.course.ReviewCourseRequest;
 import com.micutne.odik.domain.review.dto.course.ReviewCourseResultResponse;
 import com.micutne.odik.domain.tour.dto.course.TourCourseResponse;
 import com.micutne.odik.domain.tour.dto.course.TourCourseResultResponse;
+import com.micutne.odik.service.HistoryLikeCourseService;
 import com.micutne.odik.service.ReviewTourCourseService;
 import com.micutne.odik.service.TourCourseService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class TourCourseController {
     private final TourCourseService tourCourseService;
     private final ReviewTourCourseService reviewTourCourseService;
+    private final HistoryLikeCourseService historyLikeCourseService;
 
     @RequestMapping(method = RequestMethod.GET, params = "course")
     public TourCourseResultResponse readOne(
@@ -36,6 +40,13 @@ public class TourCourseController {
         return tourCourseService.readAll(search, pageNo, pageSize);
     }
 
+//    @PutMapping("/{course_id}")
+//    public TourCourseResultResponse updateCourse(
+//            Authentication authentication,
+//            @PathVariable String course_id, @RequestBody )
+//    {
+//
+//    }
 
     @RequestMapping(value = "review", method = RequestMethod.GET, params = "course")
     public ReviewCoursePageResultResponse readReviewAll(@RequestParam(name = "course") int courseId,
@@ -48,6 +59,7 @@ public class TourCourseController {
     public ReviewCourseResultResponse readReviewOne(@RequestParam(name = "review") int reviewId) {
         return reviewTourCourseService.readReview(reviewId);
     }
+
 
     @PostMapping("/review")
     public ReviewCourseResultResponse createReview(
@@ -69,19 +81,18 @@ public class TourCourseController {
             @RequestBody ReviewCourseRequest request) {
         return reviewTourCourseService.delete(request, authentication.getPrincipal().toString());
     }
-//    @PutMapping("/{course_id}")
-//    public TourCourseResultResponse updateCourse(
-//            Authentication authentication,
-//            @PathVariable String course_id, @RequestBody )
-//    {
-//
-//    }
-//
-//    @PutMapping("/{course_id}/review/{review_id}")
-//    public TourCourseResultResponse updateCourseReview(
-//            Authentication authentication,
-//            @PathVariable String course_id, @PathVariable String review_id)
-//    {
-//
-//    }
+
+    @GetMapping("/{course_id}/like")
+    public LikeResponse readLike(Authentication authentication,
+                                 @PathVariable int course_id) {
+        return historyLikeCourseService.read(course_id, authentication.getPrincipal().toString());
+    }
+
+    @PostMapping("/{course_id}/like")
+    public LikeResponse updateLike(Authentication authentication,
+                                   @PathVariable int course_id,
+                                   @RequestBody CourseLikeRequest request) {
+        return historyLikeCourseService.update(course_id, request, authentication.getPrincipal().toString());
+    }
+
 }

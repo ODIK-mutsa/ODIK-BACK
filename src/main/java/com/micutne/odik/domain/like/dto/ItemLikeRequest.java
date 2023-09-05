@@ -6,11 +6,7 @@ import lombok.Data;
 
 @Data
 public class ItemLikeRequest {
-    int tour_item_idx;
+    boolean like;
     TourItem tourItem;
     User user;
-
-    public ItemLikeRequest() {
-        this.tour_item_idx = -1;
-    }
 }
