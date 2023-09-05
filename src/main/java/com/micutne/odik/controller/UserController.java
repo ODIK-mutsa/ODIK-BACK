@@ -6,7 +6,7 @@ import com.micutne.odik.domain.tour.dto.course.TourCourseResultListResponse;
 import com.micutne.odik.domain.tour.dto.course.TourCourseResultResponse;
 import com.micutne.odik.domain.user.dto.ProfileResponse;
 import com.micutne.odik.domain.user.dto.UserRequest;
-import com.micutne.odik.domain.user.dto.UserResponse;
+import com.micutne.odik.domain.user.dto.UserResultResponse;
 import com.micutne.odik.service.TourCourseService;
 import com.micutne.odik.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class UserController {
 
 
     @GetMapping
-    public UserResponse readMyInfo(Authentication authentication) {
+    public UserResultResponse readMyInfo(Authentication authentication) {
         return userService.readOne(authentication.getPrincipal().toString());
     }
 
@@ -34,12 +34,12 @@ public class UserController {
     }
 
     @PutMapping
-    public UserResponse updateMyInfo(Authentication authentication, @RequestBody UserRequest request) {
+    public UserResultResponse updateMyInfo(Authentication authentication, @RequestBody UserRequest request) {
         return userService.updateInfo(request, authentication.getPrincipal().toString());
     }
 
     @PutMapping("state")
-    public UserResponse updateMyState(Authentication authentication, @RequestBody UserRequest request) {
+    public UserResultResponse updateMyState(Authentication authentication, @RequestBody UserRequest request) {
         return userService.updateState(request, authentication.getPrincipal().toString());
     }
 
