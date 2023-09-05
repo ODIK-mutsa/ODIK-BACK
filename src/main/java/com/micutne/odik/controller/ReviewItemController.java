@@ -1,46 +1,57 @@
 package com.micutne.odik.controller;
 
-import com.micutne.odik.domain.review.dto.ReviewTourItemListResponse;
+import com.micutne.odik.domain.review.dto.ReviewTourItemPageResponse;
 import com.micutne.odik.domain.review.dto.ReviewTourItemRequest;
 import com.micutne.odik.domain.review.dto.ReviewTourItemResponse;
+import com.micutne.odik.domain.review.dto.ReviewTourItemResultResponse;
 import com.micutne.odik.service.ReviewTourItemService;
-import jakarta.mail.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/tour/item/{itemId}/review")
+@RequestMapping("/tour/item/review")
 public class ReviewItemController {
     private final ReviewTourItemService reviewTourItemService;
 
     /**
      *  특정 리뷰 불러오기
      */
+    /*
     @GetMapping("{reviewId}")
-    public ReviewTourItemResponse readOne (
+    public ReviewTourItemResponse readReviewOne (
             @PathVariable("itemId") int itemId, @PathVariable("reviewId") int reviewId
     ) {
         return reviewTourItemService.readOne(itemId, reviewId);
     }
 
+     */
+    @RequestMapping(value = "", method = RequestMethod.GET, params = "review")
+    public ReviewTourItemResultResponse readReviewOne(@RequestParam(name = "review") int reviewId) {
+        return reviewTourItemService.readReview(reviewId);
+    }
+
     /**
      * 전체 리뷰 불러오기
      */
+    /*
     @GetMapping("")
-    public Page<ReviewTourItemListResponse> readAll(
+    public Page<ReviewTourItemPageResponse> readAll(
             @PathVariable("itemId") int itemId,
             @RequestParam(name = "no", defaultValue = "0") int pageNo,
             @RequestParam(name = "size", defaultValue = "20") int pageSize) {
         return reviewTourItemService.readAll(pageNo, pageSize);
+    }
+
+     */
+    @RequestMapping(value = "", method = RequestMethod.GET, params = "item")
+    public ReviewTourItemPageResponse readReviewAll(@RequestParam(name = "item") int tourItemId,
+                                                    @RequestParam(name = "page_no", defaultValue = "0") int pageNo,
+                                                    @RequestParam(name = "page_size", defaultValue = "20") int pageSize) {
+        return reviewTourItemService.readTourItem(tourItemId, pageNo, pageSize);
     }
 
 
@@ -48,37 +59,33 @@ public class ReviewItemController {
      * 리뷰 생성
      */
     @PostMapping("")
-    public ReviewTourItemResponse create(
+    public ReviewTourItemResultResponse createReview(
             Authentication authentication,
-            @PathVariable("itemId") int itemId,
             @RequestBody ReviewTourItemRequest request
             ) {
-        return reviewTourItemService.create(itemId, request, authentication.getPrincipal().toString());
+        return reviewTourItemService.create(request, authentication.getPrincipal().toString());
     }
 
     /**
      * 리뷰 수정
      */
-    @PutMapping("{reviewId}")
-    public ReviewTourItemResponse update(
+    @PutMapping("")
+    public ReviewTourItemResultResponse updateReview(
             Authentication authentication,
-            @PathVariable("itemId") int itemId,
-            @PathVariable("reviewId") int reviewId,
             @RequestBody ReviewTourItemRequest request
     ) {
-        return reviewTourItemService.update(itemId, reviewId, request, authentication.getPrincipal().toString());
+        return reviewTourItemService.update(request, authentication.getPrincipal().toString());
     }
 
     /**
      * 리뷰 삭제
      */
-    @DeleteMapping("{reviewId}")
-    public void remove(
+    @DeleteMapping("")
+    public void removeReview(
             Authentication authentication,
-            @PathVariable("itemId") int itemId,
-            @PathVariable("reviewId") int reviewId
+            @RequestBody ReviewTourItemRequest request
     ) {
-        reviewTourItemService.remove(itemId, reviewId, authentication.getPrincipal().toString());
+        reviewTourItemService.remove(request, authentication.getPrincipal().toString());
     }
 
 
