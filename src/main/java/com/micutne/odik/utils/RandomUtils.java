@@ -7,16 +7,15 @@ import java.util.Random;
 @Component
 public class RandomUtils {
 
-    public static String Random6Hex() {
+    public static String Random6Number() {
         Random random = new Random();
-        StringBuilder hexBuilder = new StringBuilder();
+        StringBuilder numberBuilder = new StringBuilder();
 
         for (int i = 0; i < 6; i++) {
-            int randomNumber = random.nextInt(16); // 0부터 15까지의 난수 생성
-            char hexDigit = (randomNumber < 10) ? (char) ('0' + randomNumber) : (char) ('A' + (randomNumber - 10));
-            hexBuilder.append(hexDigit);
+            int randomNumber = random.nextInt(9); // 0부터 15까지의 난수 생성
+            numberBuilder.append(randomNumber);
         }
 
-        return hexBuilder.toString();
+        return numberBuilder.toString();
     }
 }
