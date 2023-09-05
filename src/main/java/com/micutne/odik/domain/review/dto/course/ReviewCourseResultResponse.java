@@ -1,16 +1,16 @@
 package com.micutne.odik.domain.review.dto.course;
 
-import com.micutne.odik.domain.review.ReviewCourse;
+import com.micutne.odik.domain.review.ReviewTourCourse;
 import lombok.Data;
 
 @Data
 public class ReviewCourseResultResponse {
     String result;
-    ReviewTourCourseResponse review_tour_course;
+    ReviewCourseResponse review_tour_course;
 
-    public static ReviewCourseResultResponse fromEntity(ReviewCourse reviewCourse, String result) {
+    public static ReviewCourseResultResponse fromEntity(ReviewTourCourse reviewCourse, String result) {
         ReviewCourseResultResponse response = new ReviewCourseResultResponse();
-        response.review_tour_course = ReviewTourCourseResponse.fromEntity(reviewCourse);
+        response.review_tour_course = ReviewCourseResponse.fromEntity(reviewCourse);
         response.result = result;
         return response;
     }

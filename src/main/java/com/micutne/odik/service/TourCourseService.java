@@ -57,7 +57,6 @@ public class TourCourseService {
     }
 
     public Page<TourCourseResponse> readAll(String title, int pageNo, int pageSize) {
-        log.info("title : " + title);
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         String STATE = "public";
         Page<TourCourse> entities = tourCourseRepository.findAllByStateAndTitleContaining(STATE, title, pageable);

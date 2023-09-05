@@ -1,7 +1,7 @@
 package com.micutne.odik.domain.review;
 
 import com.micutne.odik.domain.BaseEntity;
-import com.micutne.odik.domain.review.dto.course.ReviewTourCourseRequest;
+import com.micutne.odik.domain.review.dto.course.ReviewCourseRequest;
 import com.micutne.odik.domain.tour.TourCourse;
 import com.micutne.odik.domain.user.User;
 import jakarta.persistence.*;
@@ -11,13 +11,13 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class ReviewCourse extends BaseEntity {
+public class ReviewTourCourse extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idx;
 
     @Column(length = 4, nullable = false)
-    private int rating;
+    private float rating;
 
     @Lob
     @Column(columnDefinition = "TEXT", nullable = false)
@@ -31,8 +31,8 @@ public class ReviewCourse extends BaseEntity {
     @JoinColumn
     private TourCourse tourCourse;
 
-    public static ReviewCourse fromDto(ReviewTourCourseRequest request) {
-        ReviewCourse reviewCourse = new ReviewCourse();
+    public static ReviewTourCourse fromDto(ReviewCourseRequest request) {
+        ReviewTourCourse reviewCourse = new ReviewTourCourse();
         reviewCourse.rating = request.getRating();
         reviewCourse.content = request.getContent();
         reviewCourse.user = request.getUser();
@@ -40,7 +40,7 @@ public class ReviewCourse extends BaseEntity {
         return reviewCourse;
     }
 
-    public void update(ReviewTourCourseRequest request) {
+    public void update(ReviewCourseRequest request) {
         if (request.getRating() != -1) rating = request.getRating();
         if (request.getContent() != null) content = request.getContent();
     }
