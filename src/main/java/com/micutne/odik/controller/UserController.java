@@ -2,6 +2,7 @@ package com.micutne.odik.controller;
 
 import com.micutne.odik.domain.tour.dto.course.TourAddItemRequest;
 import com.micutne.odik.domain.tour.dto.course.TourCourseRequest;
+import com.micutne.odik.domain.tour.dto.course.TourCourseResultListResponse;
 import com.micutne.odik.domain.tour.dto.course.TourCourseResultResponse;
 import com.micutne.odik.domain.user.dto.ProfileResponse;
 import com.micutne.odik.domain.user.dto.UserRequest;
@@ -48,6 +49,16 @@ public class UserController {
     @GetMapping("course")
     public TourCourseResultResponse readMyCourse(Authentication authentication) {
         return tourCourseService.readMyCourse(authentication.getPrincipal().toString());
+    }
+
+    /**
+     * 사용자가 생성한 코스 불러오기
+     */
+    @GetMapping("course/list")
+    public TourCourseResultListResponse readMyCourses(Authentication authentication,
+                                                      @RequestParam(name = "page_no", defaultValue = "0") int pageNo,
+                                                      @RequestParam(name = "page_size", defaultValue = "20") int pageSize) {
+        return tourCourseService.readMyCourses(authentication.getPrincipal().toString(), pageNo, pageSize);
     }
 
     /**

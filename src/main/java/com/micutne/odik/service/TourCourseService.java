@@ -28,7 +28,6 @@ public class TourCourseService {
     private final TourItemRepository tourItemRepository;
     private final TourCourseListTourItemRepository tourCourseItemListRepository;
     private final UserRepository userRepository;
-    private final HistoryLikeCourseService historyLikeCourseService;
 
     public TourCourseResultResponse readMyCourse(String username) {
         User user = userRepository.findByIdOrThrow(username);
@@ -40,13 +39,13 @@ public class TourCourseService {
         else {
             tourCourse = tourCourseRepository.findByUserIdxAndStateOrThrow(user, "cart");
         }
-        return TourCourseResultResponse.fromEntity(tourCourse, historyLikeCourseService.countCourse(tourCourse), "OK");
+        return TourCourseResultResponse.fromEntity(tourCourse, "OK");
     }
 
     public TourCourseResultResponse readOne(int course) {
         if (tourCourseRepository.existsByIdxAndState(course, "public")) {
             TourCourse tourCourse = tourCourseRepository.findByIdxAndStateOrThrow(course, "public");
-            return TourCourseResultResponse.fromEntity(tourCourse, historyLikeCourseService.countCourse(tourCourse), "OK");
+            return TourCourseResultResponse.fromEntity(tourCourse, "OK");
         }
         TourCourseResultResponse response = new TourCourseResultResponse();
         response.setResult("NOT_EXIST");
@@ -56,8 +55,15 @@ public class TourCourseService {
     public Page<TourCourseResponse> readAll(String title, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         String STATE = "public";
-        Page<TourCourse> entities = tourCourseRepository.findAllByStateAndTitleContaining(STATE, title, pageable);
+        Page<TourCourse> entities = tourCourseRepository.findAllByStateAndTitleContainingOrderByDateCreateDesc(STATE, title, pageable);
         return entities.map(TourCourseResponse::fromEntityForList);
+    }
+
+    public TourCourseResultListResponse readMyCourses(String username, int pageNo, int pageSize) {
+        User user = userRepository.findByIdOrThrow(username);
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<TourCourse> entities = tourCourseRepository.findAllByUserCourse(user, pageable);
+        return TourCourseResultListResponse.fromEntity(entities.map(TourCourseResponse::fromEntityForList), "OK");
     }
 
     public TourCourseResultResponse create(TourCourseRequest request, String username) {
@@ -69,11 +75,7 @@ public class TourCourseService {
             return TourCourseResultResponse.fromEntity(tourCourseRepository.save(TourCourse.fromDto(request)), "OK");
         } else {
             TourCourse tourCourse = tourCourseRepository.findByUserIdxAndStateOrThrow(user, "cart");
-            return TourCourseResultResponse.fromEntity(
-                    tourCourse,
-                    historyLikeCourseService.countCourse(tourCourse),
-                    "ALREADY_EXIST"
-            );
+            return TourCourseResultResponse.fromEntity(tourCourse, "ALREADY_EXIST");
         }
 
     }
@@ -108,13 +110,10 @@ public class TourCourseService {
             tourCourseItemListRepository.saveAll(newItems.stream().map(i -> TourCourseListTourItem.fromDto(i, tourCourse)).toList());
 
             return TourCourseResultResponse
-                    .fromEntity(
-                            tourCourseRepository.findByIdxOrThrow(request.getTour_course_idx()),
-                            historyLikeCourseService.countCourse(tourCourse),
-                            "OK"
-                    );
+                    .fromEntity(tourCourseRepository.findByIdxOrThrow(request.getTour_course_idx()), "OK");
         }
         return TourCourseResultResponse.fromEntity("NOT_EXIST");
     }
+
 
 }
