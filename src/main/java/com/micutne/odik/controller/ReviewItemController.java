@@ -2,7 +2,6 @@ package com.micutne.odik.controller;
 
 import com.micutne.odik.domain.review.dto.ReviewTourItemPageResponse;
 import com.micutne.odik.domain.review.dto.ReviewTourItemRequest;
-import com.micutne.odik.domain.review.dto.ReviewTourItemResponse;
 import com.micutne.odik.domain.review.dto.ReviewTourItemResultResponse;
 import com.micutne.odik.service.ReviewTourItemService;
 import lombok.RequiredArgsConstructor;
@@ -20,15 +19,6 @@ public class ReviewItemController {
     /**
      *  특정 리뷰 불러오기
      */
-    /*
-    @GetMapping("{reviewId}")
-    public ReviewTourItemResponse readReviewOne (
-            @PathVariable("itemId") int itemId, @PathVariable("reviewId") int reviewId
-    ) {
-        return reviewTourItemService.readOne(itemId, reviewId);
-    }
-
-     */
     @RequestMapping(value = "", method = RequestMethod.GET, params = "review")
     public ReviewTourItemResultResponse readReviewOne(@RequestParam(name = "review") int reviewId) {
         return reviewTourItemService.readReview(reviewId);
@@ -36,16 +26,6 @@ public class ReviewItemController {
 
     /**
      * 전체 리뷰 불러오기
-     */
-    /*
-    @GetMapping("")
-    public Page<ReviewTourItemPageResponse> readAll(
-            @PathVariable("itemId") int itemId,
-            @RequestParam(name = "no", defaultValue = "0") int pageNo,
-            @RequestParam(name = "size", defaultValue = "20") int pageSize) {
-        return reviewTourItemService.readAll(pageNo, pageSize);
-    }
-
      */
     @RequestMapping(value = "", method = RequestMethod.GET, params = "item")
     public ReviewTourItemPageResponse readReviewAll(@RequestParam(name = "item") int tourItemId,

@@ -5,7 +5,6 @@ import com.micutne.odik.domain.review.dto.ReviewTourItemRequest;
 import com.micutne.odik.domain.tour.TourItem;
 import com.micutne.odik.domain.user.User;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,16 +30,7 @@ public class ReviewTourItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tour_item_idx")
     private TourItem tourItem;
-/*
-    @Builder
-    public ReviewTourItem(float rating, String content, TourItem tour_item_idx) {
-        this.rating = rating;
-        this.content = content;
-       // this.userIdx = user_idx;
-        this.tourItemIdx = tour_item_idx;
-    }
 
- */
     public static ReviewTourItem fromDto(ReviewTourItemRequest request) {
         ReviewTourItem reviewTourItem = new ReviewTourItem();
         reviewTourItem.rating = request.getRating();

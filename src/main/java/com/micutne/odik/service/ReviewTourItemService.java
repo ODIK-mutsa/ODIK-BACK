@@ -1,8 +1,5 @@
 package com.micutne.odik.service;
 
-import com.micutne.odik.common.exception.AuthException;
-import com.micutne.odik.common.exception.BusinessException;
-import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.review.ReviewTourItem;
 import com.micutne.odik.domain.review.dto.*;
 import com.micutne.odik.domain.tour.TourItem;
@@ -24,18 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewTourItemService {
     private final ReviewTourItemRepository reviewTourItemRepository;
     private final TourItemRepository tourItemRepository;
-    private final ReviewTourItemMapper reviewTourItemMapper;
     private final UserRepository userRepository;
-   // private final ReviewTourItemResultResponse reviewTourItemResultResponse;
 
     /**
      *  특정 리뷰 불러오기
-     */
-    /*
-    public ReviewTourItemResponse readOne(int itemIdx, int reviewIdx) {
-        ReviewTourItem reviewTourItem = reviewTourItemRepository.findByIdOrThrow(reviewIdx);
-        TourItem tourItem = tourItemRepository.findByIdOrThrow(itemIdx);
-        return ReviewTourItemResponse.fromEntity(reviewTourItem);
      */
     public ReviewTourItemResultResponse readReview(int reviewId) {
         if (reviewTourItemRepository.existsByIdx(reviewId)) {
@@ -47,13 +36,6 @@ public class ReviewTourItemService {
 
     /**
      * 전체 리뷰 불러오기
-     */
-    /*
-    public Page<ReviewTourItemPageResponse> readAll(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        return reviewTourItemRepository.findAll(pageable).map(reviewTourItemMapper::toListDto);
-    }
-
      */
     public ReviewTourItemPageResponse readTourItem(int tourItemId, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
@@ -69,19 +51,6 @@ public class ReviewTourItemService {
     }
     /**
      * 리뷰 생성
-     */
-    /*
-    public ReviewTourItemResponse create(int tour_item_idx, ReviewTourItemRequest request, String username) {
-        TourItem tourItem = tourItemRepository.findByIdOrThrow(tour_item_idx);
-        request.setTour_item_idx(tourItem);
-        //request.setUser_idx(userRepository.findByIdOrThrow(username));
-        ReviewTourItem reviewTourItem = reviewTourItemMapper.toEntity(request);
-        //ReviewTourItem reviewTourItem = reviewTourItemMapper.requestToEntity(request);
-        reviewTourItem = reviewTourItemRepository.save(reviewTourItem);
-
-        return ReviewTourItemResponse.fromEntity(reviewTourItem);
-    }
-
      */
     public ReviewTourItemResultResponse create(ReviewTourItemRequest request, String username) {
         User user = userRepository.findByIdOrThrow(username);
@@ -106,22 +75,6 @@ public class ReviewTourItemService {
 
     /**
      * 리뷰 수정
-     */
-    /*
-    public ReviewTourItemResponse update(int itemIdx, int reviewIdx, ReviewTourItemRequest request, String username) {
-        TourItem tourItem = tourItemRepository.findByIdOrThrow(itemIdx);
-        User user = userRepository.findByIdOrThrow(username);
-        ReviewTourItem reviewTourItem = reviewTourItemRepository.findByIdOrThrow(reviewIdx);
-
-        //checkAuth(reviewTourItem, user);
-        checkPath(reviewTourItem, tourItem);
-        reviewTourItem.update(request);
-        //reviewTourItemResponse.setResult("OK");
-        reviewTourItemRepository.save(reviewTourItem);
-
-        return ReviewTourItemResponse.fromEntity(reviewTourItem);
-    }
-
      */
     @Transactional
     public ReviewTourItemResultResponse update(ReviewTourItemRequest request, String username) {
@@ -148,23 +101,6 @@ public class ReviewTourItemService {
     /**
      * 리뷰 삭제
      */
-    /*
-    public void remove(int itemId, int reviewId, String username) {
-        TourItem tourItem = tourItemRepository.findByIdOrThrow(itemId);
-        User user = userRepository.findByIdOrThrow(username);
-        ReviewTourItem reviewTourItem = reviewTourItemRepository.findByIdOrThrow(reviewId);
-
-        //checkAuth(reviewTourItem, user);
-        checkPath(reviewTourItem, tourItem);
-        try {
-            reviewTourItemRepository.delete(reviewTourItem);
-        } catch (Exception e) {
-            throw new BusinessException(ErrorCode.REVIEW_ITEM_DELETE_FAIL);
-        }
-        log.info("delete a review");
-    }
-
-     */
     public ReviewTourItemResultResponse remove(ReviewTourItemRequest request, String username) {
         User user = userRepository.findByIdOrThrow(username);
 
@@ -185,17 +121,7 @@ public class ReviewTourItemService {
 
     // 리뷰 권한 확인
     public boolean checkAuth(ReviewTourItem reviewTourItem, User user) {
-        //if (!reviewTourItem.getUserIdx().equals(user)) throw new AuthException(ErrorCode.USER_NOT_FOUND);
         return reviewTourItem.getUser().equals(user);
     }
-
-
-    // 리뷰 경로 확인
-    /*
-    public void checkPath(ReviewTourItem reviewTourItem, TourItem tourItem) {
-        if (!reviewTourItem.getTourItemIdx().equals(tourItem)) throw new AuthException(ErrorCode.TOUR_ITEM_NOT_FOUND);
-    }
-
-     */
 }
 
