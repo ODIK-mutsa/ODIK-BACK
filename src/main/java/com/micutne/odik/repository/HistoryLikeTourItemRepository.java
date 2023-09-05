@@ -29,4 +29,6 @@ public interface HistoryLikeTourItemRepository extends JpaRepository<HistoryLike
     Optional<HistoryLikeTourItem> findByTourItemAndUser(TourItem tourItem, User user);
 
     Boolean existsByTourItemAndUser(TourItem tourItem, User user);
+
+    int countByTourItem(TourItem tourItem);
 }

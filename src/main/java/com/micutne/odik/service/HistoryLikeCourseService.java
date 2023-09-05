@@ -33,6 +33,10 @@ public class HistoryLikeCourseService {
         return LikeResponse.toDto("COURSE_NOT_EXIST");
     }
 
+    public int countCourse(TourCourse tourCourse) {
+        return historyLikeTourCourseRepository.countByTourCourse(tourCourse);
+    }
+
     public LikeResponse update(int courseId, CourseLikeRequest request, String username) {
         User user = userRepository.findByIdOrThrow(username);
         if (tourCourseRepository.existsByIdx(courseId)) {

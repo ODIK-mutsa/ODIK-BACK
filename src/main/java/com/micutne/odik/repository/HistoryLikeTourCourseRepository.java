@@ -31,5 +31,7 @@ public interface HistoryLikeTourCourseRepository extends JpaRepository<HistoryLi
 
     Boolean existsByTourCourseAndUser(TourCourse tourCourse, User user);
 
+    int countByTourCourse(TourCourse tourCourse);
+
 
 }

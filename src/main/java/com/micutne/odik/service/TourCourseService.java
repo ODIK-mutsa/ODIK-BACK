@@ -28,6 +28,7 @@ public class TourCourseService {
     private final TourItemRepository tourItemRepository;
     private final TourCourseListTourItemRepository tourCourseItemListRepository;
     private final UserRepository userRepository;
+    private final HistoryLikeCourseService historyLikeCourseService;
 
     public TourCourseResultResponse readMyCourse(String username) {
         User user = userRepository.findByIdOrThrow(username);
@@ -39,17 +40,13 @@ public class TourCourseService {
         else {
             tourCourse = tourCourseRepository.findByUserIdxAndStateOrThrow(user, "cart");
         }
-        TourCourseResultResponse response = TourCourseResultResponse.fromEntity(tourCourse);
-        response.setResult("OK");
-        return response;
+        return TourCourseResultResponse.fromEntity(tourCourse, historyLikeCourseService.countCourse(tourCourse), "OK");
     }
 
     public TourCourseResultResponse readOne(int course) {
         if (tourCourseRepository.existsByIdxAndState(course, "public")) {
             TourCourse tourCourse = tourCourseRepository.findByIdxAndStateOrThrow(course, "public");
-            TourCourseResultResponse response = TourCourseResultResponse.fromEntity(tourCourse);
-            response.setResult("OK");
-            return response;
+            return TourCourseResultResponse.fromEntity(tourCourse, historyLikeCourseService.countCourse(tourCourse), "OK");
         }
         TourCourseResultResponse response = new TourCourseResultResponse();
         response.setResult("NOT_EXIST");
@@ -68,13 +65,15 @@ public class TourCourseService {
         if (!tourCourseRepository.existsByUserIdxAndState(user, "cart")) {
             request.setUser(user);
             request.setState("cart");
-            TourCourseResultResponse response = TourCourseResultResponse.fromEntity(tourCourseRepository.save(TourCourse.fromDto(request)));
-            response.setResult("OK");
-            return response;
+
+            return TourCourseResultResponse.fromEntity(tourCourseRepository.save(TourCourse.fromDto(request)), "OK");
         } else {
-            TourCourseResultResponse response = TourCourseResultResponse.fromEntity(tourCourseRepository.findByUserIdxAndStateOrThrow(user, "cart"));
-            response.setResult("ALREADY_EXIST");
-            return response;
+            TourCourse tourCourse = tourCourseRepository.findByUserIdxAndStateOrThrow(user, "cart");
+            return TourCourseResultResponse.fromEntity(
+                    tourCourse,
+                    historyLikeCourseService.countCourse(tourCourse),
+                    "ALREADY_EXIST"
+            );
         }
 
     }
@@ -108,13 +107,14 @@ public class TourCourseService {
 
             tourCourseItemListRepository.saveAll(newItems.stream().map(i -> TourCourseListTourItem.fromDto(i, tourCourse)).toList());
 
-            TourCourseResultResponse response = TourCourseResultResponse.fromEntity(tourCourseRepository.findByIdxOrThrow(request.getTour_course_idx()));
-            response.setResult("OK");
-            return response;
+            return TourCourseResultResponse
+                    .fromEntity(
+                            tourCourseRepository.findByIdxOrThrow(request.getTour_course_idx()),
+                            historyLikeCourseService.countCourse(tourCourse),
+                            "OK"
+                    );
         }
-        TourCourseResultResponse response = TourCourseResultResponse.fromEntity(tourCourse);
-        response.setResult("NOT_EXIST");
-        return response;
+        return TourCourseResultResponse.fromEntity("NOT_EXIST");
     }
 
 }

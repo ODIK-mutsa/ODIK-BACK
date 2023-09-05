@@ -12,6 +12,7 @@ public class TourCourseResponse {
     int idx;
     String title;
     String state;
+    int like;
 
     ProfileResponse user;
     List<TourCourseItemResponse> tour_items = new ArrayList<>();
