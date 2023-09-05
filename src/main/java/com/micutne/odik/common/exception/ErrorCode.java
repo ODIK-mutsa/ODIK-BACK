@@ -20,6 +20,8 @@ public enum ErrorCode {
     TOUR_ITEM_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "TI_002", "장소를 삭제 중 오류가 발생하였습니다."),
     TOUR_ITEM_ALREADY_EXIST(HttpStatus.INTERNAL_SERVER_ERROR, "TI_003", "이미 존재하는 장소입니다."),
 
+    REVIEW_COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "RC_001", "해당 댓글을 찾을 수 없습니다."),
+
     REVIEW_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "RI_001", "해당 댓글을 찾을 수 없습니다."),
     REVIEW_ITEM_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "RI_002", "리뷰를 삭제 중 오류가 발생하였습니다."),
 

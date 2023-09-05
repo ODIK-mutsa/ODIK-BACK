@@ -12,7 +12,6 @@ public class TourCourseResponse {
     int idx;
     String title;
     String state;
-    long like;
 
     ProfileResponse user;
     List<TourCourseItemResponse> tour_items = new ArrayList<>();
@@ -22,7 +21,6 @@ public class TourCourseResponse {
         response.idx = tourCourse.getIdx();
         response.title = tourCourse.getTitle();
         response.state = tourCourse.getState();
-        response.like = tourCourse.getLike();
         response.user = ProfileResponse.fromEntity(tourCourse.getUserIdx());
         response.tour_items = tourCourse.getTourCourseItemLists().stream().map(TourCourseItemResponse::fromEntity).toList();
         return response;
@@ -33,7 +31,6 @@ public class TourCourseResponse {
         response.idx = tourCourse.getIdx();
         response.title = tourCourse.getTitle();
         response.state = tourCourse.getState();
-        response.like = tourCourse.getLike();
         response.user = ProfileResponse.fromEntity(tourCourse.getUserIdx());
         return response;
     }

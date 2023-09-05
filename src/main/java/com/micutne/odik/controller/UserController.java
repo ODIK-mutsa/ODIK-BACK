@@ -6,7 +6,6 @@ import com.micutne.odik.domain.tour.dto.course.TourCourseResultResponse;
 import com.micutne.odik.domain.user.dto.ProfileResponse;
 import com.micutne.odik.domain.user.dto.UserRequest;
 import com.micutne.odik.domain.user.dto.UserResponse;
-import com.micutne.odik.service.AuthService;
 import com.micutne.odik.service.TourCourseService;
 import com.micutne.odik.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("user")
 public class UserController {
     private final UserService userService;
-    private final AuthService authService;
     private final TourCourseService tourCourseService;
 
 
@@ -60,31 +58,13 @@ public class UserController {
         return tourCourseService.create(request, authentication.getPrincipal().toString());
     }
 
-    /**
-     * 사용자 장바구니에 관광지 추가하기
-     */
-    @PostMapping("course/add_tour_item")
-    public TourCourseResultResponse addMyTourItem(Authentication authentication, @RequestBody TourAddItemRequest request) {
-        return tourCourseService.addTourItem(request, authentication.getPrincipal().toString());
-    }
 
     /**
      * 사용자 장바구니 수정하기
      */
     @PutMapping("course")
-    public TourCourseResultResponse update(@RequestBody TourCourseRequest request, Authentication authentication) {
-        return tourCourseService.updateCourse(request, authentication.getPrincipal().toString());
+    public TourCourseResultResponse update(@RequestBody TourAddItemRequest request, Authentication authentication) {
+        return tourCourseService.updateAll(request, authentication.getPrincipal().toString());
     }
 
-//    /**
-//     * 사용자 장바구니 삭제하기
-//     */
-//    @DeleteMapping("course")
-//    public ResponseDto remove(@PathVariable("idx") int idx,
-//                              Authentication authentication) {
-//        tourCourseService.remove(idx, authentication.getPrincipal().toString());
-//        ResponseDto responseDto = new ResponseDto();
-//        responseDto.setMessage("삭제 되었습니다.");
-//        return responseDto;
-//    }
 }
