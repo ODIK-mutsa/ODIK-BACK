@@ -20,6 +20,7 @@ public class TourItemRequest {
 
     String phone_number;
     Float point_google;
+    String type;
 
     List<String> images_google;
 
