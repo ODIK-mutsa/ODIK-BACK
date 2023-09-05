@@ -80,6 +80,7 @@ public class TourItem extends BaseEntity {
         this.locationLng = request.getLocation_lng();
         this.state = request.getState();
         this.address = request.getAddress();
+        this.type = request.getType();
 
     }
 
