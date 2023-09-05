@@ -11,5 +11,6 @@ public class TourCourseRequest {
     String title;
     String state;
     User user;
-
+    String like;
+    String time;
 }

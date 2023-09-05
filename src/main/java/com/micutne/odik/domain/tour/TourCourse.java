@@ -25,6 +25,9 @@ public class TourCourse extends BaseEntity {
     @JoinColumn(name = "user_idx")
     private User userIdx;
 
+    @Column
+    private long like;
+
     @OneToMany(mappedBy = "tourCourse")
     private List<TourCourseListTourItem> tourCourseItemLists = new ArrayList<>();
 
@@ -33,6 +36,7 @@ public class TourCourse extends BaseEntity {
         tourCourse.title = request.getTitle();
         tourCourse.state = request.getState();
         tourCourse.userIdx = request.getUser();
+        tourCourse.like = 0;
         return tourCourse;
     }
 
