@@ -22,5 +22,7 @@ public interface ReviewTourCourseRepository extends JpaRepository<ReviewCourse, 
 
     Page<ReviewCourse> findAll(Pageable pageable);
 
+    Boolean existsByIdx(int idx);
+
 
 }

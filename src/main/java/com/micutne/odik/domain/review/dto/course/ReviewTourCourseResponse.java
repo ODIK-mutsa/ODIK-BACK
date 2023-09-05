@@ -10,7 +10,7 @@ public class ReviewTourCourseResponse {
     String content;
     ProfileResponse user;
 
-    public ReviewTourCourseResponse fromEntity(ReviewCourse reviewCourse) {
+    public static ReviewTourCourseResponse fromEntity(ReviewCourse reviewCourse) {
         ReviewTourCourseResponse response = new ReviewTourCourseResponse();
         response.rating = reviewCourse.getRating();
         response.content = reviewCourse.getContent();

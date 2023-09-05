@@ -1,6 +1,7 @@
 package com.micutne.odik.domain.review;
 
 import com.micutne.odik.domain.BaseEntity;
+import com.micutne.odik.domain.review.dto.course.ReviewTourCourseRequest;
 import com.micutne.odik.domain.tour.TourCourse;
 import com.micutne.odik.domain.user.User;
 import jakarta.persistence.*;
@@ -30,12 +31,17 @@ public class ReviewCourse extends BaseEntity {
     @JoinColumn
     private TourCourse tourCourse;
 
-    public static ReviewCourse fromDto(int rating, String content, User user, TourCourse tourCourse) {
+    public static ReviewCourse fromDto(ReviewTourCourseRequest request) {
         ReviewCourse reviewCourse = new ReviewCourse();
-        reviewCourse.rating = rating;
-        reviewCourse.content = content;
-        reviewCourse.user = user;
-        reviewCourse.tourCourse = tourCourse;
+        reviewCourse.rating = request.getRating();
+        reviewCourse.content = request.getContent();
+        reviewCourse.user = request.getUser();
+        reviewCourse.tourCourse = request.getTourCourse();
         return reviewCourse;
+    }
+
+    public void update(ReviewTourCourseRequest request) {
+        if (request.getRating() != -1) rating = request.getRating();
+        if (request.getContent() != null) content = request.getContent();
     }
 }

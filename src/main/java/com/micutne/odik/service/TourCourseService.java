@@ -17,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -89,38 +88,13 @@ public class TourCourseService {
         return tourCourseRepository.save(TourCourse.fromDto(makeCourse));
     }
 
-    // 수정
-    @Transactional
-    public TourCourseResultResponse updateCourse(TourCourseRequest request, String username) {
-        User user = userRepository.findByIdOrThrow(username);
-        if (tourCourseRepository.existsByUserIdxAndState(user, "cart")) {
-            TourCourse tourCourse = tourCourseRepository.findByUserIdxAndStateOrThrow(user, "cart");
-            checkAuth(tourCourse, user);
-            tourCourse.update(request);
-            TourCourseResultResponse response = TourCourseResultResponse.fromEntity(tourCourse);
-            response.setResult("OK");
-            return response;
-        }
-        TourCourseResultResponse response = new TourCourseResultResponse();
-        response.setResult("NOT_EXIST");
-        return response;
-    }
-
-    // 삭제
-    public void remove(int idx, String username) {
-        TourCourse tourCourse = tourCourseRepository.findByIdxOrThrow(idx);
-        User user = userRepository.findByIdOrThrow(username);
-        checkAuth(tourCourse, user);
-        //TODO 삭제
-    }
-
 
     public void checkAuth(TourCourse tourCourse, User user) {
         if (!tourCourse.getUserIdx().equals(user)) throw new AuthException(ErrorCode.NOT_YOURS);
     }
 
 
-    public TourCourseResultResponse addTourItem(TourAddItemRequest request, String username) {
+    public TourCourseResultResponse updateAll(TourAddItemRequest request, String username) {
         User user = userRepository.findByIdOrThrow(username);
         TourCourse tourCourse = tourCourseRepository.findByIdxOrThrow(request.getTour_course_idx());
         checkAuth(tourCourse, user);
@@ -133,7 +107,7 @@ public class TourCourseService {
             List<TourUpdateItemRequest> newItems = request.getTour_items();
             newItems.forEach(item -> item.setItem(tourItemRepository.findByIdOrThrow(item.getIdx())));
 
-            List<TourCourseListTourItem> afterItems = tourCourseItemListRepository.saveAll(newItems.stream().map(i -> TourCourseListTourItem.fromDto(i, tourCourse)).toList());
+            tourCourseItemListRepository.saveAll(newItems.stream().map(i -> TourCourseListTourItem.fromDto(i, tourCourse)).toList());
 
             TourCourseResultResponse response = TourCourseResultResponse.fromEntity(tourCourseRepository.findByIdxOrThrow(request.getTour_course_idx()));
             response.setResult("OK");
@@ -144,38 +118,4 @@ public class TourCourseService {
         return response;
     }
 
-
-//    public TourItemResponse addTourItem(TourAddItemRequest request, String username) {
-//        User user = userRepository.findByIdOrThrow(username);
-//        if (tourCourseRepository.existsByIdx(request.getTour_course_idx())) {
-//            TourCourse tourCourse = tourCourseRepository.findByIdxOrThrow(request.getTour_course_idx());
-//            List<TourCourseListTourItem> beforeItems = tourCourse.getTourCourseItemLists();
-//            List<TourUpdateItemRequest> newItems = request.getTour_items();
-//            newItems.forEach(item -> item.setItem(tourItemRepository.findByIdOrThrow(item.getIdx())));
-//            List<TourItem> after_items = newItems.stream().map(TourUpdateItemRequest::getItem).toList();
-//            List<TourUpdateItemRequest> processedItems = new ArrayList<>();
-//
-//            if (!beforeItems.isEmpty()) {
-//                for (TourCourseListTourItem temp : beforeItems) {
-//                    //수정
-//                    if (after_items.contains(temp.getTourItem())) {
-//                        TourUpdateItemRequest updateTemp = newItems.stream().filter(item -> item.getIdx() == temp.getTourItem().getIdx()).findFirst().get();
-//                        processedItems.add(updateTemp);
-//                        temp.update(updateTemp);
-//                    }
-//                    //삭제
-//                    else {
-//                        tourCourseItemListRepository.delete(temp);
-//                        beforeItems.remove(temp);
-//                    }
-//                }
-//            }
-//
-//            //tourCourseItemListRepository.saveAll(processedItems.stream().map(i -> TourCourseListTourItem.fromDto(i, tourCourse)).toList());
-//            newItems.removeAll(processedItems);
-//            log.info(newItems.toString());
-//            tourCourseItemListRepository.saveAll(newItems.stream().map(i -> TourCourseListTourItem.fromDto(i, tourCourse)).toList());
-//            return new TourItemResponse("OK");
-//        } else return new TourItemResponse("NOT_EXIST");
-//    }
 }
