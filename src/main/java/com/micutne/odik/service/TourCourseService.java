@@ -5,10 +5,7 @@ import com.micutne.odik.common.exception.AuthException;
 import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.tour.TourCourse;
 import com.micutne.odik.domain.tour.TourCourseListTourItem;
-import com.micutne.odik.domain.tour.dto.course.TourAddItemRequest;
-import com.micutne.odik.domain.tour.dto.course.TourCourseRequest;
-import com.micutne.odik.domain.tour.dto.course.TourCourseResultResponse;
-import com.micutne.odik.domain.tour.dto.course.TourUpdateItemRequest;
+import com.micutne.odik.domain.tour.dto.course.*;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.repository.TourCourseListTourItemRepository;
 import com.micutne.odik.repository.TourCourseRepository;
@@ -16,6 +13,9 @@ import com.micutne.odik.repository.TourItemRepository;
 import com.micutne.odik.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +43,26 @@ public class TourCourseService {
         TourCourseResultResponse response = TourCourseResultResponse.fromEntity(tourCourse);
         response.setResult("OK");
         return response;
+    }
+
+    public TourCourseResultResponse readOne(int course) {
+        if (tourCourseRepository.existsByIdxAndState(course, "public")) {
+            TourCourse tourCourse = tourCourseRepository.findByIdxAndStateOrThrow(course, "public");
+            TourCourseResultResponse response = TourCourseResultResponse.fromEntity(tourCourse);
+            response.setResult("OK");
+            return response;
+        }
+        TourCourseResultResponse response = new TourCourseResultResponse();
+        response.setResult("NOT_EXIST");
+        return response;
+    }
+
+    public Page<TourCourseResponse> readAll(String title, int pageNo, int pageSize) {
+        log.info("title : " + title);
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        String STATE = "public";
+        Page<TourCourse> entities = tourCourseRepository.findAllByStateAndTitleContaining(STATE, title, pageable);
+        return entities.map(TourCourseResponse::fromEntityForList);
     }
 
     public TourCourseResultResponse create(TourCourseRequest request, String username) {
