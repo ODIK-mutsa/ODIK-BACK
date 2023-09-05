@@ -20,6 +20,8 @@ public enum ErrorCode {
     TOUR_ITEM_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "TI_002", "장소를 삭제 중 오류가 발생하였습니다."),
     TOUR_ITEM_ALREADY_EXIST(HttpStatus.INTERNAL_SERVER_ERROR, "TI_003", "이미 존재하는 장소입니다."),
 
+    REVIEW_COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "RC_001", "해당 댓글을 찾을 수 없습니다."),
+
     REVIEW_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "RI_001", "해당 댓글을 찾을 수 없습니다."),
     REVIEW_ITEM_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "RI_002", "리뷰를 삭제 중 오류가 발생하였습니다."),
 
@@ -39,7 +41,8 @@ public enum ErrorCode {
     EMAIL_TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "EM_003", "이메일 인증 토큰이 일치하지 않습니다."),
     INVALID_PW_VALUE(HttpStatus.BAD_REQUEST, "PW_001", "비밀번호가 맞지 않습니다."),
     NOT_YOURS(HttpStatus.BAD_REQUEST, "PW_000", "인증에 실패했습니다."),
-    TOUR_COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "TC_001", "코스를 찾을 수 없습니다.");
+    TOUR_COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "TC_001", "코스를 찾을 수 없습니다."),
+    HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "H_001", "좋아요 기록을 찾을 수 없습니다.");
 
 
     //------------------------------------------------------------------------//
