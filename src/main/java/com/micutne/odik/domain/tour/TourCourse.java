@@ -47,4 +47,3 @@ public class TourCourse extends BaseEntity {
         state = (request.getState() != null) ? request.getState() : state;
     }
 }
-
