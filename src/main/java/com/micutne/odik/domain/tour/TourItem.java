@@ -9,7 +9,6 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.util.List;
@@ -36,10 +35,11 @@ public class TourItem extends BaseEntity {
     private String state;
     @Column(nullable = false)
     private String address;
-    @ColumnDefault("unidentified")
+    @Column
     private String referenceIdGoogle;
     private String phoneNumber;
     private Float pointGoogle;
+    private String type;
     @OneToMany(mappedBy = "tourItemIdx", cascade = CascadeType.ALL)
     @CreatedDate
     private List<ImageTourItem> imagesGoogle;
@@ -48,7 +48,7 @@ public class TourItem extends BaseEntity {
     private List<ReviewTourItem> reviewTourItem;
 
     @Builder
-    public TourItem(String title, User user, Double location_lat, Double location_lng, String state, String address, String reference_id_google, String phone_number, Float point_google ) {
+    public TourItem(String title, User user, Double location_lat, Double location_lng, String state, String address, String reference_id_google, String phone_number, Float point_google, String type) {
         this.title = title;
         this.user = user;
         this.locationLat = location_lat;
@@ -58,6 +58,7 @@ public class TourItem extends BaseEntity {
         this.referenceIdGoogle = reference_id_google;
         this.phoneNumber = phone_number;
         this.pointGoogle = point_google;
+        this.type = type;
 
     }
 
@@ -79,13 +80,13 @@ public class TourItem extends BaseEntity {
         this.locationLng = request.getLocation_lng();
         this.state = request.getState();
         this.address = request.getAddress();
+        this.type = request.getType();
 
     }
 
     public void updateState(String state) {
         this.state = state;
     }
-
 
 
     public void updateUser(User user) {

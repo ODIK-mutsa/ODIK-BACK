@@ -38,7 +38,8 @@ public enum ErrorCode {
     INVALID_EMAIL_EXIST(HttpStatus.BAD_REQUEST, "EM_002", "이미 존재하는 이메일입니다."),
     EMAIL_TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "EM_003", "이메일 인증 토큰이 일치하지 않습니다."),
     INVALID_PW_VALUE(HttpStatus.BAD_REQUEST, "PW_001", "비밀번호가 맞지 않습니다."),
-    ;
+    NOT_YOURS(HttpStatus.BAD_REQUEST, "PW_000", "인증에 실패했습니다."),
+    TOUR_COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "TC_001", "코스를 찾을 수 없습니다.");
 
 
     //------------------------------------------------------------------------//
