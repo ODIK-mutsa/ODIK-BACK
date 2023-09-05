@@ -37,5 +37,3 @@ public interface TourItemRepository extends JpaRepository<TourItem, Integer> {
     Page<TourItem> findAllByType(String query, Pageable pageable);
 
 }
-
-
