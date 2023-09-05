@@ -1,10 +1,12 @@
 package com.micutne.odik.controller;
 
+import com.micutne.odik.domain.like.dto.ItemLikeRequest;
+import com.micutne.odik.domain.like.dto.LikeResponse;
 import com.micutne.odik.domain.tour.dto.TourItemRequest;
 import com.micutne.odik.domain.tour.dto.TourItemResponse;
+import com.micutne.odik.service.HistoryLikeItemService;
 import com.micutne.odik.service.TourItemService;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/tour/item")
 public class TourItemController {
     private final TourItemService tourItemService;
+    private final HistoryLikeItemService historyLikeItemService;
 
     /**
      * 특정 관광지 또는 전체 관광지 불러오기
@@ -84,6 +87,19 @@ public class TourItemController {
             @RequestParam(value = "pageNo", defaultValue = "0") int pageNo
     ) {
         return tourItemService.searchByType(query, pageNo);
+    }
+
+    @GetMapping("{item_id}/like")
+    public LikeResponse readLike(Authentication authentication,
+                                 @PathVariable int item_id) {
+        return historyLikeItemService.read(item_id, authentication.getPrincipal().toString());
+    }
+
+    @PostMapping("{item_id}/like")
+    public LikeResponse updateLike(Authentication authentication,
+                                   @PathVariable int item_id,
+                                   @RequestBody ItemLikeRequest request) {
+        return historyLikeItemService.update(item_id, request, authentication.getPrincipal().toString());
     }
 
 }
