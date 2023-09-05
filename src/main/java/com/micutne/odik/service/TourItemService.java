@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -117,6 +118,28 @@ public class TourItemService {
             throw new BusinessException(ErrorCode.TOUR_ITEM_DELETE_FAIL);
         }
         log.info("delete a tour item");
+    }
+
+    /**
+     * 관광지 검색 (제목)
+     */
+    public Page<TourItemResponse> searchByTitle(
+            String query, int pageNo
+    ){
+        Pageable pageable = PageRequest.of(
+                pageNo, 20, Sort.by("idx").descending());
+        return tourItemRepository.findAllByTitleContains(query, pageable).map(TourItemResponse::fromEntity);
+    }
+
+    /**
+     * 관광지 검색 (타입)
+     */
+    public Page<TourItemResponse> searchByType(
+            String query, int pageNo
+    ) {
+        Pageable pageable = PageRequest.of(
+                pageNo, 20, Sort.by("idx").descending());
+        return  tourItemRepository.findAllByType(query, pageable).map(TourItemResponse::fromEntity);
     }
 
     /**
