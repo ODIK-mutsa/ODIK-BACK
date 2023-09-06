@@ -11,6 +11,7 @@ import com.micutne.odik.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -37,6 +38,7 @@ public class HistoryLikeItemService {
         return historyLikeTourItemRepository.countByTourItem(tourItem);
     }
 
+    @Transactional
     public LikeResponse update(int itemId, ItemLikeRequest request, String username) {
         User user = userRepository.findByIdOrThrow(username);
         if (tourItemRepository.existsById(itemId)) {
@@ -51,6 +53,7 @@ public class HistoryLikeItemService {
                 request.setUser(user);
                 request.setTourItem(tourItem);
                 historyLikeTourItemRepository.save(HistoryLikeTourItem.fromDto(request));
+                tourItem.updateLike(1);
                 return LikeResponse.toDto(true, "OK");
             }
             //false : 제거

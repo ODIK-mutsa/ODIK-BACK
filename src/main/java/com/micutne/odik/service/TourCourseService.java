@@ -21,6 +21,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +58,9 @@ public class TourCourseService {
         return response;
     }
 
-    public Page<TourCourseResponse> searchAll(String title, String orderBy, int pageNo, int pageSize) {
+    public TourCourseResultListResponse searchAll(String title, String orderBy, int pageNo, int pageSize) {
+        title = URLDecoder.decode(title, StandardCharsets.UTF_8);
+        log.info(title);
         String[] keywords = title.split(" ");
         Specification<TourCourse> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -85,11 +89,18 @@ public class TourCourseService {
             pageable = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.ASC, sortData[0]));
         }
         Page<TourCourse> tourCourses = tourCourseRepository.findAll(spec, pageable);
-        return tourCourses.map(TourCourseResponse::fromEntityForList);
+
+        return TourCourseResultListResponse.fromEntity(tourCourses.map(TourCourseResponse::fromEntityForList), "OK");
     }
 
     private String[] findField(String orderBy) {
         switch (orderBy) {
+            case "recent" -> {
+                return new String[]{"dateCreate", "desc"};
+            }
+            case "like" -> {
+                return new String[]{"countLike", "asc"};
+            }
             default -> {
                 return new String[]{"dateCreate", "desc"};
             }

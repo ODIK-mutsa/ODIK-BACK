@@ -11,6 +11,7 @@ import com.micutne.odik.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -33,10 +34,7 @@ public class HistoryLikeCourseService {
         return LikeResponse.toDto("COURSE_NOT_EXIST");
     }
 
-    public int countCourse(TourCourse tourCourse) {
-        return historyLikeTourCourseRepository.countByTourCourse(tourCourse);
-    }
-
+    @Transactional
     public LikeResponse update(int courseId, CourseLikeRequest request, String username) {
         User user = userRepository.findByIdOrThrow(username);
         if (tourCourseRepository.existsByIdx(courseId)) {
@@ -51,6 +49,7 @@ public class HistoryLikeCourseService {
                 request.setUser(user);
                 request.setTourCourse(tourCourse);
                 historyLikeTourCourseRepository.save(HistoryLikeTourCourse.fromDto(request));
+                tourCourse.updateLike(1);
                 return LikeResponse.toDto(true, "OK");
             }
             //false : 제거
@@ -60,6 +59,7 @@ public class HistoryLikeCourseService {
 
             HistoryLikeTourCourse entity = historyLikeTourCourseRepository.findByTourCourseAndUserOrThrow(tourCourse, user);
             historyLikeTourCourseRepository.delete(entity);
+            tourCourse.updateLike(-1);
 
             return LikeResponse.toDto(false, "OK");
         }
