@@ -43,7 +43,7 @@ public class TourItem extends BaseEntity {
     @OneToMany(mappedBy = "tourItemIdx", cascade = CascadeType.ALL)
     @CreatedDate
     private List<ImageTourItem> imagesGoogle;
-    @OneToMany(mappedBy = "tourItemIdx", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "tourItem", cascade = CascadeType.ALL)
     @CreatedDate
     private List<ReviewTourItem> reviewTourItem;
 
