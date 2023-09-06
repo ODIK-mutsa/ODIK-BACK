@@ -11,13 +11,17 @@ import com.micutne.odik.repository.TourCourseListTourItemRepository;
 import com.micutne.odik.repository.TourCourseRepository;
 import com.micutne.odik.repository.TourItemRepository;
 import com.micutne.odik.repository.UserRepository;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -52,11 +56,44 @@ public class TourCourseService {
         return response;
     }
 
-    public Page<TourCourseResponse> readAll(String title, int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        String STATE = "public";
-        Page<TourCourse> entities = tourCourseRepository.findAllByStateAndTitleContainingOrderByDateCreateDesc(STATE, title, pageable);
-        return entities.map(TourCourseResponse::fromEntityForList);
+    public Page<TourCourseResponse> searchAll(String title, String orderBy, int pageNo, int pageSize) {
+        String[] keywords = title.split(" ");
+        Specification<TourCourse> spec = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // 검색어가 있으면 키워드에 따라 title을 like 검색
+            if (keywords.length > 0) {
+                Predicate[] keywordPredicates = new Predicate[keywords.length];
+                for (int i = 0; i < keywords.length; i++) {
+                    keywordPredicates[i] = criteriaBuilder.like(root.get("title"), "%" + keywords[i] + "%");
+                }
+                predicates.add(criteriaBuilder.or(keywordPredicates));
+            }
+
+            predicates.add(criteriaBuilder.equal(root.get("state"), "public"));
+            // 추가적인 조건을 여기에 추가할 수 있음
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Pageable pageable;
+        String[] sortData = findField(orderBy);
+        // 정렬 설정
+        if (sortData[1].equals("desc")) {
+            pageable = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.DESC, sortData[0]));
+        } else {
+            pageable = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.ASC, sortData[0]));
+        }
+        Page<TourCourse> tourCourses = tourCourseRepository.findAll(spec, pageable);
+        return tourCourses.map(TourCourseResponse::fromEntityForList);
+    }
+
+    private String[] findField(String orderBy) {
+        switch (orderBy) {
+            default -> {
+                return new String[]{"dateCreate", "desc"};
+            }
+        }
     }
 
     public TourCourseResultListResponse readMyCourses(String username, int pageNo, int pageSize) {

@@ -35,9 +35,10 @@ public class TourCourseController {
 
     @RequestMapping(method = RequestMethod.GET)
     public Page<TourCourseResponse> readAll(@RequestParam(name = "search", required = false, defaultValue = "") String search,
+                                            @RequestParam(name = "orderBy", required = false, defaultValue = "latest") String orderBy,
                                             @RequestParam(name = "page_no", defaultValue = "0") int pageNo,
                                             @RequestParam(name = "page_size", defaultValue = "20") int pageSize) {
-        return tourCourseService.readAll(search, pageNo, pageSize);
+        return tourCourseService.searchAll(search, orderBy, pageNo, pageSize);
     }
 
 //    @PutMapping("/{course_id}")
