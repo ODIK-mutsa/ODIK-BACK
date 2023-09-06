@@ -41,8 +41,6 @@ public class TourItemService {
     private final UserRepository userRepository;
     private final TourItemMapper tourItemMapper;
     private final ImageTourItemRepository imageTourItemRepository;
-    // private final ImageTourItemMapper imageTourItemMapper;
-    //private final TourItemResponse tourItemResponse;
 
 
     /**
@@ -53,16 +51,6 @@ public class TourItemService {
         TourItem tourItem = tourItemRepository.findByReferenceIdGoogle(reference_id);
         return TourItemResponse.fromEntity(tourItemRepository.findByReferenceIdGoogle(reference_id));
     }
-
-    /**
-     * 전체 관광지 전체 불러오기
-     */
-
-    public Page<TourItemListResponse> readAll(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        return tourItemRepository.findAllByState("public", pageable).map(tourItemMapper::toListDto);
-    }
-
 
     /**
      * 관광지 저장
@@ -127,27 +115,8 @@ public class TourItemService {
     }
 
     /**
-     * 관광지 검색 (제목)
+     * 관광지 검색 또는 전체 불러오기
      */
-    public Page<TourItemResponse> searchByTitle(
-            String keyword, int pageNo
-    ){
-        Pageable pageable = PageRequest.of(
-                pageNo, 20, Sort.by("idx").descending());
-        return tourItemRepository.findAllByTitleContains(keyword, pageable).map(TourItemResponse::fromEntity);
-    }
-
-    /**
-     * 관광지 검색 (타입)
-     */
-    public Page<TourItemResponse> searchByType(
-            String keyword, int pageNo
-    ) {
-        Pageable pageable = PageRequest.of(
-                pageNo, 20, Sort.by("idx").descending());
-        return  tourItemRepository.findAllByType(keyword, pageable).map(TourItemResponse::fromEntity);
-    }
-
     public TourItemResultListResponse searchAll(String title, String orderBy, int pageNo, int pageSize) {
         title = URLDecoder.decode(title, StandardCharsets.UTF_8);
         log.info("title" + title);
