@@ -6,7 +6,10 @@ import com.micutne.odik.domain.tour.TourCourse;
 import com.micutne.odik.domain.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -41,9 +44,15 @@ public interface TourCourseRepository extends JpaRepository<TourCourse, Integer>
 
     Optional<TourCourse> findByUserIdxAndState(User user, String state);
 
-    Page<TourCourse> findAllByStateAndTitleContaining(String state, String title, Pageable pageable);
+    Page<TourCourse> findAllByStateAndTitleContainingOrderByDateCreateDesc(String state, String title, Pageable pageable);
 
+    @Query("SELECT t FROM TourCourse t WHERE t.userIdx = :userIdx AND t.state <> 'delete' ORDER BY t.dateCreate")
+    Page<TourCourse> findAllByUserCourse(@Param("userIdx") User userIdx, Pageable pageable);
+
+    Page<TourCourse> findAll(Specification<TourCourse> spec, Pageable pageable);
 }
+
+
 
 
 

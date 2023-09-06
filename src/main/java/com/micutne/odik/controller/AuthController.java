@@ -4,8 +4,7 @@ import com.micutne.odik.domain.email.dto.EmailRequest;
 import com.micutne.odik.domain.email.dto.EmailResponse;
 import com.micutne.odik.domain.user.dto.LoginRequest;
 import com.micutne.odik.domain.user.dto.SignUpRequest;
-import com.micutne.odik.domain.user.dto.UserResponse;
-import com.micutne.odik.domain.user.dto.VaildResponse;
+import com.micutne.odik.domain.user.dto.UserResultResponse;
 import com.micutne.odik.service.AuthService;
 import com.micutne.odik.service.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -25,19 +24,19 @@ public class AuthController {
     private final EmailService emailService;
 
     @PostMapping("signup")
-    public UserResponse signup(@RequestBody SignUpRequest request) {
+    public UserResultResponse signup(@RequestBody SignUpRequest request) {
         return authService.signup(request);
     }
 
     @PostMapping("login")
-    public VaildResponse login(@RequestBody LoginRequest request) {
+    public UserResultResponse login(@RequestBody LoginRequest request) {
         return authService.login(request);
 
     }
 
     @GetMapping("validate_token")
-    public VaildResponse checkResponse(@RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader,
-                                       Authentication authentication) {
+    public UserResultResponse checkResponse(@RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader,
+                                            Authentication authentication) {
 
         return authService.checkAuth(authorizationHeader, authentication);
     }
@@ -63,7 +62,7 @@ public class AuthController {
     }
 
     @PutMapping("find_pw")
-    public Map<String, String> passwordChange(@RequestBody Map<String, String> requestData) {
+    public UserResultResponse passwordChange(@RequestBody Map<String, String> requestData) {
         String email = requestData.get("email");
         String password = requestData.get("password");
         return authService.changePassword(email, password);

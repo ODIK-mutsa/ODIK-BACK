@@ -20,6 +20,8 @@ public class TourCourse extends BaseEntity {
     private String title;
     @Column(length = 8)
     private String state;
+    @Column
+    private int countLike;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
@@ -45,5 +47,9 @@ public class TourCourse extends BaseEntity {
     public void update(TourAddItemRequest request) {
         title = (request.getTitle() != null) ? request.getTitle() : title;
         state = (request.getState() != null) ? request.getState() : state;
+    }
+
+    public void updateLike(int i) {
+        countLike += i;
     }
 }

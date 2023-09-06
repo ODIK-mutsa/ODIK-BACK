@@ -2,10 +2,11 @@ package com.micutne.odik.controller;
 
 import com.micutne.odik.domain.tour.dto.course.TourAddItemRequest;
 import com.micutne.odik.domain.tour.dto.course.TourCourseRequest;
+import com.micutne.odik.domain.tour.dto.course.TourCourseResultListResponse;
 import com.micutne.odik.domain.tour.dto.course.TourCourseResultResponse;
 import com.micutne.odik.domain.user.dto.ProfileResponse;
 import com.micutne.odik.domain.user.dto.UserRequest;
-import com.micutne.odik.domain.user.dto.UserResponse;
+import com.micutne.odik.domain.user.dto.UserResultResponse;
 import com.micutne.odik.service.TourCourseService;
 import com.micutne.odik.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class UserController {
 
 
     @GetMapping
-    public UserResponse readMyInfo(Authentication authentication) {
+    public UserResultResponse readMyInfo(Authentication authentication) {
         return userService.readOne(authentication.getPrincipal().toString());
     }
 
@@ -33,12 +34,12 @@ public class UserController {
     }
 
     @PutMapping
-    public UserResponse updateMyInfo(Authentication authentication, @RequestBody UserRequest request) {
+    public UserResultResponse updateMyInfo(Authentication authentication, @RequestBody UserRequest request) {
         return userService.updateInfo(request, authentication.getPrincipal().toString());
     }
 
     @PutMapping("state")
-    public UserResponse updateMyState(Authentication authentication, @RequestBody UserRequest request) {
+    public UserResultResponse updateMyState(Authentication authentication, @RequestBody UserRequest request) {
         return userService.updateState(request, authentication.getPrincipal().toString());
     }
 
@@ -48,6 +49,16 @@ public class UserController {
     @GetMapping("course")
     public TourCourseResultResponse readMyCourse(Authentication authentication) {
         return tourCourseService.readMyCourse(authentication.getPrincipal().toString());
+    }
+
+    /**
+     * 사용자가 생성한 코스 불러오기
+     */
+    @GetMapping("course/list")
+    public TourCourseResultListResponse readMyCourses(Authentication authentication,
+                                                      @RequestParam(name = "page_no", defaultValue = "0") int pageNo,
+                                                      @RequestParam(name = "page_size", defaultValue = "20") int pageSize) {
+        return tourCourseService.readMyCourses(authentication.getPrincipal().toString(), pageNo, pageSize);
     }
 
     /**

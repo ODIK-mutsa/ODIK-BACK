@@ -6,14 +6,13 @@ import com.micutne.odik.domain.like.dto.LikeResponse;
 import com.micutne.odik.domain.review.dto.course.ReviewCoursePageResultResponse;
 import com.micutne.odik.domain.review.dto.course.ReviewCourseRequest;
 import com.micutne.odik.domain.review.dto.course.ReviewCourseResultResponse;
-import com.micutne.odik.domain.tour.dto.course.TourCourseResponse;
+import com.micutne.odik.domain.tour.dto.course.TourCourseResultListResponse;
 import com.micutne.odik.domain.tour.dto.course.TourCourseResultResponse;
 import com.micutne.odik.service.HistoryLikeCourseService;
 import com.micutne.odik.service.ReviewTourCourseService;
 import com.micutne.odik.service.TourCourseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,17 +26,17 @@ public class TourCourseController {
     private final ReviewTourCourseService reviewTourCourseService;
     private final HistoryLikeCourseService historyLikeCourseService;
 
-    @RequestMapping(method = RequestMethod.GET, params = "course")
-    public TourCourseResultResponse readOne(
-            @RequestParam(name = "course") int courseId) {
-        return tourCourseService.readOne(courseId);
+    @GetMapping("{course_id}")
+    public TourCourseResultResponse readOne(@PathVariable int course_id) {
+        return tourCourseService.readOne(course_id);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public Page<TourCourseResponse> readAll(@RequestParam(name = "search", required = false, defaultValue = "") String search,
-                                            @RequestParam(name = "page_no", defaultValue = "0") int pageNo,
-                                            @RequestParam(name = "page_size", defaultValue = "20") int pageSize) {
-        return tourCourseService.readAll(search, pageNo, pageSize);
+    @GetMapping()
+    public TourCourseResultListResponse readAll(@RequestParam(name = "keyword", required = false, defaultValue = "") String search,
+                                                @RequestParam(name = "order", required = false, defaultValue = "like") String orderBy,
+                                                @RequestParam(name = "page_no", defaultValue = "0") int pageNo,
+                                                @RequestParam(name = "page_size", defaultValue = "20") int pageSize) {
+        return tourCourseService.searchAll(search, orderBy, pageNo, pageSize);
     }
 
 //    @PutMapping("/{course_id}")

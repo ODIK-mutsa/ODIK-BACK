@@ -39,6 +39,7 @@ public class TourItem extends BaseEntity {
     private String referenceIdGoogle;
     private String phoneNumber;
     private Float pointGoogle;
+    private int CountLike;
     private String type;
     @OneToMany(mappedBy = "tourItemIdx", cascade = CascadeType.ALL)
     @CreatedDate
@@ -93,4 +94,7 @@ public class TourItem extends BaseEntity {
         this.user = user;
     }
 
+    public void updateLike(int i) {
+        CountLike += i;
+    }
 }
