@@ -61,11 +61,11 @@ public class ReviewItemController {
      * 리뷰 삭제
      */
     @DeleteMapping("")
-    public void removeReview(
+    public ReviewTourItemResultResponse removeReview(
             Authentication authentication,
             @RequestBody ReviewTourItemRequest request
     ) {
-        reviewTourItemService.remove(request, authentication.getPrincipal().toString());
+        return reviewTourItemService.remove(request, authentication.getPrincipal().toString());
     }
 
 
