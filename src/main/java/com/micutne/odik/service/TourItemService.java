@@ -5,6 +5,7 @@ import com.micutne.odik.common.exception.BusinessException;
 import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.imageTourItem.ImageTourItem;
 import com.micutne.odik.domain.tour.TourItem;
+import com.micutne.odik.domain.tour.dto.TourItemResultListResponse;
 import com.micutne.odik.domain.tour.dto.TourItemListResponse;
 import com.micutne.odik.domain.tour.dto.TourItemMapper;
 import com.micutne.odik.domain.tour.dto.TourItemRequest;
@@ -14,17 +15,22 @@ import com.micutne.odik.repository.ImageTourItemRepository;
 import com.micutne.odik.repository.TourItemRepository;
 import com.micutne.odik.repository.UserRepository;
 import com.micutne.odik.utils.file.Extensions;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 @Slf4j
@@ -124,22 +130,71 @@ public class TourItemService {
      * 관광지 검색 (제목)
      */
     public Page<TourItemResponse> searchByTitle(
-            String query, int pageNo
+            String keyword, int pageNo
     ){
         Pageable pageable = PageRequest.of(
                 pageNo, 20, Sort.by("idx").descending());
-        return tourItemRepository.findAllByTitleContains(query, pageable).map(TourItemResponse::fromEntity);
+        return tourItemRepository.findAllByTitleContains(keyword, pageable).map(TourItemResponse::fromEntity);
     }
 
     /**
      * 관광지 검색 (타입)
      */
     public Page<TourItemResponse> searchByType(
-            String query, int pageNo
+            String keyword, int pageNo
     ) {
         Pageable pageable = PageRequest.of(
                 pageNo, 20, Sort.by("idx").descending());
-        return  tourItemRepository.findAllByType(query, pageable).map(TourItemResponse::fromEntity);
+        return  tourItemRepository.findAllByType(keyword, pageable).map(TourItemResponse::fromEntity);
+    }
+
+    public TourItemResultListResponse searchAll(String title, String orderBy, int pageNo, int pageSize) {
+        title = URLDecoder.decode(title, StandardCharsets.UTF_8);
+        log.info("title" + title);
+        String[] keywords = title.split(" ");
+        Specification<TourItem> spec = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (keywords.length > 0) {
+                Predicate[] keywordPredicates = new Predicate[keywords.length];
+                for (int i = 0; i < keywords.length; i++) {
+                    keywordPredicates[i] = criteriaBuilder.like(root.get("title"), "%" + keywords[i] + "%");
+                }
+                predicates.add(criteriaBuilder.or(keywordPredicates));
+            }
+            predicates.add(criteriaBuilder.equal(root.get("state"), "public"));
+
+            log.info("builder" + String.valueOf(criteriaBuilder.and(predicates.toArray(new Predicate[0]))));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Pageable pageable;
+        String[] sortData = findField(orderBy);
+
+        if (sortData[1].equals("desc")) {
+            pageable = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.DESC, sortData[0]));
+        } else {
+            pageable = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.ASC, sortData[0]));
+        }
+        Page<TourItem> tourItems = tourItemRepository.findAll(spec, pageable);
+
+        log.info("result" + TourItemResultListResponse.fromEntity(tourItems.map(TourItemResponse::fromEntity).toString()).toString());
+        return TourItemResultListResponse.fromEntity(tourItems.map(TourItemResponse::fromEntity), "OK");
+    }
+
+
+    private String[] findField(String orderBy) {
+        switch (orderBy) {
+            case "recent" -> {
+                return new String[]{"dateCreate", "desc"};
+            }
+            case "like" -> {
+                return new String[]{"countLike", "asc"};
+            }
+            default -> {
+                return new String[]{"dateCreate", "desc"};
+            }
+        }
     }
 
     /**

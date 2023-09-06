@@ -34,6 +34,8 @@ public class TourItemResponse {
     Float point_google;
     String type;
 
+    int countLike;
+
     List<String> images_google;
 
 
@@ -49,6 +51,7 @@ public class TourItemResponse {
         response.reference_id_google = tourItem.getReferenceIdGoogle();
         response.phone_number = tourItem.getPhoneNumber();
         response.point_google = tourItem.getPointGoogle();
+        response.countLike = tourItem.getCountLike();
         response.type = tourItem.getType();
         if (tourItem.getImagesGoogle() != null)
             response.setImages_google(tourItem.getImagesGoogle().stream().map(ImageTourItem::getImagesGoogle).toList());
