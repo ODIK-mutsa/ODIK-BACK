@@ -72,14 +72,10 @@ public class TourItemResponse {
 
     }
 
-    public static TourItemResponse alreadyExist(String result) {
+    public static TourItemResponse resultMessage(String result) {
         TourItemResponse response = new TourItemResponse();
         response.result = result;
         return response;
-    }
-
-    public TourItemResponse(ErrorCode errorCode) {
-        this.result = String.valueOf(new BusinessException(ErrorCode.TOUR_ITEM_ALREADY_EXIST));
     }
 
 }
