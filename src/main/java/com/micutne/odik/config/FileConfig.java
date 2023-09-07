@@ -29,4 +29,13 @@ public class FileConfig {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    public static String findPath(String category) {
+        String path = getPath();
+        switch (category) {
+            case "course" -> path += "/course";
+            case "review" -> path += "/review";
+        }
+        return path;
+    }
 }

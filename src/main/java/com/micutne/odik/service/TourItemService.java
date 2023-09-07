@@ -1,25 +1,20 @@
 package com.micutne.odik.service;
 
-import ch.qos.logback.core.joran.action.PreconditionValidator;
 import com.micutne.odik.common.exception.AuthException;
-import com.micutne.odik.common.exception.BusinessException;
 import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.imageTourItem.ImageTourItem;
 import com.micutne.odik.domain.tour.TourItem;
-import com.micutne.odik.domain.tour.dto.TourItemResultListResponse;
-import com.micutne.odik.domain.tour.dto.TourItemListResponse;
 import com.micutne.odik.domain.tour.dto.TourItemMapper;
 import com.micutne.odik.domain.tour.dto.TourItemRequest;
 import com.micutne.odik.domain.tour.dto.TourItemResponse;
+import com.micutne.odik.domain.tour.dto.TourItemResultListResponse;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.repository.ImageTourItemRepository;
 import com.micutne.odik.repository.TourItemRepository;
 import com.micutne.odik.repository.UserRepository;
-import com.micutne.odik.utils.file.Extensions;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.control.MappingControl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +33,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class TourItemService {
-    private static final String[] ARTICLE_FILE_URL = Extensions.IMAGE.getExtensions();
     private final TourItemRepository tourItemRepository;
     private final UserRepository userRepository;
     private final TourItemMapper tourItemMapper;

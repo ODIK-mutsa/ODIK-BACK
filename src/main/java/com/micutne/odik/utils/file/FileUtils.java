@@ -4,8 +4,8 @@ import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.common.exception.FileException;
 import com.micutne.odik.common.exception.InvalidValueException;
 import com.micutne.odik.config.FileConfig;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,20 +18,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 class FileUtils {
-    private static Path root;
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
-    private static final StandardPBEStringEncryptor tokenEncoder;
-
-    static {
-        tokenEncoder = new StandardPBEStringEncryptor();
-        tokenEncoder.setPassword("file");
-    }
 
     public static void createDirectory(Path path) {
         try {
@@ -44,25 +38,25 @@ class FileUtils {
     /**
      * 파일 저장
      */
-    public static FileResponse saveFile(MultipartFile file, String folder, String fileName) {
-        getPath(folder);
-        if (fileName == null) fileName = validateFileName(file.getOriginalFilename());
+    public static FileResponse saveFile(MultipartFile file, String category) {
+        Path path = getPath(category);
 
-        String timeStamp = dateFormat.format(new Date());
-        fileName = tokenEncoder.encrypt(timeStamp + "_" + fileName);
+        String fileName = System.currentTimeMillis() + "-" + UUID.randomUUID();
+
         String ext = getExt(Objects.requireNonNull(file.getOriginalFilename()));
         validateFileSize(file.getSize());
-        Path filePath = save(file, fileName + "." + ext);
+        Path filePath = save(file, path, fileName + "." + ext);
         return buildFileResponse(filePath, file.getSize(), file.getContentType());
     }
 
     /**
-     * 입력된 folder와 기본 경로를 통해 디렉터리를 생성
+     * 경로 탐색 후 디렉터리를 생성
      */
-    private static void getPath(String folder) {
-        String defaultPath = FileConfig.getPath();
-        root = Paths.get(defaultPath + folder);
+    private static Path getPath(String category) {
+        String path = FileConfig.findPath(category);
+        Path root = Paths.get(path);
         createDirectory(root);
+        return root;
     }
 
     /**
@@ -73,18 +67,20 @@ class FileUtils {
     }
 
     //저장
-    private static Path save(MultipartFile file, String fileName) {
-        Path targetLocation = root.resolve(fileName);
+    private static Path save(MultipartFile file, Path path, String fileName) {
+        Path targetLocation = path.resolve(fileName);
+        log.info(String.valueOf(targetLocation));
         try {
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException ie) {
-            throw new FileException(ErrorCode.FILE_UPLOAD_FAILED);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return targetLocation;
     }
 
-    static void remove(String filename, String folder) {
-        String pathname = FileConfig.getPath() + folder + File.separator + filename;
+    static void remove(String filename, String category) {
+        String path = FileConfig.findPath(category) + "/";
+        String pathname = path + File.separator + filename;
         log.info(pathname);
         //UUID가 포함된 파일이름을 디코딩해줍니다.
         File file = new File(pathname);
