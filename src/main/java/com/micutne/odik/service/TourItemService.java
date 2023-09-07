@@ -50,8 +50,11 @@ public class TourItemService {
      */
 
     public TourItemResponse readOne(String reference_id) {
-        TourItem tourItem = tourItemRepository.findByReferenceIdGoogle(reference_id);
-        return TourItemResponse.fromEntity(tourItemRepository.findByReferenceIdGoogle(reference_id));
+        if (tourItemRepository.existsByReferenceIdGoogleAndState(reference_id, "public")) {
+            TourItem tourItem = tourItemRepository.findByReferenceIdGoogle(reference_id);
+            return TourItemResponse.fromEntity(tourItemRepository.findByReferenceIdGoogle(reference_id));
+        }
+        return TourItemResponse.resultMessage("TOUR_ITEM_NOT_EXIST");
     }
 
     /**

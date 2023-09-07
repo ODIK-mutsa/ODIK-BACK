@@ -30,4 +30,5 @@ public interface TourItemRepository extends JpaRepository<TourItem, Integer> {
 
     Page<TourItem> findAll(Specification<TourItem> spec, Pageable pageable);
 
+    boolean existsByReferenceIdGoogleAndState(String referenceIdGoogle, String state);
 }
