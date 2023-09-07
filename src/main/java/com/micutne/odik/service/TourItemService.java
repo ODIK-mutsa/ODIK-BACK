@@ -61,43 +61,47 @@ public class TourItemService {
      * 관광지 저장
      */
     @Transactional
-    public TourItemResponse create(TourItemRequest request, String id) {
+    public TourItemResponse create(TourItemRequest request, String username) {
+
         if (tourItemRepository.existsByReferenceIdGoogle(request.getReference_id_google()))
             return new TourItemResponse(String.valueOf(ErrorCode.TOUR_ITEM_ALREADY_EXIST));
 
-        request.setUser(userRepository.findByIdOrThrow(id));
-        TourItem tourItem = tourItemMapper.toEntity(request);
-        tourItem = tourItemRepository.save(tourItem);
+        if (userRepository.existsById(username)) {
+            request.setUser(userRepository.findByIdOrThrow(username));
+            TourItem tourItem = tourItemMapper.toEntity(request);
+            tourItem = tourItemRepository.save(tourItem);
 
-        List<ImageTourItem> imageTourItems = new ArrayList<>();
+            List<ImageTourItem> imageTourItems = new ArrayList<>();
 
-        if (request.getImages_google() != null) {
-            for (String imageUrl : request.getImages_google()) {
-                // Url 또는 파일 추가 로직 ( 파일 추가부분 수정 필요 )
-                boolean saveUrl = imageUrl.startsWith("http://") || imageUrl.startsWith("https://");
-                String saveFile = "saveFile";
-                ImageTourItem imageTourItem = ImageTourItem.builder()
-                        .tour_item_idx(tourItem)
-                        .url(saveUrl ? imageUrl : saveFile)
-                        .build();
-                imageTourItems.add(imageTourItem);
+            if (request.getImages_google() != null) {
+                for (String imageUrl : request.getImages_google()) {
+                    // Url 또는 파일 추가 로직 ( 파일 추가부분 수정 필요 )
+                    boolean saveUrl = imageUrl.startsWith("http://") || imageUrl.startsWith("https://");
+                    String saveFile = "saveFile";
+                    ImageTourItem imageTourItem = ImageTourItem.builder()
+                            .tour_item_idx(tourItem)
+                            .url(saveUrl ? imageUrl : saveFile)
+                            .build();
+                    imageTourItems.add(imageTourItem);
+                }
             }
+
+            imageTourItems = imageTourItemRepository.saveAll(imageTourItems);
+
+            TourItemResponse response = TourItemResponse.fromEntity(tourItem, imageTourItems);
+            response.setImages_google(imageTourItems.stream().map(ImageTourItem::getImagesGoogle).toList());
+            return response;
         }
-
-        imageTourItems = imageTourItemRepository.saveAll(imageTourItems);
-
-        TourItemResponse response = TourItemResponse.fromEntity(tourItem, imageTourItems);
-        response.setImages_google(imageTourItems.stream().map(ImageTourItem::getImagesGoogle).toList());
-        return response;
+        return TourItemResponse.resultMessage("AUTH_FAIL");
     }
 
     /**
      * 관광지 수정
      */
     @Transactional
-    public TourItemResponse update(int idx, TourItemRequest request, String id) {
+    public TourItemResponse update(int idx, TourItemRequest request, String username) {
         TourItem tourItem = tourItemRepository.findByIdOrThrow(idx);
-        User user = userRepository.findByIdOrThrow(id);
+        User user = userRepository.findByIdOrThrow(username);
         checkAuth(tourItem, user);
         tourItem.updateTourItem(request);
         return TourItemResponse.fromEntity(tourItem);

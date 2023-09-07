@@ -54,13 +54,22 @@ public class TourItem extends BaseEntity {
         this.user = user;
         this.locationLat = location_lat;
         this.locationLng = location_lng;
-        this.state = "public";
+        this.state = setState(state);
         this.address = address;
         this.referenceIdGoogle = reference_id_google;
         this.phoneNumber = phone_number;
         this.pointGoogle = point_google;
         this.type = type;
 
+    }
+
+    public String setState(String state) {
+            if (state != null && !state.equals("public")) {
+                this.state = state;
+            } else {
+                this.state = "public";
+            }
+            return this.state;
     }
 
 
