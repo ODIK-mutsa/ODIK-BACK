@@ -29,15 +29,4 @@ public class TourCourseResponse {
         response.tour_items = tourCourse.getTourCourseItemLists().stream().map(TourCourseItemResponse::fromEntity).toList();
         return response;
     }
-
-    public static TourCourseResponse fromEntityForList(TourCourse tourCourse) {
-        TourCourseResponse response = new TourCourseResponse();
-        response.idx = tourCourse.getIdx();
-        response.title = tourCourse.getTitle();
-        response.state = tourCourse.getState();
-        response.user = ProfileResponse.fromEntity(tourCourse.getUserIdx());
-        response.date_join = TimeUtils.getLocalTime(tourCourse.getDateCreate());
-        response.countLike = tourCourse.getCountLike();
-        return response;
-    }
 }

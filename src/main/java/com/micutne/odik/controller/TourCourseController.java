@@ -6,6 +6,7 @@ import com.micutne.odik.domain.like.dto.LikeResponse;
 import com.micutne.odik.domain.review.dto.course.ReviewCoursePageResultResponse;
 import com.micutne.odik.domain.review.dto.course.ReviewCourseRequest;
 import com.micutne.odik.domain.review.dto.course.ReviewCourseResultResponse;
+import com.micutne.odik.domain.tour.dto.course.TourCourseRequest;
 import com.micutne.odik.domain.tour.dto.course.TourCourseResultListResponse;
 import com.micutne.odik.domain.tour.dto.course.TourCourseResultResponse;
 import com.micutne.odik.service.HistoryLikeCourseService;
@@ -39,13 +40,18 @@ public class TourCourseController {
         return tourCourseService.searchAll(search, orderBy, pageNo, pageSize);
     }
 
-//    @PutMapping("/{course_id}")
-//    public TourCourseResultResponse updateCourse(
-//            Authentication authentication,
-//            @PathVariable String course_id, @RequestBody )
-//    {
-//
-//    }
+    @GetMapping("/user/{user_id}")
+    public TourCourseResultListResponse readUserList(@PathVariable int user_id,
+                                                     @RequestParam(name = "page_no", defaultValue = "0") int pageNo,
+                                                     @RequestParam(name = "page_size", defaultValue = "20") int pageSize) {
+        return tourCourseService.readUserList(user_id, pageNo, pageSize);
+    }
+
+    @PutMapping("")
+    public TourCourseResultResponse updateCourse(Authentication authentication,
+                                                 @RequestBody TourCourseRequest request) {
+        return tourCourseService.update(request, authentication.getPrincipal().toString());
+    }
 
     @RequestMapping(value = "review", method = RequestMethod.GET, params = "course")
     public ReviewCoursePageResultResponse readReviewAll(@RequestParam(name = "course") int courseId,

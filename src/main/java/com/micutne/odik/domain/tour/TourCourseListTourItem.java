@@ -44,6 +44,15 @@ public class TourCourseListTourItem {
         return response;
     }
 
+    public static TourCourseListTourItem fromEntity(TourCourseListTourItem entity, TourCourse tourCourse) {
+        TourCourseListTourItem response = new TourCourseListTourItem();
+        response.level = entity.getLevel();
+        response.day = entity.getDay();
+        response.tourItem = entity.getTourItem();
+        response.tourCourse = tourCourse;
+        return response;
+    }
+
     public void update(TourUpdateItemRequest request) {
         level = request.getLevel() != -1 ? request.getLevel() : level;
         day = request.getDay() != -1 ? request.getDay() : day;

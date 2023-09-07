@@ -49,6 +49,9 @@ public interface TourCourseRepository extends JpaRepository<TourCourse, Integer>
     @Query("SELECT t FROM TourCourse t WHERE t.userIdx = :userIdx AND t.state <> 'delete' ORDER BY t.dateCreate")
     Page<TourCourse> findAllByUserCourse(@Param("userIdx") User userIdx, Pageable pageable);
 
+    @Query("SELECT t FROM TourCourse t WHERE t.userIdx = :userIdx AND t.state = 'public' ORDER BY t.dateCreate")
+    Page<TourCourse> findPublicByUserCourse(@Param("userIdx") User userIdx, Pageable pageable);
+
     Page<TourCourse> findAll(Specification<TourCourse> spec, Pageable pageable);
 }
 
