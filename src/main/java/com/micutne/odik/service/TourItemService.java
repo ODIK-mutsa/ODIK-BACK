@@ -46,7 +46,8 @@ public class TourItemService {
     public TourItemResponse readOne(String reference_id) {
         if (tourItemRepository.existsByReferenceIdGoogleAndState(reference_id, "public")) {
             TourItem tourItem = tourItemRepository.findByReferenceIdGoogle(reference_id);
-            return TourItemResponse.fromEntity(tourItemRepository.findByReferenceIdGoogle(reference_id));
+            //return TourItemResponse.fromEntity(tourItemRepository.findByReferenceIdGoogle(reference_id));
+            return TourItemResponse.fromEntity(tourItem);
         }
         return TourItemResponse.resultMessage("TOUR_ITEM_NOT_EXIST");
     }
@@ -69,12 +70,9 @@ public class TourItemService {
 
             if (request.getImages_google() != null) {
                 for (String imageUrl : request.getImages_google()) {
-                    // Url 또는 파일 추가 로직 ( 파일 추가부분 수정 필요 )
-                    boolean saveUrl = imageUrl.startsWith("http://") || imageUrl.startsWith("https://");
-                    String saveFile = "saveFile";
                     ImageTourItem imageTourItem = ImageTourItem.builder()
                             .tour_item_idx(tourItem)
-                            .url(saveUrl ? imageUrl : saveFile)
+                            .url(imageUrl)
                             .build();
                     imageTourItems.add(imageTourItem);
                 }
