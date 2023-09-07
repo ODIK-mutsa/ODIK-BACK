@@ -2,6 +2,7 @@ package com.micutne.odik.controller;
 
 import com.micutne.odik.domain.like.dto.ItemLikeRequest;
 import com.micutne.odik.domain.like.dto.LikeResponse;
+import com.micutne.odik.domain.review.dto.ReviewTourItemRequest;
 import com.micutne.odik.domain.tour.dto.TourItemListResponse;
 import com.micutne.odik.domain.tour.dto.TourItemResultListResponse;
 import com.micutne.odik.domain.tour.dto.TourItemRequest;
@@ -63,12 +64,12 @@ public class TourItemController {
      * 관광지 삭제
      */
     @DeleteMapping("/{idx}")
-    public void remove(
+
+    public TourItemResponse remove(
             Authentication authentication,
             @PathVariable int idx) {
-        tourItemService.remove(idx, authentication.getPrincipal().toString());
+        return tourItemService.remove(idx, authentication.getPrincipal().toString());
     }
-
 
     @GetMapping("{item_id}/like")
     public LikeResponse readLike(Authentication authentication,

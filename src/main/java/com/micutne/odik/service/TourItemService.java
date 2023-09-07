@@ -1,5 +1,6 @@
 package com.micutne.odik.service;
 
+import ch.qos.logback.core.joran.action.PreconditionValidator;
 import com.micutne.odik.common.exception.AuthException;
 import com.micutne.odik.common.exception.BusinessException;
 import com.micutne.odik.common.exception.ErrorCode;
@@ -18,6 +19,7 @@ import com.micutne.odik.utils.file.Extensions;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.control.MappingControl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -102,16 +104,17 @@ public class TourItemService {
     /**
      * 관광지 삭제
      */
-    public void remove(int idx, String id) {
-        TourItem tourItem = tourItemRepository.findByIdOrThrow(idx);
-        User user = userRepository.findByIdOrThrow(id);
-        checkAuth(tourItem, user);
-        try {
+    public TourItemResponse remove(int idx, String username) {
+        User user = userRepository.findByIdOrThrow(username);
+
+        if (tourItemRepository.existsByIdx(idx)) {
+            TourItem tourItem = tourItemRepository.findByIdOrThrow(idx);
+            checkAuth(tourItem, user);
+
             tourItemRepository.delete(tourItem);
-        } catch (Exception e) {
-            throw new BusinessException(ErrorCode.TOUR_ITEM_DELETE_FAIL);
+            return TourItemResponse.resultMessage("OK");
         }
-        log.info("delete a tour item");
+        return TourItemResponse.resultMessage("TOUR_ITEM_NOT_EXIST");
     }
 
     /**
@@ -169,9 +172,8 @@ public class TourItemService {
     /**
      * 사용자 확인(추후 수정 및 추가)
      */
+
     public void checkAuth(TourItem tourItem, User user) {
         if (!tourItem.getUser().equals(user)) throw new AuthException(ErrorCode.USER_NOT_FOUND);
     }
-
-
 }
