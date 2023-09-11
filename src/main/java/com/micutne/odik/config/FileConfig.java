@@ -33,8 +33,10 @@ public class FileConfig {
     public static String findPath(String category) {
         String path = getPath();
         switch (category) {
-            case "course" -> path += "/course";
-            case "review" -> path += "/review";
+            case "tour_course" -> path += "/course";
+            case "tour_item" -> path += "/item";
+            case "review_tour_course" -> path += "/review/course";
+            case "review_tour_item" -> path += "/review/item";
         }
         return path;
     }

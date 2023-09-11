@@ -31,8 +31,8 @@ public class ImageUtils extends FileUtils {
         return result;
     }
 
-    public static void removeFile(String filename, String uploadDir) {
-        FileUtils.remove(filename, uploadDir);
+    public static void removeFile(String filename, String category) {
+        FileUtils.remove(filename, category);
     }
 
     /**

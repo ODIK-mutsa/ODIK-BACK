@@ -81,7 +81,6 @@ class FileUtils {
     static void remove(String filename, String category) {
         String path = FileConfig.findPath(category) + "/";
         String pathname = path + File.separator + filename;
-        log.info(pathname);
         //UUID가 포함된 파일이름을 디코딩해줍니다.
         File file = new File(pathname);
         boolean result = file.delete();

@@ -16,6 +16,7 @@ public class TourCourseResponse {
     int count_like;
     ProfileResponse user;
     String date_join;
+    String image_cover;
     List<TourCourseItemResponse> tour_items = new ArrayList<>();
 
     public static TourCourseResponse fromEntity(TourCourse tourCourse) {
@@ -26,6 +27,7 @@ public class TourCourseResponse {
         response.user = ProfileResponse.fromEntity(tourCourse.getUserIdx());
         response.date_join = TimeUtils.getLocalTime(tourCourse.getDateCreate());
         response.count_like = tourCourse.getCountLike();
+        response.image_cover = tourCourse.getImage_cover();
         response.tour_items = tourCourse.getTourCourseItemLists().stream().map(TourCourseItemResponse::fromEntity).toList();
         return response;
     }
