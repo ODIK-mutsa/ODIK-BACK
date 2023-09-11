@@ -1,8 +1,6 @@
 package com.micutne.odik.service;
 
 
-import com.micutne.odik.common.exception.AuthException;
-import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.tour.TourCourse;
 import com.micutne.odik.domain.tour.TourCourseListTourItem;
 import com.micutne.odik.domain.tour.dto.course.*;
@@ -20,9 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +32,9 @@ public class TourCourseService {
     private final TourCourseListTourItemRepository tourCourseItemListRepository;
     private final UserRepository userRepository;
 
+    /**
+     * 내 장바구니 불러오기 / 없으면 생성하기
+     */
     public TourCourseResultResponse readMyCourse(String username) {
         User user = userRepository.findByIdOrThrow(username);
         TourCourse tourCourse;
@@ -48,6 +48,9 @@ public class TourCourseService {
         return TourCourseResultResponse.fromEntity(tourCourse, "OK");
     }
 
+    /**
+     * 단일 코스 출력
+     */
     public TourCourseResultResponse readOne(int course) {
         if (tourCourseRepository.existsByIdxAndState(course, "public")) {
             TourCourse tourCourse = tourCourseRepository.findByIdxAndStateOrThrow(course, "public");
@@ -58,10 +61,10 @@ public class TourCourseService {
         return response;
     }
 
-    public TourCourseResultListResponse searchAll(String title, String orderBy, int pageNo, int pageSize) {
-        title = URLDecoder.decode(title, StandardCharsets.UTF_8);
-        log.info(title);
-        String[] keywords = title.split(" ");
+    /**
+     * 코스 검색
+     */
+    public TourCourseResultListResponse searchAll(String[] keywords, String orderBy, int pageNo, int pageSize) {
         Specification<TourCourse> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -75,7 +78,6 @@ public class TourCourseService {
             }
 
             predicates.add(criteriaBuilder.equal(root.get("state"), "public"));
-            // 추가적인 조건을 여기에 추가할 수 있음
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -89,31 +91,46 @@ public class TourCourseService {
             pageable = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.ASC, sortData[0]));
         }
         Page<TourCourse> tourCourses = tourCourseRepository.findAll(spec, pageable);
-
-        return TourCourseResultListResponse.fromEntity(tourCourses.map(TourCourseResponse::fromEntityForList), "OK");
+        return TourCourseResultListResponse.fromEntity(tourCourses.map(TourCourseResponse::fromEntity), "OK");
     }
 
+    /**
+     * 코스 order 에 맞춰 값 출력 [field, order by]
+     */
     private String[] findField(String orderBy) {
         switch (orderBy) {
             case "recent" -> {
                 return new String[]{"dateCreate", "desc"};
             }
             case "like" -> {
-                return new String[]{"countLike", "asc"};
+                return new String[]{"countLike", "desc"};
             }
             default -> {
-                return new String[]{"dateCreate", "desc"};
+                return new String[]{"countLike", "desc"};
             }
         }
     }
 
+    /**
+     * 내 장바구니 불러오기
+     */
     public TourCourseResultListResponse readMyCourses(String username, int pageNo, int pageSize) {
         User user = userRepository.findByIdOrThrow(username);
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<TourCourse> entities = tourCourseRepository.findAllByUserCourse(user, pageable);
-        return TourCourseResultListResponse.fromEntity(entities.map(TourCourseResponse::fromEntityForList), "OK");
+        return TourCourseResultListResponse.fromEntity(entities.map(TourCourseResponse::fromEntity), "OK");
     }
 
+    public TourCourseResultListResponse readUserList(int userId, int pageNo, int pageSize) {
+        User user = userRepository.findByIdxOrThrow(userId);
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<TourCourse> entities = tourCourseRepository.findPublicByUserCourse(user, pageable);
+        return TourCourseResultListResponse.fromEntity(entities.map(TourCourseResponse::fromEntity), "OK");
+    }
+
+    /**
+     * 장바구니 생성하기
+     */
     public TourCourseResultResponse create(TourCourseRequest request, String username) {
         User user = userRepository.findByIdOrThrow(username);
         if (!tourCourseRepository.existsByUserIdxAndState(user, "cart")) {
@@ -128,6 +145,9 @@ public class TourCourseService {
 
     }
 
+    /**
+     * 내 장바구니 생성하기
+     */
     public TourCourse createMyCourse(User user) {
         TourCourseRequest makeCourse = new TourCourseRequest();
         makeCourse.setUser(user);
@@ -136,18 +156,20 @@ public class TourCourseService {
         return tourCourseRepository.save(TourCourse.fromDto(makeCourse));
     }
 
-
-    public void checkAuth(TourCourse tourCourse, User user) {
-        if (!tourCourse.getUserIdx().equals(user)) throw new AuthException(ErrorCode.NOT_YOURS);
-    }
-
-
-    public TourCourseResultResponse updateAll(TourAddItemRequest request, String username) {
+    /**
+     * 내 장바구니 수정하기
+     * 코스에 포함된 관광지까지 전부 처리됨
+     */
+    public TourCourseResultResponse updateAll(TourCourseRequest request, String username) {
         User user = userRepository.findByIdOrThrow(username);
-        TourCourse tourCourse = tourCourseRepository.findByIdxOrThrow(request.getTour_course_idx());
-        checkAuth(tourCourse, user);
-        tourCourse.update(request);
         if (tourCourseRepository.existsByIdx(request.getTour_course_idx())) {
+            TourCourse tourCourse = tourCourseRepository.findByIdxOrThrow(request.getTour_course_idx());
+
+            if (!tourCourse.getUserIdx().equals(user))
+                return TourCourseResultResponse.fromEntity("AUTH_FAIL");
+
+            tourCourse.update(request);
+
             List<TourCourseListTourItem> beforeItems = tourCourse.getTourCourseItemLists();
 
             tourCourseItemListRepository.deleteAll(beforeItems);
@@ -159,6 +181,25 @@ public class TourCourseService {
 
             return TourCourseResultResponse
                     .fromEntity(tourCourseRepository.findByIdxOrThrow(request.getTour_course_idx()), "OK");
+        }
+        return TourCourseResultResponse.fromEntity("NOT_EXIST");
+    }
+
+    /**
+     * 내 코스 수정하기
+     */
+    @Transactional
+    public TourCourseResultResponse update(TourCourseRequest request, String username) {
+        User user = userRepository.findByIdOrThrow(username);
+
+        if (tourCourseRepository.existsByIdx(request.getTour_course_idx())) {
+            TourCourse tourCourse = tourCourseRepository.findByIdxOrThrow(request.getTour_course_idx());
+
+            if (!tourCourse.getUserIdx().equals(user))
+                return TourCourseResultResponse.fromEntity("AUTH_FAIL");
+
+            tourCourse.update(request);
+            return TourCourseResultResponse.fromEntity(tourCourse, "OK");
         }
         return TourCourseResultResponse.fromEntity("NOT_EXIST");
     }

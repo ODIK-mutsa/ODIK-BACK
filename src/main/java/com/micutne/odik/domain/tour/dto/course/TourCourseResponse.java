@@ -13,9 +13,10 @@ public class TourCourseResponse {
     int idx;
     String title;
     String state;
-    int countLike;
+    int count_like;
     ProfileResponse user;
     String date_join;
+    String image_cover;
     List<TourCourseItemResponse> tour_items = new ArrayList<>();
 
     public static TourCourseResponse fromEntity(TourCourse tourCourse) {
@@ -25,19 +26,9 @@ public class TourCourseResponse {
         response.state = tourCourse.getState();
         response.user = ProfileResponse.fromEntity(tourCourse.getUserIdx());
         response.date_join = TimeUtils.getLocalTime(tourCourse.getDateCreate());
-        response.countLike = tourCourse.getCountLike();
+        response.count_like = tourCourse.getCountLike();
+        response.image_cover = tourCourse.getImage_cover();
         response.tour_items = tourCourse.getTourCourseItemLists().stream().map(TourCourseItemResponse::fromEntity).toList();
-        return response;
-    }
-
-    public static TourCourseResponse fromEntityForList(TourCourse tourCourse) {
-        TourCourseResponse response = new TourCourseResponse();
-        response.idx = tourCourse.getIdx();
-        response.title = tourCourse.getTitle();
-        response.state = tourCourse.getState();
-        response.user = ProfileResponse.fromEntity(tourCourse.getUserIdx());
-        response.date_join = TimeUtils.getLocalTime(tourCourse.getDateCreate());
-        response.countLike = tourCourse.getCountLike();
         return response;
     }
 }

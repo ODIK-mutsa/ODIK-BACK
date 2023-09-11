@@ -49,9 +49,9 @@ public class User {
 
 
     public void updateInfo(UserRequest userRequest) {
-        this.nickName = userRequest.getNick_name();
-        this.locale = userRequest.getLocale();
-        this.gender = userRequest.getGender();
+        if (userRequest.getNick_name() != null) this.nickName = userRequest.getNick_name();
+        if (userRequest.getLocale() != null) this.locale = userRequest.getLocale();
+        if (userRequest.getGender() != null) this.gender = userRequest.getGender();
     }
 
     public void updateState(UserRequest userRequest) {

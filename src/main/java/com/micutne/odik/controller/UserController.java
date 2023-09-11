@@ -1,6 +1,5 @@
 package com.micutne.odik.controller;
 
-import com.micutne.odik.domain.tour.dto.course.TourAddItemRequest;
 import com.micutne.odik.domain.tour.dto.course.TourCourseRequest;
 import com.micutne.odik.domain.tour.dto.course.TourCourseResultListResponse;
 import com.micutne.odik.domain.tour.dto.course.TourCourseResultResponse;
@@ -74,7 +73,7 @@ public class UserController {
      * 사용자 장바구니 수정하기
      */
     @PutMapping("course")
-    public TourCourseResultResponse update(@RequestBody TourAddItemRequest request, Authentication authentication) {
+    public TourCourseResultResponse update(@RequestBody TourCourseRequest request, Authentication authentication) {
         return tourCourseService.updateAll(request, authentication.getPrincipal().toString());
     }
 

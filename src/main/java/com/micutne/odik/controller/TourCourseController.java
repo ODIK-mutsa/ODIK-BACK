@@ -6,19 +6,24 @@ import com.micutne.odik.domain.like.dto.LikeResponse;
 import com.micutne.odik.domain.review.dto.course.ReviewCoursePageResultResponse;
 import com.micutne.odik.domain.review.dto.course.ReviewCourseRequest;
 import com.micutne.odik.domain.review.dto.course.ReviewCourseResultResponse;
+import com.micutne.odik.domain.tour.dto.course.TourCourseRequest;
 import com.micutne.odik.domain.tour.dto.course.TourCourseResultListResponse;
 import com.micutne.odik.domain.tour.dto.course.TourCourseResultResponse;
 import com.micutne.odik.service.HistoryLikeCourseService;
 import com.micutne.odik.service.ReviewTourCourseService;
 import com.micutne.odik.service.TourCourseService;
+import com.micutne.odik.utils.redis.SearchRedisUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
-@Slf4j
+
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/tour/course")
 public class TourCourseController {
@@ -36,16 +41,24 @@ public class TourCourseController {
                                                 @RequestParam(name = "order", required = false, defaultValue = "like") String orderBy,
                                                 @RequestParam(name = "page_no", defaultValue = "0") int pageNo,
                                                 @RequestParam(name = "page_size", defaultValue = "20") int pageSize) {
-        return tourCourseService.searchAll(search, orderBy, pageNo, pageSize);
+        search = URLDecoder.decode(search, StandardCharsets.UTF_8);
+        String[] keywords = search.split(" ");
+        SearchRedisUtils.addSearchKeyword(keywords);
+        return tourCourseService.searchAll(keywords, orderBy, pageNo, pageSize);
     }
 
-//    @PutMapping("/{course_id}")
-//    public TourCourseResultResponse updateCourse(
-//            Authentication authentication,
-//            @PathVariable String course_id, @RequestBody )
-//    {
-//
-//    }
+    @GetMapping("/user/{user_id}")
+    public TourCourseResultListResponse readUserList(@PathVariable int user_id,
+                                                     @RequestParam(name = "page_no", defaultValue = "0") int pageNo,
+                                                     @RequestParam(name = "page_size", defaultValue = "20") int pageSize) {
+        return tourCourseService.readUserList(user_id, pageNo, pageSize);
+    }
+
+    @PutMapping("")
+    public TourCourseResultResponse updateCourse(Authentication authentication,
+                                                 @RequestBody TourCourseRequest request) {
+        return tourCourseService.update(request, authentication.getPrincipal().toString());
+    }
 
     @RequestMapping(value = "review", method = RequestMethod.GET, params = "course")
     public ReviewCoursePageResultResponse readReviewAll(@RequestParam(name = "course") int courseId,

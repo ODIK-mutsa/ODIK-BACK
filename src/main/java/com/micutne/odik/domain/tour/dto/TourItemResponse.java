@@ -1,7 +1,5 @@
 package com.micutne.odik.domain.tour.dto;
 
-import com.micutne.odik.common.exception.BusinessException;
-import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.imageTourItem.ImageTourItem;
 import com.micutne.odik.domain.tour.TourItem;
 import com.micutne.odik.domain.user.dto.ProfileResponse;
