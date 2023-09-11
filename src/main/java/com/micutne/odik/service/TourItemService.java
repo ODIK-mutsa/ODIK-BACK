@@ -23,8 +23,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,10 +44,9 @@ public class TourItemService {
     public TourItemResponse readOne(String reference_id) {
         if (tourItemRepository.existsByReferenceIdGoogleAndState(reference_id, "public")) {
             TourItem tourItem = tourItemRepository.findByReferenceIdGoogle(reference_id);
-            //return TourItemResponse.fromEntity(tourItemRepository.findByReferenceIdGoogle(reference_id));
             return TourItemResponse.fromEntity(tourItem);
         }
-        return TourItemResponse.resultMessage("TOUR_ITEM_NOT_EXIST");
+        return TourItemResponse.resultMessage("NOT_EXIST");
     }
 
     /**
@@ -119,10 +116,7 @@ public class TourItemService {
     /**
      * 관광지 검색 또는 전체 불러오기
      */
-    public TourItemResultListResponse searchAll(String title, String orderBy, int pageNo, int pageSize) {
-        title = URLDecoder.decode(title, StandardCharsets.UTF_8);
-        log.info("title" + title);
-        String[] keywords = title.split(" ");
+    public TourItemResultListResponse searchAll(String[] keywords, String orderBy, int pageNo, int pageSize) {
         Specification<TourItem> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -135,7 +129,6 @@ public class TourItemService {
             }
             predicates.add(criteriaBuilder.equal(root.get("state"), "public"));
 
-            log.info("builder" + String.valueOf(criteriaBuilder.and(predicates.toArray(new Predicate[0]))));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
@@ -149,7 +142,6 @@ public class TourItemService {
         }
         Page<TourItem> tourItems = tourItemRepository.findAll(spec, pageable);
 
-        log.info("result" + TourItemResultListResponse.fromEntity(tourItems.map(TourItemResponse::fromEntity).toString()).toString());
         return TourItemResultListResponse.fromEntity(tourItems.map(TourItemResponse::fromEntity), "OK");
     }
 

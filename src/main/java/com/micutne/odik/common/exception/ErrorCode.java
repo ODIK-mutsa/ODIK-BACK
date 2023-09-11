@@ -42,7 +42,8 @@ public enum ErrorCode {
     INVALID_PW_VALUE(HttpStatus.BAD_REQUEST, "PW_001", "비밀번호가 맞지 않습니다."),
     NOT_YOURS(HttpStatus.BAD_REQUEST, "PW_000", "인증에 실패했습니다."),
     TOUR_COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "TC_001", "코스를 찾을 수 없습니다."),
-    HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "H_001", "좋아요 기록을 찾을 수 없습니다.");
+    HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "H_001", "좋아요 기록을 찾을 수 없습니다."),
+    SEARCH_KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "S_001", "검색어 기록을 찾을 수 없습니다.");
 
 
     //------------------------------------------------------------------------//

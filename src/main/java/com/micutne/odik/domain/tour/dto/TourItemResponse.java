@@ -1,7 +1,5 @@
 package com.micutne.odik.domain.tour.dto;
 
-import com.micutne.odik.common.exception.BusinessException;
-import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.imageTourItem.ImageTourItem;
 import com.micutne.odik.domain.tour.TourItem;
 import com.micutne.odik.domain.user.dto.ProfileResponse;
@@ -34,7 +32,7 @@ public class TourItemResponse {
     Float point_google;
     String type;
 
-    int countLike;
+    int count_like;
 
     List<String> images_google;
 
@@ -51,7 +49,7 @@ public class TourItemResponse {
         response.reference_id_google = tourItem.getReferenceIdGoogle();
         response.phone_number = tourItem.getPhoneNumber();
         response.point_google = tourItem.getPointGoogle();
-        response.countLike = tourItem.getCountLike();
+        response.count_like = tourItem.getCountLike();
         response.type = tourItem.getType();
         if (tourItem.getImagesGoogle() != null)
             response.setImages_google(tourItem.getImagesGoogle().stream().map(ImageTourItem::getImagesGoogle).toList());

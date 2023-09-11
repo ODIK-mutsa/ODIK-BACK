@@ -20,10 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -67,10 +64,7 @@ public class TourCourseService {
     /**
      * 코스 검색
      */
-    public TourCourseResultListResponse searchAll(String keyword, String orderBy, int pageNo, int pageSize) {
-        String[] keywords = URLDecoder.decode(keyword, StandardCharsets.UTF_8).split(" ");
-        log.info(keyword);
-        log.info(Arrays.toString(keywords));
+    public TourCourseResultListResponse searchAll(String[] keywords, String orderBy, int pageNo, int pageSize) {
         Specification<TourCourse> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -97,7 +91,6 @@ public class TourCourseService {
             pageable = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.ASC, sortData[0]));
         }
         Page<TourCourse> tourCourses = tourCourseRepository.findAll(spec, pageable);
-
         return TourCourseResultListResponse.fromEntity(tourCourses.map(TourCourseResponse::fromEntity), "OK");
     }
 
