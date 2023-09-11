@@ -29,7 +29,9 @@ public class FileController {
         String folder = FileConfig.findPath(category);
         String[] url = System.getProperty("user.dir").split(":");
         Resource resource = new UrlResource("file:" + url[1] + folder + "/" + file);
-        log.info(resource.getFile().getAbsolutePath());
+        //서버 경로
+//        String ubuntuUrl = "/home/ubuntu";
+//        Resource resource = new FileSystemResource(folder + "/" + file);
         return resource;
     }
 
