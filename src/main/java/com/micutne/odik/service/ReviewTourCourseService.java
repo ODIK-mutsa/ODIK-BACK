@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -47,8 +46,13 @@ public class ReviewTourCourseService {
 
     }
 
-    public ReviewCourseResultResponse readReview(int reviewId) {
+    public ReviewCourseResultResponse readReview(int courseId, int reviewId) {
         if (reviewCourseRepository.existsByIdx(reviewId)) {
+            ReviewTourCourse reviewTourCourse = reviewCourseRepository.findByIdxOrThrow(reviewId);
+
+            if (reviewTourCourse.getTourCourse().getIdx() != courseId)
+                return ReviewCourseResultResponse.fromEntity("COURSE_ID_NOT_MATCH");
+
             return ReviewCourseResultResponse.fromEntity(reviewCourseRepository.findByIdxOrThrow(reviewId), "OK");
         }
         return ReviewCourseResultResponse.fromEntity("REVIEW_NOT_EXIST");
@@ -114,7 +118,9 @@ public class ReviewTourCourseService {
             if (!checkAuth(reviewCourse, user)) return ReviewCourseResultResponse.fromEntity("AUTH_FAIL");
             //이미지 삭제
             List<String> images = reviewCourse.getReviewImage().stream().map(ImageReviewTourCourse::getUrl).toList();
-            images.stream().peek(image -> ImageUtils.removeFile(image, "review_tour_course")).collect(Collectors.toList());
+            for (String image : images) {
+                ImageUtils.removeFile(image);
+            }
             //entity 삭제
             reviewCourseRepository.delete(reviewCourse);
 

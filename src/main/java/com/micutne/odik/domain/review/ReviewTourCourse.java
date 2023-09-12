@@ -51,4 +51,8 @@ public class ReviewTourCourse extends BaseEntity {
         if (request.getRating() != -1) rating = request.getRating();
         if (request.getContent() != null) content = request.getContent();
     }
+
+    public void setReviewImage(List<ImageReviewTourCourse> urls) {
+        reviewImage = urls;
+    }
 }

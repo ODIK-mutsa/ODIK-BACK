@@ -86,9 +86,9 @@ public class TourCourseController {
     /**
      * 리뷰 단일 불러오기
      */
-    @RequestMapping(value = "review", method = RequestMethod.GET, params = "review")
-    public ReviewCourseResultResponse readReviewOne(@RequestParam(name = "review") int reviewId) {
-        return reviewTourCourseService.readReview(reviewId);
+    @GetMapping("{course_id}/review/{review_id}")
+    public ReviewCourseResultResponse readReviewOne(@PathVariable int course_id, @PathVariable int review_id) {
+        return reviewTourCourseService.readReview(course_id, review_id);
     }
 
     /**

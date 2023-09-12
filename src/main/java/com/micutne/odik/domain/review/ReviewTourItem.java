@@ -52,4 +52,7 @@ public class ReviewTourItem extends BaseEntity {
     }
 
 
+    public void setReviewImage(List<ImageReviewTourItem> urls) {
+        reviewImage = urls;
+    }
 }

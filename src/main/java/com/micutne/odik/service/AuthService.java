@@ -100,7 +100,7 @@ public class AuthService {
                 return UserResultResponse.fromEntity("INVALID");
             }
             userPrivate.updatePassword(passwordEncoder.encode(request.getPassword_new()));
-            return UserResultResponse.fromEntity("VALID");
+            return UserResultResponse.fromEntity("OK");
         }
         return UserResultResponse.fromEntity("INVALID");
     }

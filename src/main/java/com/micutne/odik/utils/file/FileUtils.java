@@ -46,7 +46,7 @@ class FileUtils {
         String ext = getExt(Objects.requireNonNull(file.getOriginalFilename()));
         validateFileSize(file.getSize());
         Path filePath = save(file, path, fileName + "." + ext);
-        return buildFileResponse(filePath, file.getSize(), file.getContentType());
+        return buildFileResponse(filePath, file.getSize(), file.getContentType(), category);
     }
 
     /**
@@ -69,7 +69,6 @@ class FileUtils {
     //저장
     private static Path save(MultipartFile file, Path path, String fileName) {
         Path targetLocation = path.resolve(fileName);
-        log.info(String.valueOf(targetLocation));
         try {
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
@@ -78,21 +77,22 @@ class FileUtils {
         return targetLocation;
     }
 
-    static void remove(String filename, String category) {
-        String path = FileConfig.findPath(category) + "/";
-        String pathname = path + File.separator + filename;
+    static void remove(String filename) {
+        String[] splits = filename.split("/");
+        String path = FileConfig.findPath(splits[2]);
+        String pathname = path + File.separator + splits[3];
         //UUID가 포함된 파일이름을 디코딩해줍니다.
         File file = new File(pathname);
         boolean result = file.delete();
     }
 
 
-    private static FileResponse buildFileResponse(Path filePath, long size, String contentType) {
-
+    private static FileResponse buildFileResponse(Path filePath, long size, String contentType, String category) {
         String fileRoot = String.valueOf(filePath).substring(1);
         fileRoot = fileRoot.replace("\\", "/");
+        String path = FileConfig.getUrl() + "/" + category + "/";
         return FileResponse.builder()
-                .fileName(filePath.getFileName().toString())
+                .fileName(path + filePath.getFileName().toString())
                 .fileSize(size)
                 .contentType(contentType)
                 .uploadTimeStamp(Instant.now())
