@@ -1,25 +1,20 @@
-package com.micutne.odik.domain.tour.dto;
+package com.micutne.odik.domain.tour.dto.item;
 
-import ch.qos.logback.core.spi.ErrorCodes;
-import com.micutne.odik.common.exception.BusinessException;
-import com.micutne.odik.common.exception.ErrorCode;
-import com.micutne.odik.domain.imageTourItem.ImageTourItem;
+import com.micutne.odik.domain.images.ImageTourItem;
 import com.micutne.odik.domain.tour.TourItem;
-import com.micutne.odik.domain.user.User;
 import com.micutne.odik.domain.user.dto.ProfileResponse;
-import com.micutne.odik.domain.user.dto.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Data
-@Component
 @NoArgsConstructor
 @AllArgsConstructor
 public class TourItemResponse {
+
+    int idx;
 
     String title;
     ProfileResponse user;
@@ -35,15 +30,18 @@ public class TourItemResponse {
 
     String phone_number;
     Float point_google;
+    String type;
 
-    List<ImageTourItem> images_google;
+    int count_like;
+
+    List<String> images_google;
 
 
     public static TourItemResponse fromEntity(TourItem tourItem) {
         TourItemResponse response = new TourItemResponse();
+        response.idx = tourItem.getIdx();
         response.title = tourItem.getTitle();
         response.user = ProfileResponse.fromEntity(tourItem.getUser());
-        //response.user = tourItem.getUser();
         response.location_lat = tourItem.getLocationLat();
         response.location_lng = tourItem.getLocationLng();
         response.state = tourItem.getState();
@@ -51,35 +49,31 @@ public class TourItemResponse {
         response.reference_id_google = tourItem.getReferenceIdGoogle();
         response.phone_number = tourItem.getPhoneNumber();
         response.point_google = tourItem.getPointGoogle();
+        response.count_like = tourItem.getCountLike();
+        response.type = tourItem.getType();
+        if (tourItem.getImagesGoogle() != null)
+            response.setImages_google(tourItem.getImagesGoogle().stream().map(ImageTourItem::getImagesGoogle).toList());
         response.result = "OK";
-        //response.images_google = tourItem.getImagesGoogle();
         return response;
     }
 
-    public static TourItemResponse updateEntity(TourItem tourItem) {
-        TourItemResponse response = new TourItemResponse();
-        response.title = tourItem.getTitle();
-        response.location_lat = tourItem.getLocationLat();
-        response.location_lng = tourItem.getLocationLng();
-        response.address = tourItem.getAddress();
-        response.phone_number = tourItem.getPhoneNumber();
-        response.reference_id_google = tourItem.getReferenceIdGoogle();
+    public static TourItemResponse fromEntity(TourItem tourItem, List<ImageTourItem> imageTourItems) {
+
+        TourItemResponse response = fromEntity(tourItem);
+        response.setImages_google(imageTourItems.stream().map(ImageTourItem::getImagesGoogle).toList());
         return response;
     }
 
 
-    public TourItemResponse (String result) {
+    public TourItemResponse(String result) {
         this.result = result;
 
     }
 
-    public static TourItemResponse alreadyExist (String result) {
+    public static TourItemResponse resultMessage(String result) {
         TourItemResponse response = new TourItemResponse();
         response.result = result;
         return response;
-    }
-    public TourItemResponse(ErrorCode errorCode) {
-        this.result = String.valueOf(new BusinessException(ErrorCode.TOUR_ITEM_ALREADY_EXIST));
     }
 
 }

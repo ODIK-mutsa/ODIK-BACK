@@ -2,14 +2,12 @@ package com.micutne.odik.service;
 
 import com.micutne.odik.common.auth.CustomUserDetails;
 import com.micutne.odik.common.auth.JwtTokenProvider;
-import com.micutne.odik.common.exception.AuthException;
-import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.domain.user.UserPrivate;
 import com.micutne.odik.domain.user.dto.LoginRequest;
+import com.micutne.odik.domain.user.dto.PasswordRequest;
 import com.micutne.odik.domain.user.dto.SignUpRequest;
-import com.micutne.odik.domain.user.dto.UserResponse;
-import com.micutne.odik.domain.user.dto.VaildResponse;
+import com.micutne.odik.domain.user.dto.UserResultResponse;
 import com.micutne.odik.repository.UserPrivateRepository;
 import com.micutne.odik.repository.UserRepository;
 import com.micutne.odik.utils.FormatUtils;
@@ -18,9 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -38,7 +33,7 @@ public class AuthService {
     }
 
     @Transactional
-    public UserResponse signup(SignUpRequest request) {
+    public UserResultResponse signup(SignUpRequest request) {
         String userId = FormatUtils.formatId(request.getId(), request.getLogin_type());
         if (!userRepository.existsById(userId)) {
             request.setId(userId);
@@ -46,9 +41,9 @@ public class AuthService {
             User user = userRepository.save(User.fromDto(request));
             user.setToken(jwtTokenProvider.generateToken(CustomUserDetails.fromEntity(user)));
             UserPrivate userPrivate = userPrivateRepository.save(UserPrivate.fromDto(request, user));
-            return UserResponse.fromEntity(user);
+            return UserResultResponse.fromEntity(user, "OK");
         }
-        throw new AuthException(ErrorCode.USER_ALREADY_EXIST);
+        return UserResultResponse.fromEntity("ALREADY_EXIST");
     }
 
     @Transactional
@@ -61,43 +56,52 @@ public class AuthService {
     }
 
     @Transactional
-    public VaildResponse login(LoginRequest request) {
+    public UserResultResponse login(LoginRequest request) {
         String userId = FormatUtils.formatId(request.getId(), "email");
         if (userRepository.existsById(userId)) {
             User user = userRepository.findByIdOrThrow(userId);
             UserPrivate userPrivate = userPrivateRepository.findByIdxOrThrow(user.getIdx());
             if (!passwordEncoder.matches(request.getPassword(), userPrivate.getPss())) {
-                return new VaildResponse("NOT_FOUND");
+                return UserResultResponse.fromEntity("NOT_FOUND");
             }
-            return VaildResponse.fromEntity(user, "OK");
-        } else return new VaildResponse("NOT_FOUND");
+            return UserResultResponse.fromEntity(user, "OK");
+        } else return UserResultResponse.fromEntity("NOT_FOUND");
     }
 
-    public VaildResponse checkAuth(String token, Authentication authentication) {
+    public UserResultResponse checkAuth(String token, Authentication authentication) {
         if (token == null || token.isEmpty() || authentication == null) {
-            return new VaildResponse("INVALID");
+            return UserResultResponse.fromEntity("INVALID");
         }
 
         String userId = authentication.getPrincipal().toString();
         User user = userRepository.findByIdOrThrow(userId);
         if (user.getToken().equals(token.split(" ")[1])) {
-            return VaildResponse.fromEntity(user, "VALID");
+            return UserResultResponse.fromEntity(user, "VALID");
         }
-        return new VaildResponse("INVALID");
+        return UserResultResponse.fromEntity("INVALID");
     }
 
     @Transactional
-    public Map<String, String> changePassword(String email, String newPassword) {
+    public UserResultResponse findPassword(String email, String newPassword) {
         String userId = FormatUtils.formatId(email, "email");
-        log.info(userId);
         User user = userRepository.findByIdOrThrow(userId);
         UserPrivate userPrivate = userPrivateRepository.findByIdxOrThrow(user.getIdx());
         userPrivate.updatePassword(passwordEncoder.encode(newPassword));
 
-        Map<String, String> result = new HashMap<>();
-        result.put("result", "OK");
-        return result;
+        return UserResultResponse.fromEntity("OK");
     }
 
 
+    public UserResultResponse changePassword(PasswordRequest request) {
+        if (userRepository.existsById(request.getId())) {
+            User user = userRepository.findByIdOrThrow(request.getId());
+            UserPrivate userPrivate = userPrivateRepository.findByIdxOrThrow(user.getIdx());
+            if (!passwordEncoder.matches(request.getPassword_old(), userPrivate.getPss())) {
+                return UserResultResponse.fromEntity("INVALID");
+            }
+            userPrivate.updatePassword(passwordEncoder.encode(request.getPassword_new()));
+            return UserResultResponse.fromEntity("OK");
+        }
+        return UserResultResponse.fromEntity("INVALID");
+    }
 }

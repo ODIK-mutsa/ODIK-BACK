@@ -13,7 +13,7 @@ public class EmailRequest {
     LocalDateTime date;
 
     public EmailRequest() {
-        code = code == null ? RandomUtils.Random6Hex() : code;
+        code = code == null ? RandomUtils.Random6Number() : code;
         date = LocalDateTime.now();
     }
 

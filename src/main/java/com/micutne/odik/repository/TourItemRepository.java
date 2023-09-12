@@ -3,11 +3,10 @@ package com.micutne.odik.repository;
 import com.micutne.odik.common.exception.EntityNotFoundException;
 import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.tour.TourItem;
-import com.micutne.odik.domain.user.dto.ProfileResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,14 +20,14 @@ public interface TourItemRepository extends JpaRepository<TourItem, Integer> {
 
     Boolean existsByReferenceIdGoogle(String referenceIdGoogle);
 
-    TourItem findByReferenceIdGoogle (String referenceIdGoogle);
+    Boolean existsByIdx(int idx);
 
-    Page<TourItem> findByUserIdxOrderByDateCreateDesc(ProfileResponse user, Pageable pageable);
+    TourItem findByReferenceIdGoogle(String referenceIdGoogle);
 
-    Page<TourItem> findAllBy(Pageable pageable);
+    Page<TourItem> findAll(Specification<TourItem> spec, Pageable pageable);
 
-    Page<TourItem> findAllByUserIdxInOrderByDateCreateDesc(List<User> user, Pageable pageable);
+    List<TourItem> findAllByOrderByCountLikeDesc(Pageable pageable);
+
+    boolean existsByReferenceIdGoogleAndState(String referenceIdGoogle, String state);
 
 }
-
-

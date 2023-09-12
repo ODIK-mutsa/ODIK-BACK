@@ -154,3 +154,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+*.yaml
+*.yml

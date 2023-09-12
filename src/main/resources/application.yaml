@@ -7,7 +7,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     show-sql: true
   servlet:
     multipart:
@@ -42,6 +42,7 @@ spring:
         registration:
           google:
             client-id:
+            client-id:
             client-secret:
             redirect-uri: /auth/oauth/google
             authorization-grant-type: authorization_code
@@ -65,5 +66,3 @@ file:
 # JWT
 jwt:
   secret: JEh7781T69H7/BGxUTl7wX538jGYOe52
-  accessTokenExpirationTime: 3600000
-  refreshTokenExpirationTime: 86400000

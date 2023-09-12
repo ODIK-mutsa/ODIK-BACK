@@ -3,7 +3,7 @@ package com.micutne.odik.service;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.domain.user.dto.ProfileResponse;
 import com.micutne.odik.domain.user.dto.UserRequest;
-import com.micutne.odik.domain.user.dto.UserResponse;
+import com.micutne.odik.domain.user.dto.UserResultResponse;
 import com.micutne.odik.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +17,16 @@ public class UserService {
     private final UserRepository userRepository;
 
 
-    public UserResponse readOne(String userId) {
-        return UserResponse.fromEntity(userRepository.findByIdOrThrow(userId));
+    public UserResultResponse readOne(String username) {
+        if (!userRepository.existsById(username)) return UserResultResponse.fromEntity("USER_NOT_EXIST");
+        return UserResultResponse.fromEntity(userRepository.findByIdOrThrow(username), "OK");
     }
 
     /**
      * 사용자 프로필 찾기
      */
     public ProfileResponse readProfile(int userIdx) {
+
         return ProfileResponse.fromEntity(userRepository.findByIdxOrThrow(userIdx));
     }
 
@@ -32,21 +34,24 @@ public class UserService {
      * 사용자 정보 수정하기
      */
     @Transactional
-    public UserResponse updateInfo(UserRequest userRequest, String id) {
-        User user = userRepository.findByIdOrThrow(id);
+    public UserResultResponse updateInfo(UserRequest userRequest, String username) {
+        if (!userRepository.existsById(username)) return UserResultResponse.fromEntity("USER_NOT_EXIST");
+
+        User user = userRepository.findByIdOrThrow(username);
         user.updateInfo(userRequest);
-        return UserResponse.fromEntity(user);
+        return UserResultResponse.fromEntity(user, "OK");
     }
 
     /**
      * 사용자 상태 수정하기
      */
     @Transactional
-    public UserResponse updateState(UserRequest userRequest, String id) {
-        User user = userRepository.findByIdOrThrow(id);
-        user.updateState(userRequest);
-        return UserResponse.fromEntity(user);
-    }
+    public UserResultResponse updateState(UserRequest userRequest, String username) {
+        if (!userRepository.existsById(username)) return UserResultResponse.fromEntity("USER_NOT_EXIST");
 
+        User user = userRepository.findByIdOrThrow(username);
+        user.updateState(userRequest);
+        return UserResultResponse.fromEntity(user, "OK");
+    }
 
 }

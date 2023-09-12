@@ -1,12 +1,10 @@
-package com.micutne.odik.domain.tour.dto;
+package com.micutne.odik.domain.tour.dto.item;
 
 import com.micutne.odik.domain.user.User;
 import lombok.Data;
 
 @Data
 public class TourItemListResponse {
-    String title;
-
     User user;
 
     Double location_lat;
@@ -15,7 +13,6 @@ public class TourItemListResponse {
 
     String state;
     String address;
+    String type;
 
-
-
-    }
+}

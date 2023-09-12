@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class UserResponse {
+    int idx;
     String email;
     String login_type;
     String token_odik;
@@ -17,6 +18,7 @@ public class UserResponse {
 
     public static UserResponse fromEntity(User user) {
         UserResponse response = new UserResponse();
+        response.idx = user.getIdx();
         response.email = user.getId();
         response.login_type = user.getLoginType();
         response.token_odik = user.getToken();

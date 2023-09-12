@@ -1,48 +1,40 @@
 package com.micutne.odik.service;
 
 import com.micutne.odik.common.exception.AuthException;
-import com.micutne.odik.common.exception.BusinessException;
-import com.micutne.odik.common.exception.EntityNotFoundException;
 import com.micutne.odik.common.exception.ErrorCode;
-import com.micutne.odik.domain.imageTourItem.ImageTourItem;
-//import com.micutne.odik.domain.imageTourItem.dto.ImageTourItemMapper;
-//import com.micutne.odik.domain.imageTourItem.dto.ImageTourItemRequest;
+import com.micutne.odik.domain.images.ImageTourItem;
 import com.micutne.odik.domain.tour.TourItem;
-import com.micutne.odik.domain.tour.dto.TourItemListResponse;
-import com.micutne.odik.domain.tour.dto.TourItemMapper;
-import com.micutne.odik.domain.tour.dto.TourItemRequest;
-import com.micutne.odik.domain.tour.dto.TourItemResponse;
+import com.micutne.odik.domain.tour.dto.item.TourItemMapper;
+import com.micutne.odik.domain.tour.dto.item.TourItemRequest;
+import com.micutne.odik.domain.tour.dto.item.TourItemResponse;
+import com.micutne.odik.domain.tour.dto.item.TourItemResultListResponse;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.repository.ImageTourItemRepository;
 import com.micutne.odik.repository.TourItemRepository;
 import com.micutne.odik.repository.UserRepository;
-import com.micutne.odik.utils.file.Extensions;
-//import com.micutne.odik.utils.file.FileResponse;
-//import com.micutne.odik.utils.file.ImageUtils;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class TourItemService {
-    private static final String[] ARTICLE_FILE_URL = Extensions.IMAGE.getExtensions();
     private final TourItemRepository tourItemRepository;
     private final UserRepository userRepository;
     private final TourItemMapper tourItemMapper;
     private final ImageTourItemRepository imageTourItemRepository;
-   // private final ImageTourItemMapper imageTourItemMapper;
-    //private final TourItemResponse tourItemResponse;
 
 
     /**
@@ -50,79 +42,57 @@ public class TourItemService {
      */
 
     public TourItemResponse readOne(String reference_id) {
-        //TourItem tourItem = tourItemRepository.findByIdOrThrow(idx);
-        //if (tourItemRepository.existsByReferenceIdGoogle(new TourItem().getReferenceIdGoogle())) {
+        if (tourItemRepository.existsByReferenceIdGoogleAndState(reference_id, "public")) {
             TourItem tourItem = tourItemRepository.findByReferenceIdGoogle(reference_id);
-          //  return tourItemMapper.toDto(tourItem);
-            return TourItemResponse.fromEntity(tourItemRepository.findByReferenceIdGoogle(reference_id));
+            return TourItemResponse.fromEntity(tourItem);
         }
-        //else throw new EntityNotFoundException(ErrorCode.TOUR_ITEM_NOT_FOUND);
-    //}
-
-    /**
-     * 전체 관광지 전체 불러오기
-     */
-
-    public Page<TourItemListResponse> readAll(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        return tourItemRepository.findAllBy(pageable).map(tourItemMapper::toListDto);
+        return TourItemResponse.resultMessage("NOT_EXIST");
     }
 
     /**
      * 관광지 저장
      */
     @Transactional
-    public TourItemResponse create(TourItemRequest request, String id) {
-        //if (new TourItem().getReferenceIdGoogle() != (request.getReference_id_google())) {
-        if (!tourItemRepository.existsByReferenceIdGoogle(new TourItem().getReferenceIdGoogle())) {
-            //request.updateUser(userRepository.findByIdOrThrow(id));
-            request.setUser(userRepository.findByIdOrThrow(id));
-            //userRepository.findByIdOrThrow(id);
-            //request.getUser(userRepository.findByIdOrThrow(id));
-            TourItem tourItem = tourItemMapper.toEntity(request);
-            tourItem = tourItemRepository.save(tourItem);
+    public TourItemResponse create(TourItemRequest request, String username) {
 
-            /*
+        if (tourItemRepository.existsByReferenceIdGoogle(request.getReference_id_google()))
+            return new TourItemResponse(String.valueOf(ErrorCode.TOUR_ITEM_ALREADY_EXIST));
+
+        if (userRepository.existsById(username)) {
+            request.setUser(userRepository.findByIdOrThrow(username));
             TourItem tourItem = tourItemMapper.toEntity(request);
-            tourItem.updateUser(userRepository.findByIdOrThrow(id));
             tourItem = tourItemRepository.save(tourItem);
-            // updateState 메소드를 통해 카트에 담을 경우 cart, 코스의 일부로 저장되는 경우 course로 사용가능?
-            tourItem.updateState("cart");
-            //return tourItemMapper.toDto(tourItem);
-             */
 
             List<ImageTourItem> imageTourItems = new ArrayList<>();
-            for (String imageUrl : request.getImages_google()) {
-                // Url 또는 파일 추가 로직 ( 파일 추가부분 수정 필요 )
-                boolean saveUrl = imageUrl.startsWith("http://") || imageUrl.startsWith("https://");
-                String saveFile = "saveFile";
-                ImageTourItem imageTourItem = ImageTourItem.builder()
-                        .tour_item_idx(tourItem)
-                        .url(saveUrl ? imageUrl : saveFile)
-                        .build();
-                imageTourItems.add(imageTourItem);
-            }
-            imageTourItemRepository.saveAll(imageTourItems);
 
-            return TourItemResponse.fromEntity(tourItem);
-            //return new TourItemResponse("OK");
-        } else
-            //return TourItemResponse.alreadyExist("ALREADY_EXIST");
-        //return new TourItemResponse(ErrorCode.TOUR_ITEM_ALREADY_EXIST);
-        //return new TourItemResponse(ErrorCode.TOUR_ITEM_ALREADY_EXIST);
-        return new TourItemResponse();
+            if (request.getImages_google() != null) {
+                for (String imageUrl : request.getImages_google()) {
+                    ImageTourItem imageTourItem = ImageTourItem.builder()
+                            .tour_item_idx(tourItem)
+                            .url(imageUrl)
+                            .build();
+                    imageTourItems.add(imageTourItem);
+                }
+            }
+
+            imageTourItems = imageTourItemRepository.saveAll(imageTourItems);
+
+            TourItemResponse response = TourItemResponse.fromEntity(tourItem, imageTourItems);
+            response.setImages_google(imageTourItems.stream().map(ImageTourItem::getImagesGoogle).toList());
+            return response;
+        }
+        return TourItemResponse.resultMessage("AUTH_FAIL");
     }
 
     /**
      * 관광지 수정
      */
     @Transactional
-    public TourItemResponse update(int idx, TourItemRequest request, String id) {
+    public TourItemResponse update(int idx, TourItemRequest request, String username) {
         TourItem tourItem = tourItemRepository.findByIdOrThrow(idx);
-        User user = userRepository.findByIdOrThrow(id);
+        User user = userRepository.findByIdOrThrow(username);
         checkAuth(tourItem, user);
         tourItem.updateTourItem(request);
-        //return tourItemMapper.toDto(tourItem);
         return TourItemResponse.fromEntity(tourItem);
 
     }
@@ -130,45 +100,71 @@ public class TourItemService {
     /**
      * 관광지 삭제
      */
-    public void remove(int idx, String id) {
-        TourItem tourItem = tourItemRepository.findByIdOrThrow(idx);
-        User user = userRepository.findByIdOrThrow(id);
-        checkAuth(tourItem, user);
-        try {
+    public TourItemResponse remove(int idx, String username) {
+        User user = userRepository.findByIdOrThrow(username);
+
+        if (tourItemRepository.existsByIdx(idx)) {
+            TourItem tourItem = tourItemRepository.findByIdOrThrow(idx);
+            checkAuth(tourItem, user);
+
             tourItemRepository.delete(tourItem);
-        } catch (Exception e) {
-            throw new BusinessException(ErrorCode.TOUR_ITEM_DELETE_FAIL);
+            return TourItemResponse.resultMessage("OK");
+        }
+        return TourItemResponse.resultMessage("TOUR_ITEM_NOT_EXIST");
+    }
+
+    /**
+     * 관광지 검색 또는 전체 불러오기
+     */
+    public TourItemResultListResponse searchAll(String[] keywords, String orderBy, int pageNo, int pageSize) {
+        Specification<TourItem> spec = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (keywords.length > 0) {
+                Predicate[] keywordPredicates = new Predicate[keywords.length];
+                for (int i = 0; i < keywords.length; i++) {
+                    keywordPredicates[i] = criteriaBuilder.like(root.get("title"), "%" + keywords[i] + "%");
+                }
+                predicates.add(criteriaBuilder.or(keywordPredicates));
+            }
+            predicates.add(criteriaBuilder.equal(root.get("state"), "public"));
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Pageable pageable;
+        String[] sortData = findField(orderBy);
+
+        if (sortData[1].equals("desc")) {
+            pageable = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.DESC, sortData[0]));
+        } else {
+            pageable = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.ASC, sortData[0]));
+        }
+        Page<TourItem> tourItems = tourItemRepository.findAll(spec, pageable);
+
+        return TourItemResultListResponse.fromEntity(tourItems.map(TourItemResponse::fromEntity), "OK");
+    }
+
+
+    private String[] findField(String orderBy) {
+        switch (orderBy) {
+            case "recent" -> {
+                return new String[]{"dateCreate", "desc"};
+            }
+            case "like" -> {
+                return new String[]{"countLike", "asc"};
+            }
+            default -> {
+                return new String[]{"dateCreate", "desc"};
+            }
         }
     }
 
     /**
      * 사용자 확인(추후 수정 및 추가)
      */
+
     public void checkAuth(TourItem tourItem, User user) {
         if (!tourItem.getUser().equals(user)) throw new AuthException(ErrorCode.USER_NOT_FOUND);
     }
-
-
-    // 이미지 생성
-    /*
-    private List<ImageTourItem> saveImage(MultipartFile[] images, TourItem tourItem) {
-        List<FileResponse> responses = Arrays.stream(images)
-                .map(file -> ImageUtils.saveFiles(file, ARTICLE_FILE_URL, file.getOriginalFilename().split("\\.")[0] ))
-                .toList();
-
-        for (FileResponse temp : responses) {
-            temp.setTourItem(tourItem)
-        }
-
-    }
-
-     */
-
-    // delete
-    /*
-    private void removeImage(TourItem tourItem) {
-        List<ImageTourItemRequest> images = tourItem.get
-    }
-
-     */
 }
