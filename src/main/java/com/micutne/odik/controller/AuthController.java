@@ -3,6 +3,7 @@ package com.micutne.odik.controller;
 import com.micutne.odik.domain.email.dto.EmailRequest;
 import com.micutne.odik.domain.email.dto.EmailResponse;
 import com.micutne.odik.domain.user.dto.LoginRequest;
+import com.micutne.odik.domain.user.dto.PasswordRequest;
 import com.micutne.odik.domain.user.dto.SignUpRequest;
 import com.micutne.odik.domain.user.dto.UserResultResponse;
 import com.micutne.odik.service.AuthService;
@@ -65,17 +66,15 @@ public class AuthController {
     public UserResultResponse passwordFind(@RequestBody Map<String, String> requestData) {
         String email = requestData.get("email");
         String password = requestData.get("password");
-        return authService.changePassword(email, password);
+        return authService.findPassword(email, password);
     }
 
     /**
      * 기존의 비밀번호를 알고 있는 경우
      */
     @PutMapping("change_pw")
-    public UserResultResponse passwordChange(@RequestBody Map<String, String> requestData) {
-        String email = requestData.get("email");
-        String password = requestData.get("password");
-        return authService.changePassword(email, password);
+    public UserResultResponse passwordChange(@RequestBody PasswordRequest request) {
+        return authService.changePassword(request);
     }
 
 
