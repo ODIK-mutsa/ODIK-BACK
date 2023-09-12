@@ -2,9 +2,9 @@ package com.micutne.odik.controller;
 
 import com.micutne.odik.domain.like.dto.ItemLikeRequest;
 import com.micutne.odik.domain.like.dto.LikeResponse;
-import com.micutne.odik.domain.tour.dto.TourItemRequest;
-import com.micutne.odik.domain.tour.dto.TourItemResponse;
-import com.micutne.odik.domain.tour.dto.TourItemResultListResponse;
+import com.micutne.odik.domain.tour.dto.item.TourItemRequest;
+import com.micutne.odik.domain.tour.dto.item.TourItemResponse;
+import com.micutne.odik.domain.tour.dto.item.TourItemResultListResponse;
 import com.micutne.odik.service.HistoryLikeItemService;
 import com.micutne.odik.service.TourItemService;
 import com.micutne.odik.utils.redis.SearchRedisUtils;

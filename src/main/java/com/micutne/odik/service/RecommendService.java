@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SearchKeywordService {
+public class RecommendService {
     private final SearchKeywordRepository searchKeywordRepository;
 
 
@@ -25,4 +25,7 @@ public class SearchKeywordService {
     }
 
 
+    public SearchKeywordResultResponse readRecommendList(String username) {
+
+    }
 }

@@ -65,6 +65,9 @@ dependencies {
     //Scheduler
     implementation 'org.springframework.boot:spring-boot-starter-quartz:2.7.5'
 
+    //redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 

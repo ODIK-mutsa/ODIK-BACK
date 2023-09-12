@@ -1,10 +1,14 @@
 package com.micutne.odik.service;
 
+import com.micutne.odik.domain.images.ImageReviewTourCourse;
+import com.micutne.odik.domain.images.ImageReviewTourItem;
+import com.micutne.odik.domain.review.ReviewTourCourse;
+import com.micutne.odik.domain.review.ReviewTourItem;
 import com.micutne.odik.domain.tour.TourCourse;
+import com.micutne.odik.domain.tour.TourItem;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.repository.*;
 import com.micutne.odik.utils.file.FileRequest;
-import com.micutne.odik.utils.file.FileResponse;
 import com.micutne.odik.utils.file.FileResultResponse;
 import com.micutne.odik.utils.file.ImageUtils;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +27,9 @@ public class FileService {
     private final TourCourseRepository tourCourseRepository;
     private final TourItemRepository tourItemRepository;
     private final ReviewTourCourseRepository reviewTourCourseRepository;
+    private final ImageReviewTourCourseRepository imageReviewTourCourseRepository;
     private final ReviewTourItemRepository reviewTourItemRepository;
+    private final ImageReviewTourItemRepository imageReviewTourItemRepository;
     private final UserRepository userRepository;
 
     @Transactional
@@ -44,11 +50,18 @@ public class FileService {
         String category = request.getCategory();
         int idx = request.getIdx();
         if (reviewTourItemRepository.existsByIdx(idx)) {
+            ReviewTourItem reviewTourItem = reviewTourItemRepository.findByIdOrThrow(idx);
+            User user = userRepository.findByIdOrThrow(username);
+            List<String> result = new ArrayList<>();
+            if (reviewTourItem.getUser().equals(user)) {
+                if (images[0].getSize() == 0) {
+                    List<String> temps = reviewTourItem.getReviewImage().stream().map(ImageReviewTourItem::getUrl).toList();
 
-            List<FileResponse> result = ImageUtils.saveFiles(images, category);
-            List<String> urls = result.stream().map(FileResponse::getFileName).toList();
-
-            return FileResultResponse.toDto("NOT_YET");
+                    return FileResultResponse.toDto("OK", result);
+                }
+                return FileResultResponse.toDto("OK", result);
+            }
+            return FileResultResponse.toDto("AUTH_FAIL");
         }
         return FileResultResponse.toDto("ENTITY_NOT_EXIST");
     }
@@ -57,11 +70,17 @@ public class FileService {
         String category = request.getCategory();
         int idx = request.getIdx();
         if (reviewTourCourseRepository.existsByIdx(idx)) {
-
-            List<FileResponse> result = ImageUtils.saveFiles(images, category);
-            List<String> urls = result.stream().map(FileResponse::getFileName).toList();
-
-            return FileResultResponse.toDto("NOT_YET");
+            ReviewTourCourse reviewTourCourse = reviewTourCourseRepository.findByIdxOrThrow(idx);
+            User user = userRepository.findByIdOrThrow(username);
+            List<String> result = new ArrayList<>();
+            if (reviewTourCourse.getUser().equals(user)) {
+                if (images[0].getSize() == 0) {
+                    List<String> temps = reviewTourCourse.getReviewImage().stream().map(ImageReviewTourCourse::getUrl).toList();
+                    return FileResultResponse.toDto("OK", result);
+                }
+                return FileResultResponse.toDto("OK", result);
+            }
+            return FileResultResponse.toDto("AUTH_FAIL");
         }
         return FileResultResponse.toDto("ENTITY_NOT_EXIST");
     }
@@ -70,11 +89,16 @@ public class FileService {
         String category = request.getCategory();
         int idx = request.getIdx();
         if (tourItemRepository.existsByIdx(idx)) {
-
-            List<FileResponse> result = ImageUtils.saveFiles(images, category);
-            List<String> urls = result.stream().map(FileResponse::getFileName).toList();
-
-            return FileResultResponse.toDto("NOT_YET");
+            TourItem tourItem = tourItemRepository.findByIdOrThrow(idx);
+            User user = userRepository.findByIdOrThrow(username);
+            List<String> result = new ArrayList<>();
+            if (tourItem.getUser().equals(user)) {
+                if (images[0].getSize() == 0) {
+                    return FileResultResponse.toDto("OK", result);
+                }
+                return FileResultResponse.toDto("OK", result);
+            }
+            return FileResultResponse.toDto("AUTH_FAIL");
         }
         return FileResultResponse.toDto("ENTITY_NOT_EXIST");
     }

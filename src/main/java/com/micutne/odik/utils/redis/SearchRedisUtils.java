@@ -29,7 +29,7 @@ public class SearchRedisUtils {
             searchRedisTemplate.opsForZSet().incrementScore(searchKey, keyword, 1);
 
             // 검색어에 1시간 동안의 유효 기간 설정
-            searchRedisTemplate.expire(searchKey, 10, TimeUnit.MINUTES);
+            searchRedisTemplate.expire(searchKey, 1, TimeUnit.DAYS);
         }
     }
 
@@ -45,5 +45,18 @@ public class SearchRedisUtils {
         return topKeywords;
     }
 
+    public static List<RedisResponse> readTopSearchKeywords(int count) {
+        Set<ZSetOperations.TypedTuple<String>> result = searchRedisTemplate.opsForZSet().reverseRangeWithScores(searchKey, 0, count - 1);
+
+        List<RedisResponse> topKeywords = new ArrayList<>();
+        for (ZSetOperations.TypedTuple<String> tuple : result) {
+            topKeywords.add(RedisResponse.builder(
+                    topKeywords.size() + 1,
+                    tuple.getValue(),
+                    tuple.getScore()
+            ));
+        }
+        return topKeywords;
+    }
 
 }

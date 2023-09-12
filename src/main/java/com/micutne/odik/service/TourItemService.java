@@ -2,12 +2,12 @@ package com.micutne.odik.service;
 
 import com.micutne.odik.common.exception.AuthException;
 import com.micutne.odik.common.exception.ErrorCode;
-import com.micutne.odik.domain.imageTourItem.ImageTourItem;
+import com.micutne.odik.domain.images.ImageTourItem;
 import com.micutne.odik.domain.tour.TourItem;
-import com.micutne.odik.domain.tour.dto.TourItemMapper;
-import com.micutne.odik.domain.tour.dto.TourItemRequest;
-import com.micutne.odik.domain.tour.dto.TourItemResponse;
-import com.micutne.odik.domain.tour.dto.TourItemResultListResponse;
+import com.micutne.odik.domain.tour.dto.item.TourItemMapper;
+import com.micutne.odik.domain.tour.dto.item.TourItemRequest;
+import com.micutne.odik.domain.tour.dto.item.TourItemResponse;
+import com.micutne.odik.domain.tour.dto.item.TourItemResultListResponse;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.repository.ImageTourItemRepository;
 import com.micutne.odik.repository.TourItemRepository;

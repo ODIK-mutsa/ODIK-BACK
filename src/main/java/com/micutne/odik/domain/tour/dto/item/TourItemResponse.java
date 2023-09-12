@@ -1,6 +1,6 @@
-package com.micutne.odik.domain.tour.dto;
+package com.micutne.odik.domain.tour.dto.item;
 
-import com.micutne.odik.domain.imageTourItem.ImageTourItem;
+import com.micutne.odik.domain.images.ImageTourItem;
 import com.micutne.odik.domain.tour.TourItem;
 import com.micutne.odik.domain.user.dto.ProfileResponse;
 import lombok.AllArgsConstructor;

@@ -1,12 +1,17 @@
 package com.micutne.odik.service;
 
+import com.micutne.odik.domain.images.ImageReviewTourItem;
 import com.micutne.odik.domain.review.ReviewTourItem;
-import com.micutne.odik.domain.review.dto.*;
+import com.micutne.odik.domain.review.dto.ReviewTourItemPageResponse;
+import com.micutne.odik.domain.review.dto.ReviewTourItemRequest;
+import com.micutne.odik.domain.review.dto.ReviewTourItemResponse;
+import com.micutne.odik.domain.review.dto.ReviewTourItemResultResponse;
 import com.micutne.odik.domain.tour.TourItem;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.repository.ReviewTourItemRepository;
 import com.micutne.odik.repository.TourItemRepository;
 import com.micutne.odik.repository.UserRepository;
+import com.micutne.odik.utils.file.ImageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,6 +19,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -24,7 +32,7 @@ public class ReviewTourItemService {
     private final UserRepository userRepository;
 
     /**
-     *  특정 리뷰 불러오기
+     * 특정 리뷰 불러오기
      */
     public ReviewTourItemResultResponse readReview(int reviewId) {
         if (reviewTourItemRepository.existsByIdx(reviewId)) {
@@ -49,6 +57,7 @@ public class ReviewTourItemService {
         }
         return ReviewTourItemPageResponse.fromPage("TOUR_ITEM_NOT_EXIST");
     }
+
     /**
      * 리뷰 생성
      */
@@ -112,7 +121,10 @@ public class ReviewTourItemService {
                 return ReviewTourItemResultResponse.fromEntity("STATE_NOT_PUBLIC");
             if (!checkAuth(reviewTourItem, user))
                 return ReviewTourItemResultResponse.fromEntity("AUTH_FAIL");
-
+            //이미지 삭제
+            List<String> images = reviewTourItem.getReviewImage().stream().map(ImageReviewTourItem::getUrl).toList();
+            images.stream().peek(image -> ImageUtils.removeFile(image, "review_tour_course")).collect(Collectors.toList());
+            //entity 삭제
             reviewTourItemRepository.delete(reviewTourItem);
             return ReviewTourItemResultResponse.fromEntity("OK");
         }
