@@ -50,7 +50,7 @@ public class SchedulerConfig {
     public CronTriggerFactoryBean SearchKeywordTrigger(JobDetail searchTotalizationJobDetail) {
         CronTriggerFactoryBean factory = new CronTriggerFactoryBean();
         factory.setJobDetail(searchTotalizationJobDetail);
-        factory.setCronExpression("0 0/10 * * * ?"); // 30분마다 실행
+        factory.setCronExpression("0 0 12 * * ?"); // 매일 정각 12시에 실행
         return factory;
     }
 

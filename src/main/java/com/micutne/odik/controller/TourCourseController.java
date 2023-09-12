@@ -31,11 +31,18 @@ public class TourCourseController {
     private final ReviewTourCourseService reviewTourCourseService;
     private final HistoryLikeCourseService historyLikeCourseService;
 
+
+    /**
+     * 코스 단일 출력
+     */
     @GetMapping("{course_id}")
     public TourCourseResultResponse readOne(@PathVariable int course_id) {
         return tourCourseService.readOne(course_id);
     }
 
+    /**
+     * 검색 및 전체 출력
+     */
     @GetMapping()
     public TourCourseResultListResponse readAll(@RequestParam(name = "keyword", required = false, defaultValue = "") String search,
                                                 @RequestParam(name = "order", required = false, defaultValue = "like") String orderBy,
@@ -47,6 +54,9 @@ public class TourCourseController {
         return tourCourseService.searchAll(keywords, orderBy, pageNo, pageSize);
     }
 
+    /**
+     * 사용자의 코스 출력
+     */
     @GetMapping("/user/{user_id}")
     public TourCourseResultListResponse readUserList(@PathVariable int user_id,
                                                      @RequestParam(name = "page_no", defaultValue = "0") int pageNo,
@@ -54,12 +64,18 @@ public class TourCourseController {
         return tourCourseService.readUserList(user_id, pageNo, pageSize);
     }
 
+    /**
+     * 코스 수정
+     */
     @PutMapping("")
     public TourCourseResultResponse updateCourse(Authentication authentication,
                                                  @RequestBody TourCourseRequest request) {
         return tourCourseService.update(request, authentication.getPrincipal().toString());
     }
 
+    /**
+     * 리뷰 불러오기
+     */
     @RequestMapping(value = "review", method = RequestMethod.GET, params = "course")
     public ReviewCoursePageResultResponse readReviewAll(@RequestParam(name = "course") int courseId,
                                                         @RequestParam(name = "page_no", defaultValue = "0") int pageNo,
@@ -67,24 +83,29 @@ public class TourCourseController {
         return reviewTourCourseService.readCourse(courseId, pageNo, pageSize);
     }
 
+    /**
+     * 리뷰 단일 불러오기
+     */
     @RequestMapping(value = "review", method = RequestMethod.GET, params = "review")
     public ReviewCourseResultResponse readReviewOne(@RequestParam(name = "review") int reviewId) {
         return reviewTourCourseService.readReview(reviewId);
     }
 
-
-    @PostMapping("/review")
+    /**
+     * 리뷰 작성
+     */
+    @PostMapping("/{course_id}/review")
     public ReviewCourseResultResponse createReview(
             Authentication authentication,
-            @RequestBody ReviewCourseRequest request) {
-        return reviewTourCourseService.create(request, authentication.getPrincipal().toString());
+            @RequestBody ReviewCourseRequest request, @PathVariable int course_id) {
+        return reviewTourCourseService.create(course_id, request, authentication.getPrincipal().toString());
     }
 
-    @PutMapping("/review")
+    @PutMapping("/{course_id}/review/{review_id}")
     public ReviewCourseResultResponse updateReview(
             Authentication authentication,
-            @RequestBody ReviewCourseRequest request) {
-        return reviewTourCourseService.update(request, authentication.getPrincipal().toString());
+            @RequestBody ReviewCourseRequest request, @PathVariable int course_id, @PathVariable int review_id) {
+        return reviewTourCourseService.update(course_id, review_id, request, authentication.getPrincipal().toString());
     }
 
     @DeleteMapping("/review")

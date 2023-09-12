@@ -1,4 +1,4 @@
-package com.micutne.odik.domain.tour.dto;
+package com.micutne.odik.domain.tour.dto.item;
 
 import com.micutne.odik.domain.user.User;
 import lombok.Data;

@@ -1,5 +1,6 @@
 package com.micutne.odik.service;
 
+import com.micutne.odik.domain.images.ImageReviewTourCourse;
 import com.micutne.odik.domain.review.ReviewTourCourse;
 import com.micutne.odik.domain.review.dto.course.ReviewCoursePageResultResponse;
 import com.micutne.odik.domain.review.dto.course.ReviewCourseRequest;
@@ -10,6 +11,7 @@ import com.micutne.odik.domain.user.User;
 import com.micutne.odik.repository.ReviewTourCourseRepository;
 import com.micutne.odik.repository.TourCourseRepository;
 import com.micutne.odik.repository.UserRepository;
+import com.micutne.odik.utils.file.ImageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -49,9 +54,8 @@ public class ReviewTourCourseService {
         return ReviewCourseResultResponse.fromEntity("REVIEW_NOT_EXIST");
     }
 
-    public ReviewCourseResultResponse create(ReviewCourseRequest request, String username) {
+    public ReviewCourseResultResponse create(int courseId, ReviewCourseRequest request, String username) {
         User user = userRepository.findByIdOrThrow(username);
-        int courseId = request.getTour_course_idx();
         if (tourCourseRepository.existsByIdx(courseId)) {
             TourCourse tourCourse = tourCourseRepository.findByIdxOrThrow(courseId);
 
@@ -71,13 +75,15 @@ public class ReviewTourCourseService {
     }
 
     @Transactional
-    public ReviewCourseResultResponse update(ReviewCourseRequest request, String username) {
+    public ReviewCourseResultResponse update(int courseId, int reviewId, ReviewCourseRequest request, String username) {
         User user = userRepository.findByIdOrThrow(username);
 
-        if (reviewCourseRepository.existsByIdx(request.getReview_course_idx())) {
-            ReviewTourCourse reviewCourse = reviewCourseRepository.findByIdxOrThrow(request.getReview_course_idx());
+        if (reviewCourseRepository.existsByIdx(reviewId)) {
+            ReviewTourCourse reviewCourse = reviewCourseRepository.findByIdxOrThrow(reviewId);
 
             TourCourse tourCourse = reviewCourse.getTourCourse();
+
+            if (tourCourse.getIdx() != courseId) return ReviewCourseResultResponse.fromEntity("NOT_RIGHT_COURSE_ID");
 
             if (!tourCourse.getState().equals("public"))
                 return ReviewCourseResultResponse.fromEntity("STATE_NOT_PUBLIC");
@@ -106,8 +112,12 @@ public class ReviewTourCourseService {
                 return ReviewCourseResultResponse.fromEntity("STATE_NOT_PUBLIC");
 
             if (!checkAuth(reviewCourse, user)) return ReviewCourseResultResponse.fromEntity("AUTH_FAIL");
-
+            //이미지 삭제
+            List<String> images = reviewCourse.getReviewImage().stream().map(ImageReviewTourCourse::getUrl).toList();
+            images.stream().peek(image -> ImageUtils.removeFile(image, "review_tour_course")).collect(Collectors.toList());
+            //entity 삭제
             reviewCourseRepository.delete(reviewCourse);
+
             return ReviewCourseResultResponse.fromEntity("OK");
         }
         return ReviewCourseResultResponse.fromEntity("REVIEW_NOT_EXIST");

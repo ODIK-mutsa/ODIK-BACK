@@ -2,7 +2,7 @@ package com.micutne.odik.repository;
 
 import com.micutne.odik.common.exception.EntityNotFoundException;
 import com.micutne.odik.common.exception.ErrorCode;
-import com.micutne.odik.domain.imageTourItem.ImageTourItem;
+import com.micutne.odik.domain.images.ImageTourItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

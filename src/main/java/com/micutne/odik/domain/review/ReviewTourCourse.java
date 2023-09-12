@@ -1,12 +1,15 @@
 package com.micutne.odik.domain.review;
 
 import com.micutne.odik.domain.BaseEntity;
+import com.micutne.odik.domain.images.ImageReviewTourCourse;
 import com.micutne.odik.domain.review.dto.course.ReviewCourseRequest;
 import com.micutne.odik.domain.tour.TourCourse;
 import com.micutne.odik.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,6 +33,10 @@ public class ReviewTourCourse extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private TourCourse tourCourse;
+
+    @OneToMany(mappedBy = "reviewTourCourse", cascade = CascadeType.ALL)
+    private List<ImageReviewTourCourse> reviewImage;
+
 
     public static ReviewTourCourse fromDto(ReviewCourseRequest request) {
         ReviewTourCourse reviewCourse = new ReviewTourCourse();

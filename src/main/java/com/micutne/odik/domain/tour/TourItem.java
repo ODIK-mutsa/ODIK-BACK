@@ -1,15 +1,14 @@
 package com.micutne.odik.domain.tour;
 
 import com.micutne.odik.domain.BaseEntity;
-import com.micutne.odik.domain.imageTourItem.ImageTourItem;
+import com.micutne.odik.domain.images.ImageTourItem;
 import com.micutne.odik.domain.review.ReviewTourItem;
-import com.micutne.odik.domain.tour.dto.TourItemRequest;
+import com.micutne.odik.domain.tour.dto.item.TourItemRequest;
 import com.micutne.odik.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.util.List;
 
@@ -42,10 +41,9 @@ public class TourItem extends BaseEntity {
     private int countLike;
     private String type;
     @OneToMany(mappedBy = "tourItemIdx", cascade = CascadeType.ALL)
-    @CreatedDate
     private List<ImageTourItem> imagesGoogle;
+
     @OneToMany(mappedBy = "tourItem", cascade = CascadeType.ALL)
-    @CreatedDate
     private List<ReviewTourItem> reviewTourItem;
 
     @Builder
@@ -64,12 +62,12 @@ public class TourItem extends BaseEntity {
     }
 
     public String setState(String state) {
-            if (state != null && !state.equals("public")) {
-                this.state = state;
-            } else {
-                this.state = "public";
-            }
-            return this.state;
+        if (state != null && !state.equals("public")) {
+            this.state = state;
+        } else {
+            this.state = "public";
+        }
+        return this.state;
     }
 
 

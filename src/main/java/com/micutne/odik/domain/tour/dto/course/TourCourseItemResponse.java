@@ -1,7 +1,7 @@
 package com.micutne.odik.domain.tour.dto.course;
 
 import com.micutne.odik.domain.tour.TourCourseListTourItem;
-import com.micutne.odik.domain.tour.dto.TourItemResponse;
+import com.micutne.odik.domain.tour.dto.item.TourItemResponse;
 import lombok.Data;
 
 @Data

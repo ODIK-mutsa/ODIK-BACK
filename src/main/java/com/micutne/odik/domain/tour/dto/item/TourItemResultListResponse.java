@@ -1,7 +1,8 @@
-package com.micutne.odik.domain.tour.dto;
+package com.micutne.odik.domain.tour.dto.item;
 
 import lombok.Data;
 import org.springframework.data.domain.Page;
+
 @Data
 public class TourItemResultListResponse {
     String result;

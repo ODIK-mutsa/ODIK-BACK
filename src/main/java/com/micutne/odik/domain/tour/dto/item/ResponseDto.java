@@ -1,10 +1,11 @@
-package com.micutne.odik.domain.tour.dto;
+package com.micutne.odik.domain.tour.dto.item;
 
 import lombok.Data;
 
 @Data
 public class ResponseDto {
     private String message;
+
     public static ResponseDto getMessage(String message) {
         ResponseDto responseDto = new ResponseDto();
         responseDto.setMessage(message);

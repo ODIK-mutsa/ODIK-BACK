@@ -1,12 +1,10 @@
-package com.micutne.odik.domain.imageTourItem;
+package com.micutne.odik.domain.images;
 
-import com.micutne.odik.domain.BaseEntity;
 import com.micutne.odik.domain.tour.TourItem;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -23,7 +21,6 @@ public class ImageTourItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tour_item_idx")
-    @JsonIgnore
     private TourItem tourItemIdx;
     @Lob
     @Column(columnDefinition = "TEXT", name = "url")
