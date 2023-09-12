@@ -5,9 +5,11 @@ import com.micutne.odik.common.exception.ErrorCode;
 import com.micutne.odik.domain.like.HistoryLikeTourCourse;
 import com.micutne.odik.domain.tour.TourCourse;
 import com.micutne.odik.domain.user.User;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -32,6 +34,8 @@ public interface HistoryLikeTourCourseRepository extends JpaRepository<HistoryLi
     Boolean existsByTourCourseAndUser(TourCourse tourCourse, User user);
 
     int countByTourCourse(TourCourse tourCourse);
+
+    List<HistoryLikeTourCourse> findAllByUser(User user, Pageable pageable);
 
 
 }

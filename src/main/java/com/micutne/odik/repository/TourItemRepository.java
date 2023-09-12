@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface TourItemRepository extends JpaRepository<TourItem, Integer> {
     default TourItem findByIdOrThrow(int idx) {
@@ -23,6 +25,8 @@ public interface TourItemRepository extends JpaRepository<TourItem, Integer> {
     TourItem findByReferenceIdGoogle(String referenceIdGoogle);
 
     Page<TourItem> findAll(Specification<TourItem> spec, Pageable pageable);
+
+    List<TourItem> findAllByOrderByCountLikeDesc(Pageable pageable);
 
     boolean existsByReferenceIdGoogleAndState(String referenceIdGoogle, String state);
 

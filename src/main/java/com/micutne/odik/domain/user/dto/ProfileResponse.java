@@ -15,7 +15,7 @@ public class ProfileResponse {
         response.idx = user.getIdx();
         response.nick_name = user.getNickName();
         if (user.getGender() != null) {
-            response.gender = user.getGender().equals("m") ? "male" : "female";
+            response.gender = user.getGender();
         }
         response.locale = user.getLocale();
         return response;

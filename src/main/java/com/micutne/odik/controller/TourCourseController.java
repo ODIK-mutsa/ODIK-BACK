@@ -76,11 +76,11 @@ public class TourCourseController {
     /**
      * 리뷰 불러오기
      */
-    @RequestMapping(value = "review", method = RequestMethod.GET, params = "course")
-    public ReviewCoursePageResultResponse readReviewAll(@RequestParam(name = "course") int courseId,
-                                                        @RequestParam(name = "page_no", defaultValue = "0") int pageNo,
-                                                        @RequestParam(name = "page_size", defaultValue = "20") int pageSize) {
-        return reviewTourCourseService.readCourse(courseId, pageNo, pageSize);
+    @GetMapping("{course_id}/review")
+    public ReviewCoursePageResultResponse readReviewAll(@RequestParam(name = "page_no", defaultValue = "0") int pageNo,
+                                                        @RequestParam(name = "page_size", defaultValue = "20") int pageSize,
+                                                        @PathVariable int course_id) {
+        return reviewTourCourseService.readCourse(course_id, pageNo, pageSize);
     }
 
     /**

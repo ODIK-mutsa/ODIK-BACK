@@ -1,5 +1,6 @@
 package com.micutne.odik.controller;
 
+import com.micutne.odik.domain.etc.RecommendResponse;
 import com.micutne.odik.domain.search.dto.SearchKeywordResultResponse;
 import com.micutne.odik.service.RecommendService;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,9 @@ public class MainController {
     private final RecommendService recommendService;
 
     @GetMapping("/tour/recommend")
-    public SearchKeywordResultResponse homeRecommendList(Authentication authentication) {
-        return recommendService.readRecommendList(authentication.getPrincipal().toString());
+    public RecommendResponse homeRecommendList(Authentication authentication) {
+        String username = (authentication != null) ? authentication.getPrincipal().toString() : null;
+        return recommendService.readRecommendList(username);
     }
 
     @GetMapping("/search/top/{limit}")
