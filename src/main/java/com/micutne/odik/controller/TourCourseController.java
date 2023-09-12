@@ -108,11 +108,10 @@ public class TourCourseController {
         return reviewTourCourseService.update(course_id, review_id, request, authentication.getPrincipal().toString());
     }
 
-    @DeleteMapping("/review")
+    @DeleteMapping("/{course_id}/review/{review_id}")
     public ReviewCourseResultResponse removeReview(
-            Authentication authentication,
-            @RequestBody ReviewCourseRequest request) {
-        return reviewTourCourseService.delete(request, authentication.getPrincipal().toString());
+            Authentication authentication, @PathVariable int course_id, @PathVariable int review_id) {
+        return reviewTourCourseService.delete(course_id, review_id, authentication.getPrincipal().toString());
     }
 
     @GetMapping("/{course_id}/like")

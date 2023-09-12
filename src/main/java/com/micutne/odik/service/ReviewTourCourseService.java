@@ -87,7 +87,7 @@ public class ReviewTourCourseService {
 
             TourCourse tourCourse = reviewCourse.getTourCourse();
 
-            if (tourCourse.getIdx() != courseId) return ReviewCourseResultResponse.fromEntity("NOT_RIGHT_COURSE_ID");
+            if (tourCourse.getIdx() != courseId) return ReviewCourseResultResponse.fromEntity("COURSE_ID_NOT_MATCH");
 
             if (!tourCourse.getState().equals("public"))
                 return ReviewCourseResultResponse.fromEntity("STATE_NOT_PUBLIC");
@@ -104,14 +104,15 @@ public class ReviewTourCourseService {
         return reviewCourse.getUser().equals(user);
     }
 
-    public ReviewCourseResultResponse delete(ReviewCourseRequest request, String username) {
+    public ReviewCourseResultResponse delete(int courseId, int reviewId, String username) {
         User user = userRepository.findByIdOrThrow(username);
 
-        if (reviewCourseRepository.existsByIdx(request.getReview_course_idx())) {
-            ReviewTourCourse reviewCourse = reviewCourseRepository.findByIdxOrThrow(request.getReview_course_idx());
+        if (reviewCourseRepository.existsByIdx(reviewId)) {
+            ReviewTourCourse reviewCourse = reviewCourseRepository.findByIdxOrThrow(reviewId);
 
             TourCourse tourCourse = reviewCourse.getTourCourse();
-
+            if (tourCourse.getIdx() != courseId)
+                return ReviewCourseResultResponse.fromEntity("COURSE_ID_NOT_MATCH");
             if (!tourCourse.getState().equals("public"))
                 return ReviewCourseResultResponse.fromEntity("STATE_NOT_PUBLIC");
 
@@ -128,6 +129,5 @@ public class ReviewTourCourseService {
         }
         return ReviewCourseResultResponse.fromEntity("REVIEW_NOT_EXIST");
     }
-
 
 }
