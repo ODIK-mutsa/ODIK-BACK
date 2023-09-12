@@ -34,7 +34,7 @@ public class ReviewTourItemService {
     /**
      * 특정 리뷰 불러오기
      */
-    public ReviewTourItemResultResponse readReview(int reviewId) {
+    public ReviewTourItemResultResponse readReview(int itemId, int reviewId) {
         if (reviewTourItemRepository.existsByIdx(reviewId)) {
             return ReviewTourItemResultResponse.fromEntity(reviewTourItemRepository.findByIdOrThrow(reviewId), "OK");
         }
@@ -45,11 +45,11 @@ public class ReviewTourItemService {
     /**
      * 전체 리뷰 불러오기
      */
-    public ReviewTourItemPageResponse readTourItem(int tourItemId, int pageNo, int pageSize) {
+    public ReviewTourItemPageResponse readTourItem(int itemId, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
 
-        if (tourItemRepository.existsById(tourItemId)) {
-            TourItem tourItem = tourItemRepository.findByIdOrThrow(tourItemId);
+        if (tourItemRepository.existsById(itemId)) {
+            TourItem tourItem = tourItemRepository.findByIdOrThrow(itemId);
 
             Page<ReviewTourItem> entities = reviewTourItemRepository.findAllByTourItem(tourItem, pageable);
             Page<ReviewTourItemResponse> dtos = entities.map(ReviewTourItemResponse::fromEntity);
@@ -61,11 +61,11 @@ public class ReviewTourItemService {
     /**
      * 리뷰 생성
      */
-    public ReviewTourItemResultResponse create(ReviewTourItemRequest request, String username) {
+    public ReviewTourItemResultResponse create(ReviewTourItemRequest request,int itemId, String username) {
         User user = userRepository.findByIdOrThrow(username);
-        int tourItemId = request.getTour_item_idx();
-        if (tourItemRepository.existsById(tourItemId)) {
-            TourItem tourItem = tourItemRepository.findByIdOrThrow(tourItemId);
+        //int tourItemId = request.getTour_item_idx();
+        if (tourItemRepository.existsById(itemId)) {
+            TourItem tourItem = tourItemRepository.findByIdOrThrow(itemId);
 
             if (!tourItem.getState().equals("public"))
                 return ReviewTourItemResultResponse.fromEntity("STATE_NOT_PUBLIC");
@@ -86,13 +86,16 @@ public class ReviewTourItemService {
      * 리뷰 수정
      */
     @Transactional
-    public ReviewTourItemResultResponse update(ReviewTourItemRequest request, String username) {
+    public ReviewTourItemResultResponse update(int itemId, int reviewId, ReviewTourItemRequest request, String username) {
         User user = userRepository.findByIdOrThrow(username);
 
-        if (reviewTourItemRepository.existsByIdx(request.getReview_tour_item_idx())) {
-            ReviewTourItem reviewTourItem = reviewTourItemRepository.findByIdOrThrow(request.getReview_tour_item_idx());
+        if (reviewTourItemRepository.existsByIdx(reviewId)) {
+            ReviewTourItem reviewTourItem = reviewTourItemRepository.findByIdOrThrow(reviewId);
 
             TourItem tourItem = reviewTourItem.getTourItem();
+
+            if (tourItem.getIdx() != itemId)
+                return ReviewTourItemResultResponse.fromEntity("NOT_RIGHT_COURSE_ID");
 
             if (!tourItem.getState().equals("public"))
                 return ReviewTourItemResultResponse.fromEntity("STATE_NOT_PUBLIC");
@@ -110,13 +113,15 @@ public class ReviewTourItemService {
     /**
      * 리뷰 삭제
      */
-    public ReviewTourItemResultResponse remove(ReviewTourItemRequest request, String username) {
+    public ReviewTourItemResultResponse remove(int itemId, int reviewId, ReviewTourItemRequest request, String username) {
         User user = userRepository.findByIdOrThrow(username);
 
-        if (reviewTourItemRepository.existsByIdx(request.getReview_tour_item_idx())) {
-            ReviewTourItem reviewTourItem = reviewTourItemRepository.findByIdOrThrow(request.getReview_tour_item_idx());
+        if (reviewTourItemRepository.existsByIdx(reviewId)) {
+            ReviewTourItem reviewTourItem = reviewTourItemRepository.findByIdOrThrow(reviewId);
             TourItem tourItem = reviewTourItem.getTourItem();
 
+            if (tourItem.getIdx() != itemId)
+                return ReviewTourItemResultResponse.fromEntity("NOT_RIGHT_COURSE_ID");
             if (!tourItem.getState().equals("public"))
                 return ReviewTourItemResultResponse.fromEntity("STATE_NOT_PUBLIC");
             if (!checkAuth(reviewTourItem, user))
