@@ -5,6 +5,7 @@ import com.micutne.odik.common.auth.JwtTokenProvider;
 import com.micutne.odik.domain.user.User;
 import com.micutne.odik.domain.user.UserPrivate;
 import com.micutne.odik.domain.user.dto.LoginRequest;
+import com.micutne.odik.domain.user.dto.PasswordRequest;
 import com.micutne.odik.domain.user.dto.SignUpRequest;
 import com.micutne.odik.domain.user.dto.UserResultResponse;
 import com.micutne.odik.repository.UserPrivateRepository;
@@ -81,9 +82,8 @@ public class AuthService {
     }
 
     @Transactional
-    public UserResultResponse changePassword(String email, String newPassword) {
+    public UserResultResponse findPassword(String email, String newPassword) {
         String userId = FormatUtils.formatId(email, "email");
-        log.info(userId);
         User user = userRepository.findByIdOrThrow(userId);
         UserPrivate userPrivate = userPrivateRepository.findByIdxOrThrow(user.getIdx());
         userPrivate.updatePassword(passwordEncoder.encode(newPassword));
@@ -92,4 +92,16 @@ public class AuthService {
     }
 
 
+    public UserResultResponse changePassword(PasswordRequest request) {
+        if (userRepository.existsById(request.getId())) {
+            User user = userRepository.findByIdOrThrow(request.getId());
+            UserPrivate userPrivate = userPrivateRepository.findByIdxOrThrow(user.getIdx());
+            if (!passwordEncoder.matches(request.getPassword_old(), userPrivate.getPss())) {
+                return UserResultResponse.fromEntity("INVALID");
+            }
+            userPrivate.updatePassword(passwordEncoder.encode(request.getPassword_new()));
+            return UserResultResponse.fromEntity("OK");
+        }
+        return UserResultResponse.fromEntity("INVALID");
+    }
 }

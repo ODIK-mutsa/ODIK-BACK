@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -61,7 +60,7 @@ public class ReviewTourItemService {
     /**
      * 리뷰 생성
      */
-    public ReviewTourItemResultResponse create(ReviewTourItemRequest request,int itemId, String username) {
+    public ReviewTourItemResultResponse create(ReviewTourItemRequest request, int itemId, String username) {
         User user = userRepository.findByIdOrThrow(username);
         //int tourItemId = request.getTour_item_idx();
         if (tourItemRepository.existsById(itemId)) {
@@ -128,7 +127,9 @@ public class ReviewTourItemService {
                 return ReviewTourItemResultResponse.fromEntity("AUTH_FAIL");
             //이미지 삭제
             List<String> images = reviewTourItem.getReviewImage().stream().map(ImageReviewTourItem::getUrl).toList();
-            images.stream().peek(image -> ImageUtils.removeFile(image, "review_tour_course")).collect(Collectors.toList());
+            for (String image : images) {
+                ImageUtils.removeFile(image);
+            }
             //entity 삭제
             reviewTourItemRepository.delete(reviewTourItem);
             return ReviewTourItemResultResponse.fromEntity("OK");

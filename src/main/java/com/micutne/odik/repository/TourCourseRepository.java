@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -42,15 +43,22 @@ public interface TourCourseRepository extends JpaRepository<TourCourse, Integer>
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.TOUR_COURSE_NOT_FOUND));
     }
 
-    Optional<TourCourse> findByUserIdxAndState(User user, String state);
+    //최신순
+    List<TourCourse> findAllByOrderByIdxDesc(Pageable pageable);
 
-    Page<TourCourse> findAllByStateAndTitleContainingOrderByDateCreateDesc(String state, String title, Pageable pageable);
+    List<TourCourse> findAllByOrderByCountLikeDesc(Pageable pageable);
+
+    Optional<TourCourse> findByUserIdxAndState(User user, String state);
 
     @Query("SELECT t FROM TourCourse t WHERE t.userIdx = :userIdx AND t.state <> 'delete' ORDER BY t.dateCreate")
     Page<TourCourse> findAllByUserCourse(@Param("userIdx") User userIdx, Pageable pageable);
 
+    @Query("SELECT t FROM TourCourse t WHERE t.userIdx = :userIdx AND t.state <> 'delete' ORDER BY t.idx DESC")
+    List<TourCourse> findListByUserCourse(@Param("userIdx") User userIdx, Pageable pageable);
+
     @Query("SELECT t FROM TourCourse t WHERE t.userIdx = :userIdx AND t.state = 'public' ORDER BY t.dateCreate")
     Page<TourCourse> findPublicByUserCourse(@Param("userIdx") User userIdx, Pageable pageable);
+
 
     Page<TourCourse> findAll(Specification<TourCourse> spec, Pageable pageable);
 }

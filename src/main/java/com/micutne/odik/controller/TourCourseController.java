@@ -76,19 +76,19 @@ public class TourCourseController {
     /**
      * 리뷰 불러오기
      */
-    @RequestMapping(value = "review", method = RequestMethod.GET, params = "course")
-    public ReviewCoursePageResultResponse readReviewAll(@RequestParam(name = "course") int courseId,
-                                                        @RequestParam(name = "page_no", defaultValue = "0") int pageNo,
-                                                        @RequestParam(name = "page_size", defaultValue = "20") int pageSize) {
-        return reviewTourCourseService.readCourse(courseId, pageNo, pageSize);
+    @GetMapping("{course_id}/review")
+    public ReviewCoursePageResultResponse readReviewAll(@RequestParam(name = "page_no", defaultValue = "0") int pageNo,
+                                                        @RequestParam(name = "page_size", defaultValue = "20") int pageSize,
+                                                        @PathVariable int course_id) {
+        return reviewTourCourseService.readCourse(course_id, pageNo, pageSize);
     }
 
     /**
      * 리뷰 단일 불러오기
      */
-    @RequestMapping(value = "review", method = RequestMethod.GET, params = "review")
-    public ReviewCourseResultResponse readReviewOne(@RequestParam(name = "review") int reviewId) {
-        return reviewTourCourseService.readReview(reviewId);
+    @GetMapping("{course_id}/review/{review_id}")
+    public ReviewCourseResultResponse readReviewOne(@PathVariable int course_id, @PathVariable int review_id) {
+        return reviewTourCourseService.readReview(course_id, review_id);
     }
 
     /**
@@ -108,11 +108,10 @@ public class TourCourseController {
         return reviewTourCourseService.update(course_id, review_id, request, authentication.getPrincipal().toString());
     }
 
-    @DeleteMapping("/review")
+    @DeleteMapping("/{course_id}/review/{review_id}")
     public ReviewCourseResultResponse removeReview(
-            Authentication authentication,
-            @RequestBody ReviewCourseRequest request) {
-        return reviewTourCourseService.delete(request, authentication.getPrincipal().toString());
+            Authentication authentication, @PathVariable int course_id, @PathVariable int review_id) {
+        return reviewTourCourseService.delete(course_id, review_id, authentication.getPrincipal().toString());
     }
 
     @GetMapping("/{course_id}/like")
