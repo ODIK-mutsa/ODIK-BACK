@@ -17,6 +17,7 @@ public class TourCourseResponse {
     ProfileResponse user;
     String date_join;
     String image_cover;
+    float rating;
     List<TourCourseItemResponse> tour_items = new ArrayList<>();
 
     public static TourCourseResponse fromEntity(TourCourse tourCourse) {
@@ -28,6 +29,7 @@ public class TourCourseResponse {
         response.date_join = TimeUtils.getLocalTime(tourCourse.getDateCreate());
         response.count_like = tourCourse.getCountLike();
         response.image_cover = tourCourse.getImage_cover();
+        response.rating = tourCourse.getAvgRating();
         response.tour_items = tourCourse.getTourCourseItemLists().stream().map(TourCourseItemResponse::fromEntity).toList();
         return response;
     }

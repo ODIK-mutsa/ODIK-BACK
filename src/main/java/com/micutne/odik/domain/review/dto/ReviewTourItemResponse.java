@@ -24,7 +24,7 @@ public class ReviewTourItemResponse {
         response.content = reviewTourItem.getContent();
         response.user = ProfileResponse.fromEntity(reviewTourItem.getUser());
         response.date_join = TimeUtils.getLocalTime(reviewTourItem.getDateCreate());
-        response.images = reviewTourItem.getReviewImage().stream().map(ImageReviewTourItem::getUrl).toList();
+        response.images = reviewTourItem.getReviewImage() != null ? reviewTourItem.getReviewImage().stream().map(ImageReviewTourItem::getUrl).toList() : null;
         return response;
     }
 

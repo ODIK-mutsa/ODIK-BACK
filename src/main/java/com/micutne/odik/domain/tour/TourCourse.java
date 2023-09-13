@@ -21,8 +21,8 @@ public class TourCourse extends BaseEntity {
     private String state;
     @Column
     private int countLike;
-    @Column
     private String image_cover;
+    private float avgRating;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
@@ -43,10 +43,15 @@ public class TourCourse extends BaseEntity {
     public void update(TourCourseRequest request) {
         title = (request.getTitle() != null) ? request.getTitle() : title;
         state = (request.getState() != null) ? request.getState() : state;
+
     }
 
     public void updateLike(int i) {
         countLike += i;
+    }
+
+    public void updateRating(float avgRating) {
+        this.avgRating = avgRating;
     }
 
     public void pasteCourse(TourCourse tourCourse) {

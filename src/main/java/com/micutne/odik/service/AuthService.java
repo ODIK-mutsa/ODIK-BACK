@@ -93,6 +93,7 @@ public class AuthService {
     }
 
     //비밀번호 변경 - 이전 비밀번호 확인하고 변경
+    @Transactional
     public UserResultResponse changePasswordHaveOld(PasswordRequest request) {
         if (userRepository.existsById(request.getId())) {
             User user = userRepository.findByIdOrThrow(request.getId());

@@ -58,6 +58,7 @@ public class ReviewTourCourseService {
         return ReviewCourseResultResponse.fromEntity("REVIEW_NOT_EXIST");
     }
 
+    @Transactional
     public ReviewCourseResultResponse create(int courseId, ReviewCourseRequest request, String username) {
         User user = userRepository.findByIdOrThrow(username);
         if (tourCourseRepository.existsByIdx(courseId)) {
@@ -71,12 +72,16 @@ public class ReviewTourCourseService {
                 request.setTourCourse(tourCourse);
 
                 ReviewTourCourse reviewCourse = reviewCourseRepository.save(ReviewTourCourse.fromDto(request));
+
+                updateTotalRating(tourCourse);
+
                 return ReviewCourseResultResponse.fromEntity(reviewCourse, "OK");
             }
             return ReviewCourseResultResponse.fromEntity("ALREADY_CREATE");
         }
         return ReviewCourseResultResponse.fromEntity("COURSE_NOT_EXIST");
     }
+
 
     @Transactional
     public ReviewCourseResultResponse update(int courseId, int reviewId, ReviewCourseRequest request, String username) {
@@ -95,15 +100,13 @@ public class ReviewTourCourseService {
             if (!checkAuth(reviewCourse, user)) return ReviewCourseResultResponse.fromEntity("AUTH_FAIL");
 
             reviewCourse.update(request);
+            updateTotalRating(tourCourse);
             return ReviewCourseResultResponse.fromEntity(reviewCourse, "OK");
         }
         return ReviewCourseResultResponse.fromEntity("REVIEW_NOT_EXIST");
     }
 
-    public boolean checkAuth(ReviewTourCourse reviewCourse, User user) {
-        return reviewCourse.getUser().equals(user);
-    }
-
+    @Transactional
     public ReviewCourseResultResponse delete(int courseId, int reviewId, String username) {
         User user = userRepository.findByIdOrThrow(username);
 
@@ -124,10 +127,22 @@ public class ReviewTourCourseService {
             }
             //entity 삭제
             reviewCourseRepository.delete(reviewCourse);
-
+            updateTotalRating(tourCourse);
             return ReviewCourseResultResponse.fromEntity("OK");
         }
         return ReviewCourseResultResponse.fromEntity("REVIEW_NOT_EXIST");
+    }
+
+    @Transactional
+    public void updateTotalRating(TourCourse tourCourse) {
+        Float avgRating = reviewCourseRepository.calculateAverageRatingByTourCourse(tourCourse);
+        if (avgRating != null) {
+            tourCourse.updateRating(avgRating);
+        }
+    }
+
+    public boolean checkAuth(ReviewTourCourse reviewCourse, User user) {
+        return reviewCourse.getUser().equals(user);
     }
 
 }
