@@ -9,6 +9,8 @@ import com.micutne.odik.repository.TourCourseListTourItemRepository;
 import com.micutne.odik.repository.TourCourseRepository;
 import com.micutne.odik.repository.TourItemRepository;
 import com.micutne.odik.repository.UserRepository;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,11 +70,16 @@ public class TourCourseService {
         Specification<TourCourse> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+            // TourCourse와 TourCourseListTourItem을 JOIN
+            Join<TourCourse, TourCourseListTourItem> tourCourseListTourItemJoin = root.join("tourCourseItemLists", JoinType.INNER);
             // 검색어가 있으면 키워드에 따라 title을 like 검색
             if (keywords.length > 0) {
                 Predicate[] keywordPredicates = new Predicate[keywords.length];
                 for (int i = 0; i < keywords.length; i++) {
-                    keywordPredicates[i] = criteriaBuilder.like(root.get("title"), "%" + keywords[i] + "%");
+                    keywordPredicates[i] = criteriaBuilder.or(
+                            criteriaBuilder.like(root.get("title"), "%" + keywords[i] + "%"),
+                            criteriaBuilder.like(tourCourseListTourItemJoin.get("tourItem").get("title"), "%" + keywords[i] + "%")
+                    );
                 }
                 predicates.add(criteriaBuilder.or(keywordPredicates));
             }
