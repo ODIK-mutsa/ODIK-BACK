@@ -14,7 +14,7 @@ public class ReviewTourItemResponse {
     float rating;
     String content;
     ProfileResponse user;
-    String date_join;
+    String date_create;
     List<String> images;
 
     public static ReviewTourItemResponse fromEntity(ReviewTourItem reviewTourItem) {
@@ -23,7 +23,7 @@ public class ReviewTourItemResponse {
         response.rating = reviewTourItem.getRating();
         response.content = reviewTourItem.getContent();
         response.user = ProfileResponse.fromEntity(reviewTourItem.getUser());
-        response.date_join = TimeUtils.getLocalTime(reviewTourItem.getDateCreate());
+        response.date_create = TimeUtils.getLocalTime(reviewTourItem.getDateCreate());
         response.images = reviewTourItem.getReviewImage().stream().map(ImageReviewTourItem::getUrl).toList();
         return response;
     }
