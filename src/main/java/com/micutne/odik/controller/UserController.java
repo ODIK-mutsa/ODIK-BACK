@@ -21,22 +21,33 @@ public class UserController {
     private final UserService userService;
     private final TourCourseService tourCourseService;
 
-
+    /**
+     * 내 정보 불러오기
+     */
     @GetMapping
     public UserResultResponse readMyInfo(Authentication authentication) {
         return userService.readOne(authentication.getPrincipal().toString());
     }
 
+    /**
+     * 프로필 불러오기
+     */
     @PostMapping("profile")
     public ProfileResponse readProfile(@RequestBody int userIdx) {
         return userService.readProfile(userIdx);
     }
 
+    /**
+     * 내 정보 수정하기
+     */
     @PutMapping
     public UserResultResponse updateMyInfo(Authentication authentication, @RequestBody UserRequest request) {
         return userService.updateInfo(request, authentication.getPrincipal().toString());
     }
 
+    /**
+     * 내 상태 변경하기
+     */
     @PutMapping("state")
     public UserResultResponse updateMyState(Authentication authentication, @RequestBody UserRequest request) {
         return userService.updateState(request, authentication.getPrincipal().toString());

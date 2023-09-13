@@ -34,9 +34,6 @@ public class HistoryLikeItemService {
         return LikeResponse.toDto("COURSE_NOT_EXIST");
     }
 
-    public int countCourse(TourItem tourItem) {
-        return historyLikeTourItemRepository.countByTourItem(tourItem);
-    }
 
     @Transactional
     public LikeResponse update(int itemId, ItemLikeRequest request, String username) {

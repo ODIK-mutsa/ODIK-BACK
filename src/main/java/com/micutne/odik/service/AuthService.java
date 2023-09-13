@@ -11,6 +11,7 @@ import com.micutne.odik.domain.user.dto.UserResultResponse;
 import com.micutne.odik.repository.UserPrivateRepository;
 import com.micutne.odik.repository.UserRepository;
 import com.micutne.odik.utils.FormatUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,19 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
     private final UserPrivateRepository userPrivateRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthService(UserRepository userRepository, UserPrivateRepository userPrivateRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
-        this.userRepository = userRepository;
-        this.userPrivateRepository = userPrivateRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
 
+    //회원 가입
     @Transactional
     public UserResultResponse signup(SignUpRequest request) {
         String userId = FormatUtils.formatId(request.getId(), request.getLogin_type());
@@ -46,6 +43,7 @@ public class AuthService {
         return UserResultResponse.fromEntity("ALREADY_EXIST");
     }
 
+    //oAuth 회원가입
     @Transactional
     public void signUpOAuth(SignUpRequest request) {
         String userId = FormatUtils.formatId(request.getId(), request.getLogin_type());
@@ -55,6 +53,7 @@ public class AuthService {
         UserPrivate userPrivate = userPrivateRepository.save(UserPrivate.fromDto(request, user));
     }
 
+    //로그인
     @Transactional
     public UserResultResponse login(LoginRequest request) {
         String userId = FormatUtils.formatId(request.getId(), "email");
@@ -68,6 +67,7 @@ public class AuthService {
         } else return UserResultResponse.fromEntity("NOT_FOUND");
     }
 
+    //토큰 확인
     public UserResultResponse checkAuth(String token, Authentication authentication) {
         if (token == null || token.isEmpty() || authentication == null) {
             return UserResultResponse.fromEntity("INVALID");
@@ -81,8 +81,9 @@ public class AuthService {
         return UserResultResponse.fromEntity("INVALID");
     }
 
+    //비밀번호 변경 - 이전 비밀번호 x
     @Transactional
-    public UserResultResponse findPassword(String email, String newPassword) {
+    public UserResultResponse changePasswordNoOld(String email, String newPassword) {
         String userId = FormatUtils.formatId(email, "email");
         User user = userRepository.findByIdOrThrow(userId);
         UserPrivate userPrivate = userPrivateRepository.findByIdxOrThrow(user.getIdx());
@@ -91,8 +92,9 @@ public class AuthService {
         return UserResultResponse.fromEntity("OK");
     }
 
-
-    public UserResultResponse changePassword(PasswordRequest request) {
+    //비밀번호 변경 - 이전 비밀번호 확인하고 변경
+    @Transactional
+    public UserResultResponse changePasswordHaveOld(PasswordRequest request) {
         if (userRepository.existsById(request.getId())) {
             User user = userRepository.findByIdOrThrow(request.getId());
             UserPrivate userPrivate = userPrivateRepository.findByIdxOrThrow(user.getIdx());

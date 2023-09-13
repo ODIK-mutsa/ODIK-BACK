@@ -101,6 +101,9 @@ public class TourCourseController {
         return reviewTourCourseService.create(course_id, request, authentication.getPrincipal().toString());
     }
 
+    /**
+     * 리뷰 수정
+     */
     @PutMapping("/{course_id}/review/{review_id}")
     public ReviewCourseResultResponse updateReview(
             Authentication authentication,
@@ -108,18 +111,27 @@ public class TourCourseController {
         return reviewTourCourseService.update(course_id, review_id, request, authentication.getPrincipal().toString());
     }
 
+    /**
+     * 리뷰 삭제
+     */
     @DeleteMapping("/{course_id}/review/{review_id}")
     public ReviewCourseResultResponse removeReview(
             Authentication authentication, @PathVariable int course_id, @PathVariable int review_id) {
         return reviewTourCourseService.delete(course_id, review_id, authentication.getPrincipal().toString());
     }
 
+    /**
+     * 좋아요 확인
+     */
     @GetMapping("/{course_id}/like")
     public LikeResponse readLike(Authentication authentication,
                                  @PathVariable int course_id) {
         return historyLikeCourseService.read(course_id, authentication.getPrincipal().toString());
     }
 
+    /**
+     * 좋아요 수정
+     */
     @PostMapping("/{course_id}/like")
     public LikeResponse updateLike(Authentication authentication,
                                    @PathVariable int course_id,

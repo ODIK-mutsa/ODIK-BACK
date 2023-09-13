@@ -40,7 +40,6 @@ public class TourItemService {
     /**
      * 특정 관광지 불러오기
      */
-
     public TourItemResponse readOne(String reference_id) {
         if (tourItemRepository.existsByReferenceIdGoogleAndState(reference_id, "public")) {
             TourItem tourItem = tourItemRepository.findByReferenceIdGoogle(reference_id);

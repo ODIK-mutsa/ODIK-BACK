@@ -49,7 +49,9 @@ public class FileService {
         return response;
     }
 
-
+    /**
+     * 관광지 리뷰 이미지 저장
+     */
     public FileResultResponse saveReviewItem(FileRequest request, MultipartFile[] images, String username) {
         String category = request.getCategory();
         int idx = request.getIdx();
@@ -78,7 +80,9 @@ public class FileService {
         return FileResultResponse.toDto("ENTITY_NOT_EXIST");
     }
 
-
+    /**
+     * 관광코스 리뷰 이미지 저장
+     */
     public FileResultResponse saveReviewCourse(FileRequest request, MultipartFile[] images, String username) {
         String category = request.getCategory();
         int idx = request.getIdx();
@@ -106,6 +110,7 @@ public class FileService {
         return FileResultResponse.toDto("ENTITY_NOT_EXIST");
     }
 
+    //미사용
     private FileResultResponse saveTourItem(FileRequest request, MultipartFile[] images, String username) {
         String category = request.getCategory();
         int idx = request.getIdx();
@@ -124,7 +129,9 @@ public class FileService {
         return FileResultResponse.toDto("ENTITY_NOT_EXIST");
     }
 
-
+    /**
+     * 관광코스 표지 저장
+     */
     public FileResultResponse saveTourCourse(FileRequest request, MultipartFile[] images, String username) {
         String category = request.getCategory();
         int idx = request.getIdx();
@@ -148,7 +155,9 @@ public class FileService {
         return FileResultResponse.toDto("ENTITY_NOT_EXIST");
     }
 
-
+    /**
+     * 파일 삭제
+     */
     public void removeFiles(List<String> urls) {
         for (String url : urls) {
             ImageUtils.removeFile(url);

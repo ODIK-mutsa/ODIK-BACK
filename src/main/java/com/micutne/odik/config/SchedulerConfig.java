@@ -67,4 +67,22 @@ public class SchedulerConfig {
         return factory;
     }
 
+
+//    @Bean
+//    public JobDetailFactoryBean TempJobDetail() {
+//        JobDetailFactoryBean factory = new JobDetailFactoryBean();
+//        factory.setJobClass(TempScheduler.class);
+//        factory.setDurability(true);
+//        return factory;
+//    }
+//
+//    @Bean
+//    public SimpleTriggerFactoryBean TempTrigger(JobDetail TempJobDetail) {
+//        SimpleTriggerFactoryBean factory = new SimpleTriggerFactoryBean();
+//        factory.setJobDetail(TempJobDetail);
+//        factory.setRepeatInterval(10 * 60 * 1000); // 10분  hour
+//        factory.setStartDelay(0);
+//        return factory;
+//    }
+
 }
