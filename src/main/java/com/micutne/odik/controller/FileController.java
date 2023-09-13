@@ -36,6 +36,7 @@ public class FileController {
         return resource;
     }
 
+    //이미지 저장하기
     @PostMapping("")
     public FileResultResponse saveImage(Authentication authentication, @ModelAttribute FileRequest request, MultipartFile[] images) {
         return fileService.saveFile(request, images, authentication.getPrincipal().toString());
