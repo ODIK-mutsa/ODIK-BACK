@@ -23,7 +23,7 @@ public class ReviewCourseResponse {
         response.content = reviewCourse.getContent();
         response.user = ProfileResponse.fromEntity(reviewCourse.getUser());
         response.idx = reviewCourse.getIdx();
-        response.images = reviewCourse.getReviewImage().stream().map(ImageReviewTourCourse::getUrl).toList();
+        response.images = reviewCourse.getReviewImage() != null ? reviewCourse.getReviewImage().stream().map(ImageReviewTourCourse::getUrl).toList() : null;
         response.date_join = TimeUtils.getLocalTime(reviewCourse.getDateCreate());
         return response;
     }

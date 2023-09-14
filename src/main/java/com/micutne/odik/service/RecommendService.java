@@ -32,13 +32,20 @@ public class RecommendService {
     private final TourItemRepository tourItemRepository;
     private final HistoryLikeTourCourseRepository historyLikeTourCourseRepository;
 
+    /**
+     * 검색어 순위 출력
+     */
+
     public SearchKeywordResultResponse readRank(int limit) {
         Pageable pageable = PageRequest.of(0, limit);
         Page<SearchKeyword> result = searchKeywordRepository.findAllByOrderByCountDesc(pageable);
         return SearchKeywordResultResponse.fromEntity(result.map(SearchKeywordResponse::fromEntity), "OK");
     }
 
-
+    /**
+     * 메인 홈 추천 리스트 출력
+     * 인증 시 본인 정보 활용
+     */
     public RecommendResponse readRecommendList(String username) {
         RecommendResponse response = new RecommendResponse();
         Pageable pageable = PageRequest.of(0, 10);

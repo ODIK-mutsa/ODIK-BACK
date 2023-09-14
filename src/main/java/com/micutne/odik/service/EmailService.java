@@ -42,9 +42,10 @@ public class EmailService {
         this.templateEngine = templateEngine;
     }
 
+    //비밀번호 변경 메일 전송
     @Transactional
     public EmailResponse passwordVerifyRequest(EmailRequest request) {
-        String MAIL_TITLE = "[ODIK] PASSWORD VERIFY TEST";
+        String MAIL_TITLE = "[ODIK] PASSWORD VERIFY";
         String MAIL_TEMPLATE = "passwordVerify";
 
         String userId = FormatUtils.formatId(request.getEmail(), "email");
@@ -55,9 +56,10 @@ public class EmailService {
         }
     }
 
+    //이메일 확인 메일 전송
     @Transactional
     public EmailResponse emailVerifyRequest(EmailRequest request) {
-        String MAIL_TITLE = "[ODIK] EMAIL VERIFY TEST";
+        String MAIL_TITLE = "[ODIK] EMAIL VERIFY";
         String MAIL_TEMPLATE = "emailVerify";
 
         String userId = FormatUtils.formatId(request.getEmail(), "email");
@@ -70,6 +72,7 @@ public class EmailService {
 
     }
 
+    //메일 전송 본체
     @Transactional
     public EmailResponse VerifyRequest(EmailRequest request, String MAIL_TITLE, String MAIL_TEMPLATE) {
         //메일 전송
@@ -95,7 +98,9 @@ public class EmailService {
         return EmailResponse.fromEntity(emailEntity, EmailState.SEND);
     }
 
-
+    /**
+     * 인증번호 확인
+     */
     public EmailResponse verifyCheck(EmailRequest request) {
         //만료된 인증번호인지 확인
         if (isExpired(request.getToken())) {
